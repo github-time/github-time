@@ -1,0 +1,48 @@
+<!--index.wxml-->
+<wxs module="utils">
+  module.exports = {
+    getGradientValue: function (value) {
+      if (value > 50) {
+        return (value - 50) * 100 + 'K'
+      } else if (value > 40) {
+        return (value - 40) * 10 + 'K'
+      } else if (value > 30) {
+        return (value - 30) + 'K'
+      } else if (value > 20) {
+        return (value - 20) * 100
+      } else if (value > 10) {
+        return (value - 10) * 10
+      } else {
+        return value
+      }
+    }
+  }
+</wxs>
+
+<mp-navigation-bar
+  ext-class="my-navigation-bar"
+  title="Github Time"
+  back="{{false}}"
+  >
+</mp-navigation-bar>
+
+<mp-search-bar
+  ext-class="title-search-bar"
+  placeholder="请输入搜索关键字"
+  cancel="{{false}}">
+  <view slot="right" bindtap="onToggleFilter"> 筛选 V </view>
+</mp-search-bar>
+
+<mp-repo-filter
+  hidden="{{!showFilterView}}"
+  filters="{{filters}}"
+  bindcancel="onCancel"
+  bindsubmit="onFilter"
+  ></mp-repo-filter>
+
+<mp-fill-view>
+  <mp-repo-list
+    repo-list="{{repoList}}"
+    bindscrolltolower="lower">
+    ></mp-repo-list>
+</mp-fill-view>

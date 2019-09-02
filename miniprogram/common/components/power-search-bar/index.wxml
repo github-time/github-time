@@ -1,0 +1,21 @@
+<view class="power-search-bar {{extClass}}">
+    <slot name="left"></slot>
+    <view class="power-search-bar__form">
+        <view class="power-search-bar__box">
+            <icon class="power-search-bar-icon-search_in-box" type="search" size="12"></icon>
+            <input type="text" class="power-search-bar__input" placeholder="{{placeholder}}" value="{{value}}" focus="{{focus}}" bindblur="inputBlur" bindfocus="inputFocus" bindinput="inputChange" />
+            <icon wx:if="{{value.length > 0}}" class="power-search-bar-icon-clear" type="clear" size="12" bindtap="clearInput"></icon>
+        </view>
+        <label wx:if="{{!searchState}}" class="power-search-bar__label" bindtap="showInput">
+            <icon class="power-search-bar-icon-search" type="search" size="12"></icon>
+            <view class="power-search-bar__text">搜索</view>
+        </label>
+    </view>
+    <view wx:if="{{cancel && searchState}}" class="power-search-bar__cancel-btn" bindtap="hideInput">{{cancelText}}</view>
+    <slot name="right"></slot>
+</view>
+<mp-cells class="searchbar-result  {{extClass}}" wx:if="{{searchState && result.length > 0}}">
+    <mp-cell bindtap="selectResult" data-index="{{index}}" wx:for="{{result}}" hover>
+        <view>{{item.text}}</view>
+    </mp-cell>
+</mp-cells>

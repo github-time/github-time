@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "mp-navigation-bar": "/common/components/power-navigation-bar/index",
+    "mp-search-bar": "/common/components/power-search-bar/index",
+    "mp-simple-tab-bar": "/common/components/simple-tab-bar/index",
+    "mp-fill-view": "/common/components/fill-view/index",
+    "mp-repo-list": "/components/repo-list/index"
+  }
+}

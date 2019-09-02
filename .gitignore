@@ -1,0 +1,29 @@
+# Windows
+[Dd]esktop.ini
+Thumbs.db
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+
+# Node.js
+node_modules/
+
+package-lock.json
+
+/miniprogram/**/*.js
+!/miniprogram/common/images/base64.js
+!/miniprogram/common/lib/**/*.js
+
+/miniprogram/common/lib/marked/index.js
+/miniprogram/common/lib/prism/index.js
+/miniprogram/common/lib/prism/index.js
+
+/miniprogram/common/lib/weui/**/*
+!/miniprogram/common/lib/weui/cell/
+!/miniprogram/common/lib/weui/cells/
+!/miniprogram/common/lib/weui/weui-wxss/

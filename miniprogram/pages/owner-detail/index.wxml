@@ -1,0 +1,7 @@
+<!--miniprogram/pages/owner-detail/index.wxml-->
+<mp-navigation-bar
+  ext-class="my-navigation-bar"
+  title="Github Time"
+  back="{{true}}"
+  >
+</mp-navigation-bar>

@@ -1,0 +1,20 @@
+<wxs module="utils">
+module.exports = {
+  indexOf: function (array, value) {
+    return ~array.indexOf(value)
+  }
+}
+</wxs>
+
+<view class="button-group {{extClass}}">
+  <view
+    wx:for="{{list}}"
+    wx:key="index"
+    data-detail="{{item}}"
+    data-index="{{index}}"
+    class="button-group-item {{ utils.indexOf(selected, item.value) ? 'active' : ''}}"
+    bindtap="onButtonToggle">
+    {{item.name}}
+  </view>
+  <icon hidden="{{selected.length === 0}}" class="button-group-clear" bindtap="onClear" type="clear" size="16"></icon>
+</view>

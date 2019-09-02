@@ -1,0 +1,7 @@
+/**index.wxss**/
+
+.top-simple-tab-bar {
+  margin-top: 12rpx;
+  font-size: var(--font-size-regular);
+  background: var(--background-color-base);
+}

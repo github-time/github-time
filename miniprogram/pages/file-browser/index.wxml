@@ -1,0 +1,61 @@
+<!--index.wxml-->
+<mp-navigation-bar
+  ext-class="my-navigation-bar navigation-bar-back"
+  title="Github Time"
+  back="{{true}}"
+  >
+</mp-navigation-bar>
+
+<mp-search-bar
+  ext-class="title-search-bar"
+  placeholder="请输入搜索关键字"
+  throttle="{{1000}}"
+  bindsearch="searchFile"
+  cancel="{{false}}">
+  <view slot="left">
+    <view class="sidebar-icon-container" bindtap="toggleMenu">
+    <image
+      class="sidebar-icon"
+      src="/common/icons/sidebar.png"></image>
+    </view>
+  </view>
+  <!-- <button slot="right" size="mini">搜索</button> -->
+</mp-search-bar>
+
+<view class="header">
+  <view class="header-title">
+    <text>{{filePath}}</text>
+  </view>
+</view>
+
+<view class="viewer">
+  <mp-fill-view custom-scroll-view>
+    <mp-prism height="100%" code="{{fileContent}}" language="{{fileType}}"></mp-prism>
+  </mp-fill-view>
+</view>
+
+<view class="sidebar {{showSidebar ?  'show-sidebar' : ''}}">
+  <view class="sidebar-title"><text>{{repoDetail.full_name}}</text></view>
+  <view class="sidebar-head">
+    <view>
+      <view>
+        <image src="/common/icons/star.png" class="start-icon"></image>
+        <text class="icon-num">{{repoDetail.stargazers_count}}</text>
+      </view>
+      <view class="fork-container">
+        <image src="/common/icons/fork.png" class="fork-icon"></image>
+        <text class="icon-num fork-num">{{repoDetail.forks_count}}</text>
+      </view>
+    </view>
+    <picker class="branch-picker"
+      bindchange="branchPickerChange" value="{{0}}" range="{{repoDetail.branches}}">
+      <text class="sidebar-title-branch">{{repoDetail.default_branch}}</text>
+    </picker>
+  </view>
+  <view class="sidebar-main">
+    <view wx:for="{{treeData}}" wx:key="{{index}}" class="tree-item-1-level {{index%2 === 1 ? 'light' : ''}}">
+      <mp-tree render="{{true}}}" model='{{item}}' bind:viewFile="viewFile"></mp-tree>
+    </view>
+  </view>
+</view>
+<view class="sidebar-back" hidden="{{!showSidebar}}"  bindtap="clickCodeView"></view>

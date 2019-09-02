@@ -1,0 +1,81 @@
+<!--index.wxml-->
+<wxs module="utils">
+  module.exports = {
+    getFriendlyValue: function (value) {
+      if (value > 1000) {
+        return value / 1000 + 'K'
+      } else {
+        return value
+      }
+    }
+  }
+</wxs>
+
+<view class="filter-view" hidden="{{hidden}}">
+  <view class="filter-view-filters">
+    <view class="filter-view-group-title">Star</view>
+    <view class="filter-view-slider-container">
+      <checkbox checked="{{filters.star.min.enable}}" bindtap="onStarMinEnableChange">至少</checkbox>
+      <view class="filter-view-slider">
+        <slider
+          bindchanging="onStarMinChange"
+          min="0"
+          max="55"
+          block-size="18"/>
+      </view>
+      <view class="filter-view-slider-value">
+        {{utils.getFriendlyValue(filters.star.min.value)}}
+      </view>
+    </view>
+    <view class="filter-view-slider-container">
+      <checkbox checked="{{filters.star.max.enable}}" bindtap="onStarMaxEnableChange">至多</checkbox>
+      <view class="filter-view-slider">
+        <slider
+          bindchanging="onStarMaxChange"
+          min="0"
+          max="55"
+          block-size="18"/>
+      </view>
+      <view class="filter-view-slider-value">
+        {{utils.getFriendlyValue(filters.star.max.value)}}
+      </view>
+    </view>
+    <view class="filter-view-group-title">Fork</view>
+    <view class="filter-view-slider-container">
+      <checkbox checked="{{filters.fork.min.enable}}" bindtap="onForkMinEnableChange">至少</checkbox>
+      <view class="filter-view-slider">
+        <slider
+          bindchanging="onForkMinChange"
+          min="0"
+          max="52"
+          block-size="18"/>
+      </view>
+      <view class="filter-view-slider-value">
+        {{utils.getFriendlyValue(filters.fork.min.value)}}
+      </view>
+    </view>
+    <view class="filter-view-slider-container">
+      <checkbox checked="{{filters.fork.max.enable}}" bindtap="onForkMaxEnableChange">至多</checkbox>
+      <view class="filter-view-slider">
+        <slider
+          bindchanging="onForkMaxChange"
+          min="0"
+          max="52"
+          block-size="18"/>
+      </view>
+      <view class="filter-view-slider-value">
+        {{utils.getFriendlyValue(filters.fork.max.value)}}
+      </view>
+    </view>
+    <view class="filter-view-group-title">编程语言</view>
+    <mp-button-group multi-select list="{{languages}}" bindchange="onLanguagesChange"></mp-button-group>
+    <view class="filter-view-group-title">主题</view>
+    <mp-button-group multi-select list="{{topics}}" bindchange="onTopicsChange"></mp-button-group>
+    <view class="filter-view-group-title">最新提交</view>
+    <mp-button-group list="{{updateTime}}" bindchange="onUpdateTimeChange"></mp-button-group>
+  </view>
+  <view class="filter-view-operator">
+    <button type="default" size="mini" bindtap="onCancel">取消</button>
+    <button class="btn-primary" type="primary" size="mini" bindtap="onSubmit">完成</button>
+  </view>
+</view>

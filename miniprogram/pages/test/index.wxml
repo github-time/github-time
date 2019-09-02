@@ -1,0 +1,10 @@
+<!--index.wxml-->
+<mp-navigation-bar
+  ext-class="my-navigation-bar"
+  title="Test"
+  back="{{false}}"
+  >
+</mp-navigation-bar>
+
+<!-- <mp-prism code="{{myCode}}" language="{{myLanguage}}"></mp-prism> -->
+<mp-markdown content="{{myContent}}"></mp-markdown>

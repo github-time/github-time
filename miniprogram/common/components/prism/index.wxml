@@ -1,0 +1,16 @@
+<!--miniprogram/custom-tab-bar/index.wxml-->
+<scroll-view style="height: {{height}}" class="code-scroll-view" scroll-x scroll-y>
+  <view class="code-container">
+    <view>{{rawText}}</view>
+    <view wx:for="{{codeRows}}" wx:key="{{index}}" class="code-row">
+      <text wx:for="{{item}}"
+            wx:key="{{index}}"
+            class="{{(index === 0 ? 'line-num' : '') + ' code-text ' + (item.class ? item.class : '')}}"
+            selectable="{{true}}"
+            space="ensp"
+            decode="true"
+        >{{item.text}}</text>
+    </view>
+  </view>
+</scroll-view>
+

@@ -1,0 +1,150 @@
+/**index.wxss**/
+
+.header {
+  direction: flex;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 24px;
+  /* border-bottom: 1px solid #ccc; */
+  box-sizing: border-box;
+  z-index: 99;
+  background-color: #30474F;
+  color: #E2DEDE;
+  font-size: var(--font-size-regular);
+}
+.sidebar-icon-container{
+  flex: 1;
+  text-align: center;
+}
+.sidebar-icon{
+  width: 50rpx;
+  height: 40rpx;
+  vertical-align: middle;
+}
+.header-title{
+  flex: 5;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.container{
+  position: relative;
+  /* margin: 10rpx; */
+  padding-top: 80rpx;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.viewer {
+	background: #2d2d2d;
+}
+
+.simple-view {
+  margin-top: 10rpx;
+  text-align: center;
+}
+
+.sidebar-back{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: #618F9F;
+  opacity: 0.5;
+}
+.sidebar{
+  /* height: 100%; */
+  overflow: auto;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  max-width: 600rpx;
+  min-width: 450rpx;
+  padding: 30rpx 0;
+  /* border-right:1px solid #ccc; */
+  /* border-top:1px solid #ccc; */
+  /* height: 100%; */
+  background: #8bc;
+  z-index: 20000;
+  box-sizing:border-box;
+  transform: translate3d(-600rpx, 0rpx, 0rpx);
+  transition: transform 0.2s ease 0s;
+}
+
+.show-sidebar {
+  transform: translate3d(0rpx, 0rpx, 0rpx);
+}
+
+.sidebar-title {
+  color: #fff;
+  font-size: 40rpx;
+  margin: 0 30rpx;
+}
+
+.sidebar-head {
+  display: flex;
+  padding: 25rpx 30rpx;
+  justify-content: space-between;
+  align-items:center;
+  font-size: 35rpx;
+  border-bottom: 1px solid #04485D;
+}
+
+.start-icon {
+  width: 35rpx;
+  height: 35rpx;
+  vertical-align: middle
+}
+
+.fork-container{
+  margin-top: 10rpx;
+}
+
+.fork-icon{
+  width:  35rpx;
+  height: 35rpx;
+  vertical-align: middle
+}
+
+.icon-num {
+  margin-left: 20rpx;
+  vertical-align: middle;
+  color: #FF9494;
+}
+
+.fork-num{
+  color: #A6FFFD;
+}
+
+.branch-picker{
+  padding:8rpx 0;
+  min-width: 130rpx;
+  height: 50rpx;
+  border: 1px solid #003D51;
+  border-radius: 20rpx;
+  text-align: center;
+  color: #024B64;
+  background-color: #618F9F;
+}
+
+.sidebar-title-branch {
+  color: #03536F;
+  vertical-align: middle;
+}
+
+.sidebar-main{
+  font-size: 35rpx;
+  color: #fff;
+}
+
+.tree-item-1-level{
+  padding-left: 15rpx;
+}
+
+.light {
+  background-color: #075975;
+}
+

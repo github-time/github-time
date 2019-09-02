@@ -1,0 +1,51 @@
+/**index.wxss**/
+
+.filter-view {
+  padding: 8rpx 0;
+  position: absolute;
+  background: var(--background-color-base);
+  border: 1px solid var(--color-primary);
+  z-index: 999;
+}
+
+.filter-view-filters {
+  padding: 0 20rpx;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.filter-view-operator {
+  padding: 0 20rpx;
+  display: flex;
+  margin-top: 24rpx;
+}
+
+.filter-view-group-title {
+  display: inline-block;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-text-secondary);
+}
+
+.filter-view-operator button {
+  flex: 1;
+  margin: 0 8rpx;
+}
+
+.filter-view-slider-container {
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filter-view-slider {
+  flex: 1;
+}
+
+.filter-view-slider-value {
+  width: 2.5em;
+  text-align: right;
+}
+
+.filter-view .btn-primary {
+  background: var(--color-primary)
+}

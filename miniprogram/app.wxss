@@ -1,0 +1,65 @@
+@import './common/lib/weui/weui-wxss/dist/style/weui.wxss';
+/* @import './themes/sky-blue.wxss'; */
+/* @import './themes/lake-blue.wxss'; */
+@import './themes/grass-green.wxss';
+
+/**app.wxss**/
+page {
+  --font-size-large: 36rpx;
+  --font-size-title: 32rpx;
+  --font-size-regular: 28rpx;
+  --font-size-secondary: 24rpx;
+  --font-size-small: 22rpx;
+  --font-size-mini: 20rpx;
+  --font-size-tiny: 18rpx;
+
+  font-size: var(--font-size-regular);
+
+  font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
+
+  background-color: var(--background-color-base);
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+}
+
+.flex-wrp {display: flex;}
+
+.my-navigation-bar {
+  color: var(--color-white);
+  background: var(--color-primary);
+}
+
+.navigation-bar-back .weui-navigation-bar__center {
+  margin-left: 1.4em;
+}
+
+.title-search-bar {
+  font-size: var(--font-size-secondary);
+  background-color: var(--background-color-base);
+}
+
+page .simple-tab-bar {
+  color: var(--color-text-secondary);
+  border-color: var(--border-color-base);
+}
+
+page .simple-tab-bar-item.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+page .button-group-item {
+  background: var(--color-text-placeholder);
+}
+
+page .button-group-item.active {
+  background: var(--color-primary);
+}

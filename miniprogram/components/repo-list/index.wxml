@@ -1,0 +1,23 @@
+<!--index.wxml-->
+<scroll-view
+  scroll-y
+  style="height: 100%;"
+  bindscrolltolower="onScrollToLower">
+  <view wx:for="{{repoList}}" wx:key="id"
+    class="repo-card"
+    data-detail="{{item}}"
+    data-index="{{index}}"
+    bindtap="onRepoListItemClick"
+    >
+    <image
+      class="repo-icon"
+      src="{{item.owner.avatar_url}}"
+      data-detail="{{item.owner}}"
+      catchtap="onOwnerIconClick"></image>
+    <view class="repo-name">{{item.name}}</view>
+    <view class="repo-meta">star: {{item.stargazers_count}} fork: {{item.forks_count}} issues: {{item.open_issues}}</view>
+    <view class="repo-description">{{item.description}}</view>
+    <view class="repo-time">{{item.updated_at}}</view>
+    <view class="repo-language">{{item.language}}</view>
+  </view>
+</scroll-view>

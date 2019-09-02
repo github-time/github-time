@@ -1,0 +1,28 @@
+<!--index.wxml-->
+<mp-navigation-bar
+  ext-class="my-navigation-bar"
+  title="Github Time"
+  back="{{false}}"
+  >
+</mp-navigation-bar>
+
+<mp-search-bar
+  ext-class="title-search-bar"
+  placeholder="请输入搜索关键字"
+  cancel="{{false}}">
+  <view slot="right" bindtap="onToggleFilter"> 筛选 V </view>
+</mp-search-bar>
+
+<mp-repo-filter
+  hidden="{{!showFilterView}}"
+  filters="{{filters}}"
+  bindcancel="onCancel"
+  bindsubmit="onFilter"
+  ></mp-repo-filter>
+
+<mp-fill-view>
+  <mp-repo-list
+    repo-list="{{repoList}}"
+    bindscrolltolower="lower">
+    ></mp-repo-list>
+</mp-fill-view>

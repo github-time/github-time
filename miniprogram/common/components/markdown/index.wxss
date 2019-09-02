@@ -1,0 +1,5 @@
+@import '../../lib/marked/marked.wxss';
+
+.markdown-container {
+  padding: 8rpx 20rpx;
+}

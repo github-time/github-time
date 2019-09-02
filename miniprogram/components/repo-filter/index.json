@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "mp-button-group": "/common/components/button-group/index"
+  }
+}

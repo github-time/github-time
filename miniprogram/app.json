@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/recommend/index",
+    "pages/discover/index",
+    "pages/stars/index",
+    "pages/me/index",
+    "pages/community/index",
+    "pages/activity/index"
+  ],
+  "tabBar": {
+    "custom": false,
+    "list": [
+      {
+        "text": "推荐",
+        "iconPath": "/common/icons/tabbar.png",
+        "selectedIconPath": "/common/icons/tabbar.png",
+        "pagePath": "pages/recommend/index"
+      },
+      {
+        "text": "发现",
+        "iconPath": "/common/icons/tabbar.png",
+        "selectedIconPath": "/common/icons/tabbar.png",
+        "pagePath": "pages/discover/index"
+      },
+      {
+        "text": "Stars",
+        "iconPath": "/common/icons/tabbar.png",
+        "selectedIconPath": "/common/icons/tabbar.png",
+        "pagePath": "pages/stars/index"
+      },
+      {
+        "text": "我",
+        "iconPath": "/common/icons/tabbar.png",
+        "selectedIconPath": "/common/icons/tabbar.png",
+        "pagePath": "pages/me/index"
+      }
+    ]
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationStyle": "custom"
+  },
+  "sitemapLocation": "sitemap.json"
+}

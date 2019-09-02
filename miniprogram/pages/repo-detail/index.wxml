@@ -1,0 +1,123 @@
+<!--miniprogram/pages/repo-detail/index.wxml-->
+<mp-navigation-bar
+  ext-class="my-navigation-bar navigation-bar-back"
+  title="Github Time"
+  back="{{true}}"
+  >
+</mp-navigation-bar>
+
+<mp-simple-tab-bar
+  extClass="top-simple-tab-bar"
+  list="{{list}}"
+  bindchange="tabChange">
+</mp-simple-tab-bar>
+
+<mp-fill-view>
+  <!-- 项目摘要 -->
+  <view hidden="{{currentTab !== list[0].name}}">
+    <view class="weui-panel">
+      <view class="weui-panel__hd">{{repoDetail.full_name}}</view>
+      <view class="weui-panel__bd">
+        <view class="weui-media-box weui-media-box_text">
+          <!-- <view class="weui-media-box__title weui-media-box__title_in-text">{{repoDetail.homepage}}</view> -->
+          <!-- <view class="weui-form-preview__value">{{repoDetail.license.name}}</view> -->
+          <view class="weui-media-box__desc">{{repoDetail.description}}</view>
+          <view class="weui-media-box__info">
+            <view class="weui-media-box__info__meta">Star: {{repoDetail.stargazers_count}}</view>
+            <view class="weui-media-box__info__meta">Fork: {{repoDetail.forks_count}}</view>
+            <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">Issues: {{repoDetail.open_issues_count}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="weui-panel__bd">
+        <view class="weui-panel__ft">
+          <view class="weui-cell weui-cell_access weui-cell_link" bindtap="browserCode">
+            <view class="weui-cell__bd">浏览代码</view>
+            <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="weui-panel">
+      <view class="weui-panel__hd">标签</view>
+      <view class="weui-panel__bd">
+          <view class="weui-media-box weui-media-box_text">
+              <view class="weui-media-box__info">
+                  <view class="weui-media-box__info__meta">标签1</view>
+                  <view class="weui-media-box__info__meta">标签2</view>
+                  <view class="weui-media-box__info__meta">标签3</view>
+                  <view class="weui-media-box__info__meta">标签4</view>
+                  <view class="weui-media-box__info__meta">标签5</view>
+              </view>
+          </view>
+      </view>
+    </view>
+
+    <view class="weui-panel">
+      <view class="weui-panel__hd">项目详情</view>
+      <view class="weui-form-preview">
+        <view class="weui-form-preview__bd">
+          <view class="weui-form-preview__item">
+              <view class="weui-form-preview__label">项目语言</view>
+              <view class="weui-form-preview__value">{{repoDetail.language}}</view>
+          </view>
+          <view class="weui-form-preview__item">
+              <view class="weui-form-preview__label">Watch</view>
+              <view class="weui-form-preview__value">{{repoDetail.watchers_count}}</view>
+          </view>
+          <view class="weui-form-preview__item">
+              <view class="weui-form-preview__label">创建时间</view>
+              <view class="weui-form-preview__value">{{repoDetail.created_at}}</view>
+          </view>
+          <view class="weui-form-preview__item">
+              <view class="weui-form-preview__label">最后提交</view>
+              <view class="weui-form-preview__value">{{repoDetail.pushed_at}}</view>
+          </view>
+          <view class="weui-form-preview__item">
+              <view class="weui-form-preview__label">最近更新</view>
+              <view class="weui-form-preview__value">{{repoDetail.updated_at}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="weui-panel">
+      <view class="weui-panel__hd">作者信息</view>
+      <view class="weui-form-preview">
+        <view class="weui-form-preview__bd">
+          <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">用户名</view>
+            <view class="weui-form-preview__value">{{repoDetail.owner.login}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Readme -->
+  <view hidden="{{currentTab !== list[1].name}}">
+      <mp-markdown content="{{readmeContent}}"></mp-markdown>
+  </view>
+
+  <!-- Issues -->
+  <view hidden="{{currentTab !== list[2].name}}">
+
+  </view>
+
+  <!-- discuss -->
+  <view hidden="{{currentTab !== list[3].name}}">
+
+  </view>
+</mp-fill-view>
+
+<!-- {{repoDetail.owner.login}}
+{{repoDetail.owner.avatar_url}}
+{{repoDetail.owner.type}}
+{{repoDetail.private}}
+
+{{repoDetail.fork}}
+{{repoDetail.topics}}
+{{repoDetail.has_issues}}
+
+{{repoDetail.license.key}}
+{{repoDetail.license.url}} -->

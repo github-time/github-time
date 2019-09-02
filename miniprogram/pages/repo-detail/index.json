@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "mp-navigation-bar": "/common/components/power-navigation-bar/index",
+    "mp-simple-tab-bar": "/common/components/simple-tab-bar/index",
+    "mp-markdown": "/common/components/markdown/index",
+    "mp-fill-view": "/common/components/fill-view/index"
+  }
+}

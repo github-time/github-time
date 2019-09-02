@@ -1,0 +1,6 @@
+/* miniprogram/pages/owner-detail/index.wxss */
+
+.top-simple-tab-bar {
+  font-size: 14px;
+  background: var(--background-color-base);
+}
