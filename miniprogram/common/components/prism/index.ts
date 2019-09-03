@@ -1,6 +1,6 @@
 import hightlight from '../../lib/prism/index'
 
-const PAGE_SIZE = 64
+const PAGE_SIZE = 48
 
 function debounce (this: any, func: Function, wait: number) {
   let timer = 0
@@ -34,13 +34,21 @@ const renderNecessary = debounce(function (vm: any) {
     const currentStart = vm.data.currentStart
     const currentEnd = vm.data.currentEnd
 
-    const visibleStart = vm.data.firstVisibleLineNo
-    const visibleEnd = visibleStart + PAGE_SIZE
+    const pre = PAGE_SIZE / 2
+    const post = PAGE_SIZE / 2
+    const current = vm.data.firstVisibleLineNo
+    const visibleStart = Math.max(0, current - pre)
+    const visibleEnd = current + PAGE_SIZE + post
 
     if ((visibleStart < currentStart) || (visibleEnd > currentEnd)) {
+      if (currentStart - visibleStart > pre || visibleEnd - currentEnd > post) {
+        wx.showLoading({
+          title: '加载中'
+        })
+      }
       // 前后各多渲染一页
       vm.data.currentStart = Math.max(0, visibleStart - PAGE_SIZE)
-      vm.data.currentEnd = Math.min(6400, visibleStart + 2 * PAGE_SIZE)
+      vm.data.currentEnd = Math.min(6400, visibleEnd + PAGE_SIZE)
       console.log(`render part: ${vm.data.currentStart}-${vm.data.currentEnd}`)
       vm.data.maxRenderLineNo = Math.max(vm.data.maxRenderLineNo, vm.data.currentEnd)
       const codeRows = vm.data.codeRowsCache.slice(0, vm.data.maxRenderLineNo).map((row: any, index: number) => {
@@ -54,9 +62,12 @@ const renderNecessary = debounce(function (vm: any) {
         rawText: '',
         codeRows
       })
+      setTimeout(() => {
+        wx.hideLoading()
+      }, 300)
     }
   })
-}, 300) as (vm: any) => void
+}, 150) as (vm: any) => void
 
 Component({
   options: {
@@ -128,7 +139,7 @@ Component({
   },
   methods: {
     onScroll () {
-      renderNecessary(this)
+      if (this.data.codeRows.length > 0) renderNecessary(this)
     }
   }
 })
