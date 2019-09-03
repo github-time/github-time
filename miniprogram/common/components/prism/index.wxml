@@ -1,5 +1,11 @@
 <!--miniprogram/custom-tab-bar/index.wxml-->
-<scroll-view style="height: {{height}}" class="code-scroll-view" scroll-x scroll-y>
+<scroll-view
+  style="height: {{height}}"
+  class="code-scroll-view"
+  scroll-x
+  scroll-y
+  bindscroll="onScroll"
+  >
   <view class="code-container">
     <view>{{rawText}}</view>
     <view wx:for="{{codeRows}}" wx:key="{{index}}" class="code-row">

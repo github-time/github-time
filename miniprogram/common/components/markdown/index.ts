@@ -19,10 +19,20 @@ Component({
       console.log('rerender code ...')
       try {
         const markdownNodes = marked(content, 'apis.getImgRawPath()')
+        const longContent = markdownNodes.length > 150
         this.setData({
           rawText: '',
-          markdownNodes: markdownNodes
+          markdownNodes: longContent ? markdownNodes.slice(0, 50) : markdownNodes
         })
+
+        if (longContent) {
+          setTimeout(() => {
+            this.setData({
+              rawText: '',
+              markdownNodes: markdownNodes
+            })
+          }, 1000)
+        }
       } catch (e) {
         this.setData({
           rawText: content,
