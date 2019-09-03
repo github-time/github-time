@@ -9,17 +9,21 @@ Page({
   data: {
     currentTab: 'recommend',
     keyword: '',
+    query: '',
     queriedPageNo: 0,
     pageSize: 10,
     repoList: [] as github.repos.SearchResultItem[],
     showFilterView: !false
   },
-  onLoad() {
-
-  },
   onToggleFilter() {
     this.setData!({
       showFilterView: !this.data.showFilterView
+    })
+  },
+  onKeywordChange (e: any) {
+    this.setData!({
+      keyword: e.detail.value,
+      showFilterView: true
     })
   },
   onFilter (e: any) {
@@ -30,7 +34,12 @@ Page({
     const filters = e.detail
     let search = ''
 
-    // Star筛选
+    // keyword 筛选
+    if (this.data.keyword) {
+      search += this.data.keyword
+    }
+
+    // Star 筛选
     const starMin = filters.star.min.enable ? filters.star.min.value : -1
     const starMax = filters.star.max.enable ? filters.star.max.value : -1
     if (starMin > 0 && starMax > 0) {
@@ -60,7 +69,7 @@ Page({
     if (filters.lastUpdateTime) {
       search += `+pushed:>${filters.lastUpdateTime}`
     }
-    search = search.substr(1)
+    search = search.replace(/^\+/, '')
 
     console.log('search: ', search)
 
@@ -71,21 +80,22 @@ Page({
       showFilterView: false
     })
   },
-  async doSearch (keyword: string) {
-    if (keyword === this.data.keyword) return
+  async doSearch (query: string) {
+    if (query === this.data.query) return
 
     this.setData!({
-      keyword
+      query
     })
-    if (!keyword) return
-    console.log('do search:', keyword)
+    if (!query) return
+
+    console.log('do search:', query)
     this.data.queriedPageNo = 0
     wx.showLoading({
       title: '正在加载'
     })
     try {
       const searchResult = await github.searchRepositories({
-        keyword,
+        query,
         pageSize: this.data.pageSize
       })
       this.setData!({ repoList: searchResult.items })
@@ -99,7 +109,7 @@ Page({
     if (this.data.queriedPageNo < toQueryPageNo) {
       try {
         const repos: github.repos.SearchResult = await github.searchRepositories({
-          keyword: this.data.keyword,
+          query: this.data.query,
           pageSize: this.data.pageSize,
           pageNo: toQueryPageNo
         })

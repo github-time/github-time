@@ -25,3 +25,11 @@
   margin: 0 8rpx;
 }
 
+.btn-toggle-filter {
+  margin-left: 8rpx;
+}
+
+.btn-primary {
+  color: var(--color-white);
+  background: var(--color-primary);
+}

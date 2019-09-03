@@ -6,24 +6,22 @@ import { IMyApp } from '../../app'
 const app = getApp<IMyApp>()
 Page({
   data: {
-    currentTab: 'recommend',
-    keyword: '',
+    currentTab: 'repos',
+    query: '',
     queriedPageNo: 0,
     pageSize: 10,
 
-    list: [{
-      name: 'recommend',
-      text: "推荐",
-      // badge: 'New'
-    },
-    {
-      name: 'trend',
-      text: "趋势",
-    },
-    {
-      name: 'categories',
-      text: "分类",
-    }],
+    list: [
+      {
+        name: 'repos',
+        text: "仓库",
+        // badge: 'New'
+      },
+      {
+        name: 'users',
+        text: "开发者",
+      }
+    ],
     repoList: [] as github.repos.SearchResultItem[]
   },
   //事件处理函数
@@ -80,25 +78,21 @@ Page({
     this.doSearch(e.detail.value)
   },
 
-  inputChange (e: any) {
-    this.searchRepo(e)
-  },
-
-  async doSearch (keyword: string) {
-    if (keyword === this.data.keyword) return
+  async doSearch (query: string) {
+    if (query === this.data.query) return
 
     this.setData!({
-      keyword
+      query
     })
-    if (!keyword) return
-    console.log('do search:', keyword)
+    if (!query) return
+    console.log('do search:', query)
     this.data.queriedPageNo = 0
     wx.showLoading({
       title: '正在加载'
     })
     try {
       const searchResult = await github.searchRepositories({
-        keyword,
+        query,
         pageSize: this.data.pageSize
       })
       this.setData!({ repoList: searchResult.items })
@@ -120,7 +114,7 @@ Page({
     if (this.data.queriedPageNo < toQueryPageNo) {
       try {
         const repos: github.repos.SearchResult = await github.searchRepositories({
-          keyword: this.data.keyword,
+          query: this.data.query,
           pageSize: this.data.pageSize,
           pageNo: toQueryPageNo
         })
@@ -131,16 +125,8 @@ Page({
     }
   },
 
-  getUserInfo(e: any) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData!({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
-  },
-
   tabChange(e: any) {
+    console.log('tag++++', e.detail.item.name)
     this.setData!({
       currentTab: e.detail.item.name
     })

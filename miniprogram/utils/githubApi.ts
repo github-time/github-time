@@ -43,14 +43,14 @@ async function getAllTopics () {
 }
 
 async function searchRepositories ({
-  keyword,
+  query,
   pageSize,
   pageNo = 1,
   sort = 'stars',
   order = 'desc'
-}: {keyword: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Promise<github.repos.SearchResult> {
-  const url = `${githubApiUrl}/search/repositories?q=${keyword}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
-  console.log(`searchRepositories: keyword=${keyword}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
+}: {query: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Promise<github.repos.SearchResult> {
+  const url = `${githubApiUrl}/search/repositories?q=${query}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
+  console.log(`searchRepositories: keyword=${query}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return new Promise((resolve, reject) => {
     requestWithCache({
       url,
@@ -131,6 +131,27 @@ async function getFileTree ({
   })
 }
 
+async function getReadmeContent ({
+  fullRepoName,
+  ref = 'master'
+}: {fullRepoName:string, ref?: string }) {
+  const url = `${githubApiUrl}/repos/${fullRepoName}/readme?ref=${ref}`
+  console.log(`getReadmeContent: fullRepoName=${fullRepoName}, ref=${ref}`)
+  return new Promise((resolve, reject) => {
+    requestWithCache({
+      url,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          // TODO: 支持缓存 key 替换
+          resolve(Base64.decode((res.data as github.repos.Contents).content))
+        } else {
+          reject(new Error(`statusCode: ${res.statusCode}`))
+        }
+      }
+    }, { timeout: 60, group: `getFileContent#${fullRepoName}`}) // 共享 getFileContent 缓存组
+  })
+}
+
 async function getFileContent ({
   fullRepoName,
   filePath,
@@ -158,6 +179,7 @@ export default {
   searchRepositories,
   searchUsers,
   getFileContent,
+  getReadmeContent,
   getFileTree,
   getUserStaring
 }

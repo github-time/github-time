@@ -29,8 +29,9 @@
 <mp-search-bar
   ext-class="title-search-bar"
   placeholder="请输入搜索关键字"
-  cancel="{{false}}">
-  <view slot="right" bindtap="onToggleFilter"> 筛选 V </view>
+  cancel="{{false}}"
+  bindinput="onKeywordChange">
+  <button class="btn-toggle-filter {{showFilterView ? '' : 'btn-primary'}}" slot="right" bindtap="onToggleFilter" size="mini"> 筛选 </button>
 </mp-search-bar>
 
 <mp-repo-filter

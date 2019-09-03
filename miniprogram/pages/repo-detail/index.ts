@@ -3,6 +3,13 @@
 import { IMyApp } from '../../app'
 import github from '../../utils/githubApi'
 
+import remuData from '../../mock/remu-export-data'
+
+const tagMap: {[key: string]: string} = {}
+remuData.tags.forEach(item => {
+  tagMap[item.id] = item.name
+})
+
 const app = getApp<IMyApp>()
 
 Page({
@@ -27,16 +34,25 @@ Page({
       text: "评论",
     }],
     readmeContent: '',
-    repoDetail: {} as github.repos.RepoDetail
+    repoDetail: {} as github.repos.SearchResultItem,
+    tags: [] as string[]
   },
   onLoad() {
     const repoDetail = app.globalData.repoDetail || {
       full_name: 'vuejs/vue'
     }
 
+    const repoId = (repoDetail as github.repos.SearchResultItem).id + ''
+    const tagIds = (remuData.repoWithTags as any)[repoId]
+    let tags = []
+    if (tagIds) {
+      tags = tagIds.map((item: string) => tagMap[item])
+    }
+
     this.setData!({
-      repoDetail
-    });
+      repoDetail,
+      tags
+    })
   },
   tabChange (e: any) {
     this.setData!({
@@ -50,9 +66,8 @@ Page({
           title: '正在加载'
         });
         try {
-          const readmeContent = await github.getFileContent({
-            fullRepoName: this.data.repoDetail.full_name,
-            filePath: 'README.md'
+          const readmeContent = await github.getReadmeContent({
+            fullRepoName: this.data.repoDetail.full_name
           })
           this.setData!({
             readmeContent

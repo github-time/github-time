@@ -1,5 +1,6 @@
 <!--index.wxml-->
 <scroll-view
+  hidden="{{hidden}}"
   scroll-y
   style="height: 100%;"
   bindscrolltolower="onScrollToLower">

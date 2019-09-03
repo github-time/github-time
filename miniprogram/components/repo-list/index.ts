@@ -5,6 +5,10 @@ import { IMyApp } from '../../app'
 const app = getApp<IMyApp>()
 Component({
   properties: {
+    hidden: {
+      type: Boolean,
+      value: false
+    },
     repoList: {
       type: Array,
       value: []
