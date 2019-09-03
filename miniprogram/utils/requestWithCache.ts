@@ -5,6 +5,16 @@ const cacheMagager = new CacheMagager({
   storage: new LocalDataStorage('rc')
 })
 
+// 执行垃圾回收
+cacheMagager.gc()
+
+// 打印缓存报告
+const report = cacheMagager.report()
+for (let key in report.groups) {
+  console.log(`group ${key}: ${(report.groups[key] / 1024).toFixed(2)} K`)
+}
+console.log(`totalSize: ${(report.totalSize / 1024 / 1024).toFixed(2)} M`)
+
 export default function requestWithCache (req: wx.RequestOption, opts: CacheOptions) {
   const key = req.url
   const cacheData = cacheMagager.get(key, { group: opts.group })

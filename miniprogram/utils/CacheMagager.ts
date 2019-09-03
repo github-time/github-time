@@ -9,6 +9,7 @@ type GroupData = {
 
 type CacheMagagerOptions = {
   storage: DataStorage
+  maxCacheItemSize?: number
   gcThrottle?: number
 }
 
@@ -22,10 +23,12 @@ export default class CacheMagager {
   private groupIndexKey: string
   private groupIndex: number
   private nextGc = new Date().getTime()
+  private maxCacheItemSize: number
   private gcThrottle: number
 
-  constructor ({ storage, gcThrottle = 1 }: CacheMagagerOptions) {
+  constructor ({ storage, maxCacheItemSize = 128 * 1024, gcThrottle = 1 }: CacheMagagerOptions) {
     this.gcThrottle = gcThrottle * 1000 * 60
+    this.maxCacheItemSize = maxCacheItemSize
     this.storage = storage
     this.groupIndexKey = `gi`
     this.groupIndex = parseInt(storage.get(this.groupIndexKey)) || 0
@@ -60,6 +63,9 @@ export default class CacheMagager {
   }
 
   put (key: string, value: string, options: CacheOptions) {
+    if (value.length > this.maxCacheItemSize) {
+      return
+    }
     const storage = this.storage
     const now = new Date().getTime()
     const groupKey = `g.${options.group}`
@@ -85,17 +91,66 @@ export default class CacheMagager {
     this.gc()
   }
 
+  report () {
+    const storage = this.storage
+    let totalSize = 0
+    const groups: { [key: string]: number } = {}
+    storage.keys().forEach(key => {
+      if (key.startsWith('g.')) {
+        // 缓存组
+        const groupData = JSON.parse(storage.get(key)) as GroupData
+        const group = key.substr(2)
+        groups[group] = groups[group] || 0
+        for (let k in groupData.k) {
+          groups[group] += storage.get(`${groupData.e}.${groupData.n}.${groupData.k[k]}`).length
+        }
+      }
+      totalSize += storage.get(key).length
+    })
+    return {
+      totalSize,
+      groups
+    }
+  }
+
+  clear (group: string|undefined) {
+    const storage = this.storage
+    if (group) {
+      const groupData = this.getGroupData({group})
+      if (groupData) {
+        for (let key in groupData.k) {
+          // 清理引用数据
+          storage.remove(`${groupData.e}.${groupData.n}.${groupData.k[key]}`)
+        }
+        // 清理组数据
+        storage.remove(`g.${group}`)
+      }
+    } else {
+      storage.keys().forEach(key => {
+        storage.remove(key)
+      })
+    }
+  }
+
   gc () {
     const now = new Date().getTime()
     if (now > this.nextGc) {
+      const storage = this.storage
       this.nextGc += this.gcThrottle
-      this.storage.keys().forEach(key => {
-        const expire = parseInt(key.split('.')[0])
+      storage.keys().forEach(key => {
+        const type = key.split('.')[0]
+        let expire
+        if (type === 'g') {
+          // 缓存组
+          expire = (JSON.parse(storage.get(key)) as GroupData).e
+        } else {
+          expire = parseInt(type)
+        }
         if (expire > 0) {
           if (now > expire) {
             // 过期缓存
             console.log(`gc cache key==> ${key}`)
-            this.storage.remove(key)
+            storage.remove(key)
           }
         }
       })
