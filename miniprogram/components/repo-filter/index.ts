@@ -1,5 +1,5 @@
 //index.js
-import tinytime = require('../../common/lib/tinytime/tinytime')
+import tinytime = require('tinytime')
 const template = tinytime('{YYYY}-{Mo}-{DD}', { padMonth: true, padDays: true })
 
 //获取应用实例

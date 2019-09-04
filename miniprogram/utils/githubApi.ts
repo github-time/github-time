@@ -1,4 +1,4 @@
-import { Base64 } from '../common/lib/base64/base64'
+import { Base64 } from 'js-base64'
 import requestWithCache from './requestWithCache'
 
 const githubApiUrl = 'https://api.github.com'
