@@ -10,9 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "js-base64": "^2.5.1",
+    "marked": "^0.7.0",
+    "prismjs": "^1.17.1",
     "tinytime": "^0.2.6"
   },
   "devDependencies": {
-    "@types/js-base64": "^2.3.1"
+    "@types/js-base64": "^2.3.1",
+    "@types/marked": "^0.6.5",
+    "@types/prismjs": "^1.16.0"
   }
 }

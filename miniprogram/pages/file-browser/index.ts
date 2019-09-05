@@ -6,29 +6,57 @@ import github from '../../utils/githubApi'
 
 const app = getApp<IMyApp>()
 
-const imgMap = ['png', 'jpeg', 'jpg', 'gif']
+const fileTypeMap = [
+  {
+    test: /(^|\/)dockerfile$/i,
+    type: 'docker'
+  },
+  {
+    test: /(^|\/)makefile$/i,
+    type: 'makefile'
+  },
+  {
+    test: /(^|\/)\.\w+rc$/i,
+    type: 'json'
+  },
+  {
+    test: /(^|\/)\.\w+config$/i,
+    type: 'properties'
+  },
+  {
+    test: /\.md$/i,
+    type: 'md'
+  },
+  {
+    test: /\.(png|jpeg|jpg|gif)$/i,
+    type: 'img'
+  },
+  {
+    test: /\.([^.]+)$/i,
+    type: '$1'
+  }
+]
 
 function getFileInfo (path: string) {
-  const fileInfo = {
+  for (let item of fileTypeMap) {
+    const matches = path.match(item.test)
+    if (matches) {
+      return {
+        path,
+        type: item.type.replace('$1', matches[1])
+      }
+    }
+  }
+  return {
     path,
-    type: 'text'
+    type: 'unknown'
   }
-  const matches = path.match(/\.([a-zA-Z]+)$/)
-  const type = (matches && matches[1]) || ''
-  if (type === 'md') {
-    fileInfo.type = 'md'
-  } else if (imgMap.indexOf(type) > -1) {
-    fileInfo.type = 'img'
-  } else {
-    fileInfo.type = type
-  }
-  return fileInfo
 }
 
 Page({
   data: {
     fileContent: '',
-    fileType: 'text',
+    fileType: 'unknown',
     treeData: [],
     showSidebar: true,
     repoDetail: {

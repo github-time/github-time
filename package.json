@@ -7,11 +7,5 @@
   },
   "devDependencies": {
     "typescript": "^3.3.3333"
-  },
-  "dependencies": {
-    "@types/js-base64": "^2.3.1",
-    "js-base64": "^2.5.1",
-    "tinytime": "^0.2.6",
-    "weui-miniprogram": "^0.1.6"
   }
 }

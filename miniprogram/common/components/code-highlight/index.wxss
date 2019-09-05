@@ -1,10 +1,3 @@
-/* PrismJS 1.15.0
-https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+clike+javascript */
-/**
- * prism.js tomorrow night eighties for JavaScript, CoffeeScript, CSS and HTML
- * Based on https://github.com/chriskempson/tomorrow-theme
- * @author Rose Pritchard
- */
 
 .code-container {
 	color: #ccc;
@@ -34,10 +27,6 @@ https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+cli
 	margin: .5em 0;
 	overflow: auto;
 } */
-
-.code-container {
-	background: #2d2d2d;
-}
 
 /* Inline code */
 /* :not(pre) > code[class*="language-"] {
@@ -120,3 +109,27 @@ https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+cli
 	color: green;
 }
 
+.code-scroll-view {
+	background: #2d2d2d;
+  height: 100%;
+}
+
+.code-container {
+  padding: 8rpx 20rpx;
+}
+
+.line-num {
+  min-width: 28px;
+  /* color: rgba(27,31,35,0.3); */
+}
+
+.code-row{
+  white-space:nowrap;
+}
+
+.code-text{
+  display:inline-block;
+  /* font-size: 16rpx; */
+  /* line-height: 20rpx; */
+  /* height: 20rpx; */
+}

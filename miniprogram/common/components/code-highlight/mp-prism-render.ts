@@ -1,6 +1,8 @@
-// @ts-ignore
-import Prism = require('./prism')
-import htmlParser = require('../wxParse/htmlparser')
+import Prism = require('prismjs')
+import htmlParser = require('../../lib/wxParse/htmlparser')
+import registerMoreLanguage from './components'
+
+registerMoreLanguage(Prism)
 
 type CodeRow = {
   text: string|number
@@ -9,8 +11,8 @@ type CodeRow = {
 
 type CodeRows = CodeRow[]
 
-export default function highlight (codeString: string, type: string, line = 1) {
-  let html = Prism.highlight(codeString, Prism.languages[type], type)
+export default function (codeString: string, type: string, line = 1) {
+  let html = Prism.highlight(codeString, Prism.languages[type] || {}, type)
   let codeSegments = html.split(/\n/)
   const codeRows: CodeRows[] = []
   codeSegments.forEach((segment: string) => {

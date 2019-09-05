@@ -1,4 +1,4 @@
-import hightlight from '../../lib/prism/index'
+import render from './mp-prism-render'
 
 const PAGE_SIZE = 48
 
@@ -98,15 +98,17 @@ Component({
   },
   observers: {
     'code, language' (code: string, language: string) {
-      console.log('rerender code ...')
       try {
-        const codeRowsCache = hightlight(code, language)
+        console.log('render code with prism ...')
+        const codeRowsCache = render(code, language)
         this.data.codeRowsCache = codeRowsCache
         this.setData({
           rawText: '',
           codeRows: codeRowsCache.slice(0, PAGE_SIZE * 2) // 仅渲染前 2 页
         })
       } catch (e) {
+        console.warn('render code with prism failed: ', e)
+        console.log('render code with raw ...')
         this.setData({
           rawText: this.data.code,
           codeRows: []

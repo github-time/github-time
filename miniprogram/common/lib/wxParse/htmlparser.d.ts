@@ -9,9 +9,9 @@ declare namespace HTMLParser {
 
 	export type Handler = {
 		comment?: (text: string) => void
-		start: (tagName: string, attrs: Handler.Attr[], unary?: boolean) => void
-		end: (tagName: string) => void
-		chars: (text: string) => void
+		start?: (tagName: string, attrs: Handler.Attr[], unary?: boolean) => void
+		end?: (tagName: string) => void
+		chars?: (text: string) => void
 	}
 }
 

@@ -1,4 +1,4 @@
-import marked from '../../lib/marked/index'
+import render from './mp-marked-render'
 
 Component({
   options: {
@@ -16,9 +16,9 @@ Component({
   },
   observers: {
     'content' (content: string) {
-      console.log('rerender code ...')
       try {
-        const markdownNodes = marked(content, 'apis.getImgRawPath()')
+        console.log('render with markdown ...')
+        const markdownNodes = render(content, '')
         const longContent = markdownNodes.length > 150
         this.setData({
           rawText: '',
@@ -34,6 +34,8 @@ Component({
           }, 1000)
         }
       } catch (e) {
+        console.log('render with markdown failed:', e)
+        console.log('render raw data...')
         this.setData({
           rawText: content,
           markdownNodes: []
