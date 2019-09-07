@@ -1,8 +1,10 @@
 import CacheMagager, { CacheOptions } from './CacheMagager'
 import LocalDataStorage from './data-storage/LocalDataStorage'
 
+const PREFIX = 'rc'
+
 const cacheMagager = new CacheMagager({
-  storage: new LocalDataStorage('rc')
+  storage: new LocalDataStorage(PREFIX)
 })
 
 // 执行垃圾回收
@@ -11,12 +13,12 @@ cacheMagager.gc()
 // 打印缓存报告
 const report = cacheMagager.report()
 for (let key in report.groups) {
-  console.log(`group ${key}: ${(report.groups[key] / 1024).toFixed(2)} K`)
+  console.log(`${PREFIX} group ${key}: ${(report.groups[key] / 1024).toFixed(2)} K`)
 }
-console.log(`totalSize: ${(report.totalSize / 1024 / 1024).toFixed(2)} M`)
+console.log(`${PREFIX} totalSize: ${(report.totalSize / 1024 / 1024).toFixed(2)} M`)
 
-export default function requestWithCache (req: wx.RequestOption, opts: CacheOptions) {
-  const key = req.url
+export default function (req: wx.RequestOption, opts: CacheOptions) {
+  const key = opts.key || req.url
   const cacheData = cacheMagager.get(key, { group: opts.group })
   if (cacheData) {
     // 缓存命中

@@ -1,105 +1,90 @@
 //index.js
-//获取应用实例
+import Page from '../../common/page/index'
 import github from '../../utils/githubApi'
 import { IMyApp } from '../../app'
 
+//获取应用实例
 const app = getApp<IMyApp>()
+
+const SINCE_MAP = {
+  daily: '日',
+  weekly: '周',
+  monthly: '月'
+}
+
 Page({
   data: {
-    currentTab: 'repos',
-    query: '',
-    queriedPageNo: 0,
-    pageSize: 10,
-
-    list: [
+    current: 'repos',
+    tabs: [
       {
-        name: 'repos',
-        text: "仓库",
-        // badge: 'New'
+        key: 'repos',
+        title: '仓库'
       },
       {
-        name: 'users',
-        text: "开发者",
+        key: 'developers',
+        title: '开发者'
       }
     ],
+    buttons: [
+      {
+        label: '每月',
+        icon: 'calendar',
+        type: 'since',
+        value: 'monthly'
+      },
+      {
+        label: '，每周',
+        icon: 'time',
+        type: 'since',
+        value: 'weekly'
+      },
+      {
+        label: '每日',
+        icon: 'countdown',
+        type: 'since',
+        value: 'daily'
+      },
+      {
+        type: 'language',
+        label: '语言',
+        icon: 'read',
+      }
+    ],
+
+    since: 'daily',
+    language: '',
     repoList: [] as github.repos.SearchResultItem[]
   },
-  //事件处理函数
-  bindViewTap() {
-    wx.navigateTo({
-      url: '../logs/logs'
+
+  async loadReposTrending ({ since = 'daily', language = '' } : { since?: 'daily' | 'weekly' | 'monthly', language?: string } = {}) {
+    this.data.since = since
+    this.data.language = language
+    this.setData!({ repoList: null })
+
+    wx.showLoading({
+      title: `显示${SINCE_MAP[since]}趋势`
     })
+    const t = new Date().getTime()
+    const data = (await github.getGithubTrending({ since, language })).map((item) => {
+      return {
+        name: item.name,
+        full_name: `${item.author}/${item.name}`,
+        description: item.description,
+        language: item.language,
+        stargazers_count: item.currentPeriodStars,
+        forks_count: item.forks,
+        owner: {
+          avatar_url: item.avatar
+        }
+      }
+    })
+    setTimeout(wx.hideLoading, 1000 - new Date().getTime() + t)
+    // await new Promise((resolve) => { setTimeout(resolve, 1000) })
+    this.setData!({ repoList: data })
   },
 
   onLoad() {
-    // if (app.globalData.userInfo) {
-    //   this.setData!({
-    //     userInfo: app.globalData.userInfo,
-    //     hasUserInfo: true,
-    //   })
-    // } else if (this.data.canIUse){
-    //   // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-    //   // 所以此处加入 callback 以防止这种情况
-    //   app.userInfoReadyCallback = (res) => {
-    //     this.setData!({
-    //       userInfo: res,
-    //       hasUserInfo: true
-    //     })
-    //   }
-    // } else {
-    //   // 在没有 open-type=getUserInfo 版本的兼容处理
-    //   wx.getUserInfo({
-    //     success: res => {
-    //       app.globalData.userInfo = res.userInfo
-    //       this.setData!({
-    //         userInfo: res.userInfo,
-    //         hasUserInfo: true
-    //       })
-    //     }
-    //   })
-    // }
-
-    this.doSearch('stars:>10000')
-
-    ;(async () => {
-      const res = await github.getAllTopics()
-      console.log(res
-        .sort((a, b) => {
-          return a.name > b.name ? 1 : -1
-        })
-        .map(item => {
-          return item.name
-        })
-      )
-    })()
-  },
-
-  searchRepo(e: any) {
-    this.doSearch(e.detail.value)
-  },
-
-  async doSearch (query: string) {
-    if (query === this.data.query) return
-
-    this.setData!({
-      query
-    })
-    if (!query) return
-    console.log('do search:', query)
-    this.data.queriedPageNo = 0
-    wx.showLoading({
-      title: '正在加载'
-    })
-    try {
-      const searchResult = await github.searchRepositories({
-        query,
-        pageSize: this.data.pageSize
-      })
-      this.setData!({ repoList: searchResult.items })
-    } catch (e) {
-
-    }
-    wx.hideLoading()
+    this.loadReposTrending()
   },
 
   onRepoListItemClick (e: any) {
@@ -109,26 +94,32 @@ Page({
     })
   },
 
-  async lower () {
-    const toQueryPageNo = Math.floor(this.data.repoList.length / this.data.pageSize) + 1
-    if (this.data.queriedPageNo < toQueryPageNo) {
-      try {
-        const repos: github.repos.SearchResult = await github.searchRepositories({
-          query: this.data.query,
-          pageSize: this.data.pageSize,
-          pageNo: toQueryPageNo
-        })
-        this.setData!({ repoList: this.data!.repoList.concat(repos.items) })
-      } catch (e) {
+  onTabsChange(e: any) {
+    const { key } = e.detail
+    const index = this.data.tabs.map((n) => n.key).indexOf(key)
 
-      }
+    this.setData!({
+        key,
+        index,
+    })
+  },
+
+  onSwiperChange(e: any) {
+    const { current: index, source } = e.detail
+    const { key } = this.data.tabs[index]
+
+    if (!!source) {
+      this.setData!({
+        key,
+        index,
+      })
     }
   },
 
-  tabChange(e: any) {
-    console.log('tag++++', e.detail.item.name)
-    this.setData!({
-      currentTab: e.detail.item.name
-    })
+  onActionClick (e: any) {
+    if (e.detail.value.type === 'since') {
+      this.loadReposTrending({since: e.detail.value.value})
+    }
   }
+
 })

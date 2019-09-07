@@ -1,5 +1,8 @@
 /* global Component */
 Component({
+  options: {
+    addGlobalClass: true
+  },
   properties: {
     model: {
       type: Object,

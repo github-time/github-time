@@ -1,7 +1,7 @@
 page {
   /* Color
   -------------------------- */
-  --color-primary: rgb(112, 172, 77);
+  --color-primary: #70AC4D;
   --color-white: #FFFFFF;
   --color-black: #000000;
   /* --color-primary-light-1: mix(--color-white, --color-primary, 10%);

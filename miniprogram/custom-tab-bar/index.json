@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "wux-tabbar": "/common/lib/wux/tabbar/index",
+    "wux-tabbar-item": "/common/lib/wux/tabbar-item/index"
+  }
+}

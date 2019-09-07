@@ -1,4 +1,5 @@
 //index.js
+import Page from '../../common/page/index'
 import github from '../../utils/githubApi'
 
 //获取应用实例

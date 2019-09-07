@@ -1,26 +1,23 @@
 <!--index.wxml-->
-<mp-navigation-bar
-  ext-class="my-navigation-bar"
-  title="Github Time"
-  back="{{false}}"
-  >
-</mp-navigation-bar>
+<navigation-bar bgColor="bg-gradual-green">
+  <view slot="content">Github Time</view>
+</navigation-bar>
 
-<mp-simple-tab-bar
-  ext-class="top-simple-tab-bar"
-  list="{{list}}"
-  bindchange="tabChange">
-</mp-simple-tab-bar>
+<wux-fab-button position="bottomRight" buttons="{{ buttons }}" bind:click="onActionClick" />
+
+<wux-tabs wux-class="bordered" controlled current="{{ key }}" bindchange="onTabsChange">
+  <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
+</wux-tabs>
 
 <mp-fill-view>
-  <mp-repo-list
-    hidden="{{currentTab !== list[0].name}}"
-    repo-list="{{repoList}}"
-    bindscrolltolower="lower"
-    >
-  </mp-repo-list>
-
-  <view hidden="{{ currentTab !== list[1].name }}">
-  开发者
-  </view>
+  <swiper class="fill" current="{{ index }}" bindchange="onSwiperChange">
+    <swiper-item>
+      <mp-load-more wx:if="{{!repoList}}"></mp-load-more>
+      <mp-load-more wx:elif="{{repoList.length===0}}" no-data></mp-load-more>
+      <mp-repo-list wx:else repo-list="{{repoList}}"></mp-repo-list>
+    </swiper-item>
+    <swiper-item>
+      开发者
+    </swiper-item>
+  </swiper>
 </mp-fill-view>

@@ -19,25 +19,26 @@
   }
 </wxs>
 
-<mp-navigation-bar
-  ext-class="my-navigation-bar"
-  title="Github Time"
-  back="{{false}}"
-  >
-</mp-navigation-bar>
+<navigation-bar bgColor="bg-gradual-green">
+  <view slot="content">Github Time</view>
+</navigation-bar>
 
-<mp-search-bar
-  ext-class="title-search-bar"
+<wux-search-bar
+  clear
+  controlled
+  value="{{ value }}"
   placeholder="请输入搜索关键字"
-  cancel="{{false}}"
-  bindinput="onKeywordChange">
-  <button class="btn-toggle-filter {{showFilterView ? '' : 'btn-primary'}}" slot="right" bindtap="onToggleFilter" size="mini"> 筛选 </button>
-</mp-search-bar>
+  bind:change="onKeywordChange"
+  bind:focus="onSearchBarFocus"
+  bind:confirm="onConfirm"
+  bind:cancel="onSearchCancel">
+  <button class="btn-toggle-filter" slot="right" bindtap="onToggleFilter" size="mini"><text class="cuIcon-filter"></text></button>
+</wux-search-bar>
 
 <mp-repo-filter
   hidden="{{!showFilterView}}"
   filters="{{filters}}"
-  bindcancel="onCancel"
+  bindcancel="onSearchCancel"
   bindsubmit="onFilter"
   ></mp-repo-filter>
 

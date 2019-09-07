@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "wux-divider": "/common/lib/wux/divider/index"
+  }
+}

@@ -1,4 +1,5 @@
 //index.js
+import Page from '../../common/page/index'
 //获取应用实例
 import github from '../../utils/githubApi'
 
@@ -13,79 +14,85 @@ Page({
     queriedPageNo: 0,
     pageSize: 10,
     repoList: [] as github.repos.SearchResultItem[],
-    showFilterView: !false
+    showFilterView: !false,
+    filters: {}
   },
   onToggleFilter() {
     this.setData!({
       showFilterView: !this.data.showFilterView
     })
   },
-  onKeywordChange (e: any) {
+  onSearchBarFocus () {
     this.setData!({
-      keyword: e.detail.value,
       showFilterView: true
     })
   },
-  onFilter (e: any) {
+  onKeywordChange (e: any) {
+    this.setData!({
+      keyword: e.detail.value
+    })
+  },
+  onSearchCancel () {
     this.setData!({
       showFilterView: false
     })
-
-    const filters = e.detail
-    let search = ''
+  },
+  makeQueryString (keyword: string, filters: any) {
+    let query = ''
 
     // keyword 筛选
-    if (this.data.keyword) {
-      search += this.data.keyword
+    if (keyword) {
+      query += keyword
     }
 
     // Star 筛选
     const starMin = filters.star.min.enable ? filters.star.min.value : -1
     const starMax = filters.star.max.enable ? filters.star.max.value : -1
     if (starMin > 0 && starMax > 0) {
-      search += `+stars:${Math.min(starMin, starMax)}..${Math.max(starMin, starMax)}`
+      query += `+stars:${Math.min(starMin, starMax)}..${Math.max(starMin, starMax)}`
     } else if (starMin > 0) {
-      search += `+stars:>${starMin}`
+      query += `+stars:>${starMin}`
     } else if (starMax > 0) {
-      search += `+stars:<${starMax}`
+      query += `+stars:<${starMax}`
     }
 
     // Fork筛选
     const forkMin = filters.fork.min.enable ? filters.fork.min.value : -1
     const forkMax = filters.fork.max.enable ? filters.fork.max.value : -1
     if (forkMin > 0 && forkMax > 0) {
-      search += `+forks:${Math.min(forkMin, forkMax)}..${Math.max(forkMin, forkMax)}`
+      query += `+forks:${Math.min(forkMin, forkMax)}..${Math.max(forkMin, forkMax)}`
     } else if (forkMin > 0) {
-      search += `+forks:>${forkMin}`
+      query += `+forks:>${forkMin}`
     } else if (forkMax > 0) {
-      search += `+forks:<${forkMax}`
+      query += `+forks:<${forkMax}`
     }
 
     // 编程语言筛选
     for (let language of filters.languages) {
-      search += `+language:${language}`
+      query += `+language:${language}`
     }
     // 最新提交筛选
     if (filters.lastUpdateTime) {
-      search += `+pushed:>${filters.lastUpdateTime}`
+      query += `+pushed:>${filters.lastUpdateTime}`
     }
-    search = search.replace(/^\+/, '')
+    query = query.replace(/^\+/, '')
 
-    console.log('search: ', search)
-
-    this.doSearch(search)
+    console.log('query string: ', query)
+    return query
   },
-  onCancel () {
+  onFilter (e: any) {
     this.setData!({
       showFilterView: false
     })
+    this.data.filters = e.detail
+    this.doSearch(this.makeQueryString(this.data.keyword, this.data.filters))
   },
   async doSearch (query: string) {
     if (query === this.data.query) return
-
     this.setData!({
       query
     })
+
     if (!query) return
 
     console.log('do search:', query)

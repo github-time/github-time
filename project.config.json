@@ -15,6 +15,7 @@
 	"setting": {
 		"urlCheck": true,
 		"es6": false,
+		"enhance": true,
 		"postcss": true,
 		"minified": true,
 		"newFeature": true,
@@ -28,11 +29,12 @@
 			"ignore": [],
 			"disablePlugins": [],
 			"outputPath": ""
-		},
-		"enhance": true
+		}
 	},
 	"appid": "wx9d5e4830026a02c4",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
+	"cloudfunctionRoot": "cloud-functions/",
+	"cloudfunctionTemplateRoot": "cloud-functions-template",
 	"condition": {}
 }

@@ -23,9 +23,11 @@
     ]
   },
   "include": [
+    "./cloud-functions/**/*.ts",
     "./miniprogram/**/*.ts"
   ],
   "exclude": [
+    "./miniprogram/miniprogram_npm",
     "node_modules",
     "miniprogram_dist",
     "**/*.spec.ts"

@@ -1,4 +1,5 @@
 //index.js
+import Page from '../../common/page/index'
 //获取应用实例
 // import { IMyApp } from '../../app'
 
@@ -19,14 +20,14 @@ Page({
     //   myCode: jsfile
     // })
 
-    wx.request({
-      url: 'https://raw.githubusercontent.com/udock/vue-cli-plugin-udock/master/README.md',
-      success: (res) => {
-        console.log(res)
-        this.setData!({
-          myContent: res.data
-        })
-      },
-    })
+    // wx.request({
+    //   url: 'https://raw.githubusercontent.com/udock/vue-cli-plugin-udock/master/README.md',
+    //   success: (res) => {
+    //     console.log(res)
+    //     this.setData!({
+    //       myContent: res.data
+    //     })
+    //   },
+    // })
   }
 })

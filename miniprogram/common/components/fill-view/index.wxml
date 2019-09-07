@@ -1,5 +1,5 @@
 <scroll-view class="fill-view"
   scroll-y
-  style="height:{{scrollViewHeight}}px">
+  style="height: calc(100vh - {{otherHeight}});">
   <slot></slot>
 </scroll-view>

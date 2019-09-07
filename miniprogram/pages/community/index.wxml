@@ -1,7 +1,4 @@
 <!--index.wxml-->
-<mp-navigation-bar
-  ext-class="my-navigation-bar"
-  title="Github Time"
-  back="{{false}}"
-  >
-</mp-navigation-bar>
+<navigation-bar bgColor="bg-gradual-green">
+  <view slot="content">Github Time</view>
+</navigation-bar>

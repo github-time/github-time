@@ -3,25 +3,16 @@ Component({
     addGlobalClass: true,
   },
   data: {
-    windowHeight: 0,
-    scrollViewHeight: 0
+    otherHeight: ''
   },
   lifetimes: {
     ready() {
-      wx.getSystemInfo({
-        success: (res) => {
-          this.setData!({
-              windowHeight: res.windowHeight
-          })
-        }
-      })
-
       const query = wx.createSelectorQuery().in(this)
       query.select('.fill-view').boundingClientRect().exec((res: any) => {
         const top = res[0].top
-        const scrollViewHeight = this.data.windowHeight - top
+        const tabBarHeight = this.getTabBar() ? 50 : 0
         this.setData!({
-          scrollViewHeight: scrollViewHeight
+          otherHeight: (top + tabBarHeight) + 'px'
         })
       })
     }

@@ -15,7 +15,7 @@
   <view class="filter-view-filters">
     <view class="filter-view-group-title">Star</view>
     <view class="filter-view-slider-container">
-      <checkbox checked="{{filters.star.min.enable}}" bindtap="onStarMinEnableChange">至少</checkbox>
+      <wux-selectable controlled checked="{{filters.star.min.enable}}" bindtap="onStarMinEnableChange">至少</wux-selectable>
       <view class="filter-view-slider">
         <slider
           bindchanging="onStarMinChange"
@@ -28,7 +28,7 @@
       </view>
     </view>
     <view class="filter-view-slider-container">
-      <checkbox checked="{{filters.star.max.enable}}" bindtap="onStarMaxEnableChange">至多</checkbox>
+      <wux-selectable controlled checked="{{filters.star.max.enable}}" bindtap="onStarMaxEnableChange">至多</wux-selectable>
       <view class="filter-view-slider">
         <slider
           bindchanging="onStarMaxChange"
@@ -42,7 +42,7 @@
     </view>
     <view class="filter-view-group-title">Fork</view>
     <view class="filter-view-slider-container">
-      <checkbox checked="{{filters.fork.min.enable}}" bindtap="onForkMinEnableChange">至少</checkbox>
+      <wux-selectable controlled checked="{{filters.fork.min.enable}}" bindtap="onForkMinEnableChange">至少</wux-selectable>
       <view class="filter-view-slider">
         <slider
           bindchanging="onForkMinChange"
@@ -55,7 +55,7 @@
       </view>
     </view>
     <view class="filter-view-slider-container">
-      <checkbox checked="{{filters.fork.max.enable}}" bindtap="onForkMaxEnableChange">至多</checkbox>
+      <wux-selectable controlled checked="{{filters.fork.max.enable}}" bindtap="onForkMaxEnableChange">至多</wux-selectable>
       <view class="filter-view-slider">
         <slider
           bindchanging="onForkMaxChange"

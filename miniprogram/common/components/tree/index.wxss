@@ -1,7 +1,7 @@
-/* .container{
-  padding-left: 50rpx;
-  border-bottom: 1px solid #04485D;
-} */
+.item-name {
+  margin-left: 8rpx;
+}
+
 .tree-item{
   display: flex;
   align-items: center;
@@ -12,17 +12,11 @@
   padding-left: 15rpx;
 } */
 .indent {
-  padding-left: 50rpx;
+  padding-left: 0rpx;
 }
-.folder-icon{
-  margin: 0 20rpx 0 10rpx;
-  width: 50rpx;
-  height: 50rpx;
-  vertical-align: bottom;
-}
-.triangle-icon {
-  width: 20rpx;
-  height: 20rpx;
+.icon-folder {
+  font-size: 48rpx;
+  margin: 0 10rpx 0 5rpx;
   vertical-align: bottom;
 }
 .rotate {

@@ -1,12 +1,9 @@
 <view>
   <view bindtap="toggle" class="tree-item {{model.children ? '':'indent'}}">
-    <image wx-if="{{model.children}}"
-      class="triangle-icon {{(open ? 'rotate' : '')}}"
-      src="../../icons/triangle.png"></image>
-    <image wx-if="{{model.children}}"
-      class="folder-icon"
-      src="../../icons/folder.png"></image>
-    <text>{{model.name}}</text>
+    <text wx:if="{{model.children}}" class="cuIcon-{{(open ? 'unfold' : 'right')}}"></text>
+    <text wx:if="{{model.children}}" class="cuIcon-file"></text>
+    <text wx:else class="cuIcon-text"></text>
+    <text class="item-name">{{model.name}}</text>
   </view>
   <view wx:if="{{model.children && render}}" class="sub-tree" hidden="{{!open}}">
     <tree render="{{renderChild}}" wx:for='{{ model.children }}' wx:key='id' model='{{ item }}' bind:viewFile="viewFile"></tree>

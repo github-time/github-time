@@ -1,0 +1,5 @@
+/**index.wxss**/
+.todo-coming-soon {
+  text-align: center;
+  padding-top: 40px;
+}

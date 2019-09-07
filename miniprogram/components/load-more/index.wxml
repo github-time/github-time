@@ -1,0 +1,13 @@
+<!--index.wxml-->
+<wux-divider>
+  <view class="loadmore">
+    <blcok wx:if="{{noData}}">
+      <text class="cuIcon-notice"></text>
+      <text class="no-data-text text">没有更多数据了</text>
+    </blcok>
+    <block wx:else>
+      <view class="loading"></view>
+      <text class="text">正在加载</text>
+    </block>
+  </view>
+</wux-divider>

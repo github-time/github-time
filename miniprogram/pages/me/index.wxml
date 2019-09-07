@@ -1,44 +1,15 @@
 <!--index.wxml-->
-<mp-navigation-bar
-  ext-class="my-navigation-bar"
-  title="Github Time"
-  back="{{false}}"
-  >
-</mp-navigation-bar>
+<navigation-bar bgColor="bg-gradual-green">
+  <view slot="content">Github Time</view>
+</navigation-bar>
 
-<view class="weui-panel">
-  <view class="weui-panel__hd">联系我们</view>
-  <view class="weui-panel__bd">
-    <view class="weui-media-box weui-media-box_small-appmsg">
-      <view class="weui-cells weui-cells_in-small-appmsg">
-        <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-          <view class="weui-cell__bd">意见反馈</view>
-          <view class="weui-cell__ft weui-cell__ft_in-access">...</view>
-        </navigator>
-        <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-          <view class="weui-cell__bd">商务合作</view>
-          <view class="weui-cell__ft weui-cell__ft_in-access">...</view>
-        </navigator>
-      </view>
-    </view>
-  </view>
-</view>
+<wux-cell-group title="联系我们">
+  <wux-cell title="意见反馈" is-link open-type="feedback" bind:feedback="onFeedback"></wux-cell>
+  <wux-cell title="商务合作" is-link></wux-cell>
+</wux-cell-group>
 
-<view class="weui-panel">
-  <view class="weui-panel__bd">
-    <view class="weui-media-box weui-media-box_small-appmsg">
-      <view class="weui-cells weui-cells_in-small-appmsg">
-        <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-          <view class="weui-cell__bd">设置</view>
-          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-        </navigator>
-      </view>
-    </view>
-  </view>
-</view>
+<wux-white-space></wux-white-space>
 
-<!-- <mp-tabbar
-  style="position:fixed;bottom:0;width:100%;left:0;right:0;"
-  list="{{list}}"
-  bindchange="tabChange">
-</mp-tabbar> -->
+<wux-cell-group>
+  <wux-cell title="设置" is-link bind:contact="onContact"></wux-cell>
+</wux-cell-group>

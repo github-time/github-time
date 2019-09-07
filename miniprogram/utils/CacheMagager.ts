@@ -14,6 +14,7 @@ type CacheMagagerOptions = {
 }
 
 export type CacheOptions = {
+  key?: string
   group?: string
   timeout?: number
 }

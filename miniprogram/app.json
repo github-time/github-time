@@ -8,37 +8,31 @@
     "pages/activity/index"
   ],
   "tabBar": {
-    "custom": false,
+    "custom": true,
+    "color": "#000000",
+    "selectedColor": "#000000",
+    "backgroundColor": "#000000",
     "list": [
       {
-        "text": "推荐",
-        "iconPath": "/common/icons/tabbar.png",
-        "selectedIconPath": "/common/icons/tabbar.png",
         "pagePath": "pages/recommend/index"
       },
       {
-        "text": "发现",
-        "iconPath": "/common/icons/tabbar.png",
-        "selectedIconPath": "/common/icons/tabbar.png",
         "pagePath": "pages/discover/index"
       },
       {
-        "text": "Stars",
-        "iconPath": "/common/icons/tabbar.png",
-        "selectedIconPath": "/common/icons/tabbar.png",
         "pagePath": "pages/stars/index"
       },
       {
-        "text": "我",
-        "iconPath": "/common/icons/tabbar.png",
-        "selectedIconPath": "/common/icons/tabbar.png",
         "pagePath": "pages/me/index"
       }
     ]
   },
   "window": {
-    "backgroundTextStyle": "light",
+    "navigationBarTitleText": "Github Time",
     "navigationStyle": "custom"
   },
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "usingComponents": {
+    "navigation-bar":"/custom-navigation-bar/index"
+  }
 }

@@ -1,26 +1,23 @@
 <!--index.wxml-->
-<mp-navigation-bar
-  ext-class="my-navigation-bar navigation-bar-back"
-  title="Github Time"
-  back="{{true}}"
-  >
-</mp-navigation-bar>
+<navigation-bar bgColor="bg-gradual-green" isBack="{{!fromShare}}" showHome="{{fromShare}}">
+  <view slot="backText">返回</view>
+  <view slot="content">代码浏览器</view>
+  <view wx:if="{{fromShare}}" slot="homeText">返回首页</view>
+</navigation-bar>
 
-<mp-search-bar
-  ext-class="title-search-bar"
-  placeholder="请输入搜索关键字"
-  throttle="{{1000}}"
-  bindsearch="searchFile"
-  cancel="{{false}}">
-  <view slot="left">
-    <view class="sidebar-icon-container" bindtap="toggleMenu">
-    <image
-      class="sidebar-icon"
-      src="/common/icons/sidebar.png"></image>
-    </view>
-  </view>
-  <!-- <button slot="right" size="mini">搜索</button> -->
-</mp-search-bar>
+<wux-search-bar
+  class="top-search-bar"
+  placeholder="请输入搜索关键字">
+  <text slot="left" class="sidebar-icon cuIcon-list" bindtap="showFileTree"></text>
+  <wux-button
+    size="small"
+    clear
+    type="balanced"
+    slot="right"
+    open-type="share">
+    <text  class="sidebar-icon cuIcon-share"></text>
+  </wux-button>
+</wux-search-bar>
 
 <view class="header">
   <view class="header-title">
@@ -30,20 +27,20 @@
 
 <mp-fill-view>
   <mp-markdown wx:if="{{fileType === 'md'}}" content="{{fileContent}}"></mp-markdown>
-  <view wx:if="{{fileType === 'img'}}">图片</view>
+  <view wx:elif="{{fileType === 'img'}}">图片</view>
   <mp-code-highlight wx:else height="100%" code="{{fileContent}}" language="{{fileType}}"></mp-code-highlight>
 </mp-fill-view>
 
-<view class="sidebar {{showSidebar ?  'show-sidebar' : ''}}">
+<view style="top: {{marginTop}}px" class="sidebar {{showSidebar ?  'show-sidebar' : ''}}">
   <view class="sidebar-title"><text>{{repoDetail.full_name}}</text></view>
   <view class="sidebar-head">
     <view>
-      <view>
-        <image src="/common/icons/star.png" class="start-icon"></image>
+      <view class="mata-container">
+        <text class="cuIcon-favorfill"></text>
         <text class="icon-num">{{repoDetail.stargazers_count}}</text>
       </view>
-      <view class="fork-container">
-        <image src="/common/icons/fork.png" class="fork-icon"></image>
+      <view class="mata-container">
+        <text class="cuIcon-fork"></text>
         <text class="icon-num fork-num">{{repoDetail.forks_count}}</text>
       </view>
     </view>
@@ -54,8 +51,8 @@
   </view>
   <view class="sidebar-main">
     <view wx:for="{{treeData}}" wx:key="{{index}}" class="tree-item-1-level {{index%2 === 1 ? 'light' : ''}}">
-      <mp-tree render="{{true}}}" model='{{item}}' bind:viewFile="viewFile"></mp-tree>
+      <mp-tree render="{{true}}}" model='{{item}}' bind:viewFile="onViewFileClick"></mp-tree>
     </view>
   </view>
 </view>
-<view class="sidebar-back" hidden="{{!showSidebar}}"  bindtap="clickCodeView"></view>
+<view style="top: {{marginTop}}px" class="sidebar-back" hidden="{{!showSidebar}}"  bindtap="hideFileTree"></view>

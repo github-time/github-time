@@ -1,7 +1,5 @@
 <!--miniprogram/pages/owner-detail/index.wxml-->
-<mp-navigation-bar
-  ext-class="my-navigation-bar"
-  title="Github Time"
-  back="{{true}}"
-  >
-</mp-navigation-bar>
+<navigation-bar bgColor="bg-gradual-green" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">作者详情</view>
+</navigation-bar>

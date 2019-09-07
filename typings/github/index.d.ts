@@ -1,4 +1,25 @@
 declare namespace github {
+  namespace trending {
+    type SearchResultItemBuiltBy = {
+      avatar: string
+      href: string
+      username: string
+    }
+
+    type SearchResultItem = {
+      author: string
+      avatar: string
+      builtBy: SearchResultItemBuiltBy[]
+      currentPeriodStars: 508
+      description: string
+      forks: number
+      language: string
+      languageColor: string
+      name: string
+      stars: number
+      url: string
+    }
+  }
   namespace topics {
     type SearchResultItem = {
       name: string

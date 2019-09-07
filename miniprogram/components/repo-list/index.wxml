@@ -1,4 +1,12 @@
 <!--index.wxml-->
+<wxs module="utils">
+module.exports = {
+  encode: function (str) {
+    return str ? str.replace('#', 'shap').replace('++', 'pp') : 'null'
+  }
+}
+</wxs>
+
 <scroll-view
   hidden="{{hidden}}"
   scroll-y
@@ -16,9 +24,14 @@
       data-detail="{{item.owner}}"
       catchtap="onOwnerIconClick"></image>
     <view class="repo-name">{{item.name}}</view>
-    <view class="repo-meta">star: {{item.stargazers_count}} fork: {{item.forks_count}} issues: {{item.open_issues}}</view>
-    <view class="repo-description">{{item.description}}</view>
+    <view class="repo-meta">
+      <text class="cuIcon-favor"></text> {{item.stargazers_count}}
+      <text class="cuIcon-fork"></text> {{item.forks_count}}
+      <text class="cuIcon-question"></text> {{item.open_issues}}
+    </view>
+    <view class="text-cut repo-description">{{item.description}}</view>
     <view class="repo-time">{{item.updated_at}}</view>
-    <view class="repo-language">{{item.language}}</view>
+
+    <view class="repo-language"><view class="repo-language-icon lang-{{utils.encode(item.language)}}"></view> {{item.language}}</view>
   </view>
 </scroll-view>

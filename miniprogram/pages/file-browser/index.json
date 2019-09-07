@@ -1,7 +1,7 @@
 {
   "usingComponents": {
-    "mp-navigation-bar": "/common/components/power-navigation-bar/index",
-    "mp-search-bar": "/common/components/power-search-bar/index",
+    "wux-search-bar": "/common/lib/wux/search-bar/index",
+    "wux-button": "/common/lib/wux/button/index",
     "mp-fill-view": "/common/components/fill-view/index",
     "mp-markdown": "/common/components/markdown/index",
     "mp-code-highlight": "/common/components/code-highlight/index",

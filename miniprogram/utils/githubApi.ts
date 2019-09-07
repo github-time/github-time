@@ -1,7 +1,9 @@
 import { Base64 } from 'js-base64'
 import requestWithCache from './requestWithCache'
+import callCloudFunctionWithCache from './callCloudFunctionWithCache'
 
 const githubApiUrl = 'https://api.github.com'
+// const githubApiUrl = 'https://github.whaleyou.club'
 
 async function searchTopics ({
   keyword,
@@ -156,7 +158,7 @@ async function getFileContent ({
   fullRepoName,
   filePath,
   ref = 'master'
-}: {fullRepoName:string, filePath: string, ref?: string }) {
+}: {fullRepoName:string, filePath: string, ref?: string }): Promise<string> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/contents/${filePath}?ref=${ref}`
   console.log(`getFileContent: fullRepoName=${fullRepoName}, filePath=${filePath}, ref=${ref}`)
   return new Promise((resolve, reject) => {
@@ -173,6 +175,29 @@ async function getFileContent ({
   })
 }
 
+async function getGithubTrending ({
+  language = '',
+  since = 'daily'
+}: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Promise<github.trending.SearchResultItem[]> {
+  const url = `https://github-trending-api.now.sh?language=${language}&since=${since}`
+  console.log(`getGithubTrending: language=${language} since=${since}`)
+  return new Promise((resolve, reject) => {
+    callCloudFunctionWithCache({
+      name: 'request',
+      data: {
+        url
+      },
+      success: (res) => {
+        if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
+          resolve((res.result as any).data)
+        } else {
+          reject(new Error(`errMsg: ${res.errMsg}`))
+        }
+      }
+    }, { timeout: 60, group: `getGithubTrending`})
+  })
+}
+
 export default {
   getAllTopics,
   searchTopics,
@@ -181,5 +206,6 @@ export default {
   getFileContent,
   getReadmeContent,
   getFileTree,
-  getUserStaring
+  getUserStaring,
+  getGithubTrending
 }

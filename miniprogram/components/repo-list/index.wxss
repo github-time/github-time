@@ -27,22 +27,6 @@
   line-height: 1.4em;
 }
 
-.repo-language-container {
-  flex-direction: row;
-  float: right;
-  font-size: var(--font-size-mini);
-  color: var(--color-black);
-  margin-right: 8rpx;
-  padding-right: 8rpx;
-  height: 1em;
-  overflow: hidden;
-}
-
-.repo-language {
-  margin-left: 12rpx;
-  font-size: var(--font-size-small);
-}
-
 .repo-icon {
   height: 96rpx;
   width: 96rpx;
@@ -59,4 +43,83 @@
   padding-right: 8rpx;
   font-size: var(--font-size-mini);
   color: #bbb;
+}
+
+.repo-language {
+  color: var(--color-black);
+  margin-left: 12rpx;
+  font-size: var(--font-size-small);
+}
+
+.repo-language-icon {
+  display: inline-block;
+  margin: 0 4rpx;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background-color: var(--background-color-base)
+}
+
+.lang-Vue {
+  background-color: #2c3e50;
+}
+
+.lang-HTML {
+  background-color: #e34c26;
+}
+
+.lang-PHP {
+  background-color: #4F5D95;
+}
+
+.lang-CSS {
+  background-color: #563d7c;
+}
+
+.lang-Ruby {
+  background-color: #701516;
+}
+
+.lang-Java {
+  background-color: #b07219;
+}
+
+.lang-Python {
+  background-color: #3572A5;
+}
+
+.lang-TypeScript {
+  background-color: #2b7489;
+}
+
+.lang-JavaScript {
+  background-color: #f1e05a;
+}
+
+.lang-Cshap {
+  background-color: #178600;
+}
+
+.lang-Cpp {
+  background-color: #f34b7d;
+}
+
+.lang-Shell {
+  background-color: #89e051;
+}
+
+.lang-Rust {
+  background-color: #dea584;
+}
+
+.lang-C {
+  background-color: #555555;
+}
+
+.lang-Dart {
+  background-color: #00B4AB;
+}
+
+.lang-Go {
+  background-color: #00ADD8;
 }

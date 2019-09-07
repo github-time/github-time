@@ -1,7 +1,0 @@
-{
-    "component": true,
-    "usingComponents": {
-        "mp-cells": "/common/lib/weui/cells/cells",
-        "mp-cell": "/common/lib/weui/cell/cell"
-    }
-}

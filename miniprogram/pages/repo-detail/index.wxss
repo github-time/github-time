@@ -4,3 +4,15 @@
   font-size: 14px;
   background: var(--background-color-base);
 }
+
+.tag {
+  display: flex;
+  align-items: center;
+  margin: 0 4rpx;
+  color: #666;
+}
+
+.tag-add {
+  margin: 0 4rpx;
+  color: #666;
+}

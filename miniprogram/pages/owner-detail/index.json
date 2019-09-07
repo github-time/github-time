@@ -1,5 +1,3 @@
 {
-  "usingComponents": {
-    "mp-navigation-bar": "/common/components/power-navigation-bar/index"
-  }
+  "usingComponents": {}
 }

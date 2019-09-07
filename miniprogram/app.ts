@@ -2,6 +2,9 @@
 export interface IMyApp {
   userInfoReadyCallback?(res: wx.UserInfo): void
   globalData: {
+    StatusBar: number,
+    CustomBar: number,
+    Custom: wx.Rect,
     ownerDetail?: github.repos.OwnerInfo,
     repoDetail?: github.repos.SearchResultItem,
     userInfo?: wx.UserInfo
@@ -10,6 +13,19 @@ export interface IMyApp {
 
 App<IMyApp>({
   onLaunch() {
+    if (wx.cloud) {
+      wx.cloud.init({
+        traceUser: true
+      })
+    }
+    wx.getSystemInfo({
+      success: e => {
+        this.globalData.StatusBar = e.statusBarHeight;
+        let custom = wx.getMenuButtonBoundingClientRect();
+        this.globalData.Custom = custom;
+        this.globalData.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
+      }
+    })
     // 登录
     wx.login({
       success(_res) {
@@ -37,5 +53,9 @@ App<IMyApp>({
       }
     })
   },
-  globalData: {}
+  globalData: {
+    StatusBar: 0,
+    CustomBar: 0,
+    Custom: {} as wx.Rect
+  }
 })

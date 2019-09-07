@@ -1,7 +1,6 @@
 {
   "usingComponents": {
-    "mp-navigation-bar": "/common/components/power-navigation-bar/index",
     "mp-markdown": "/common/components/markdown/index",
-    "mp-prism": "/common/components/prism/index"
+    "mp-code-highlight": "/common/components/code-highlight/index"
   }
 }

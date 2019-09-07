@@ -1,5 +1,5 @@
 //index.js
-//获取应用实例
+import Page from '../../common/page/index'
 import { IMyApp } from '../../app'
 import parseTree from '../../utils/parseTree'
 import github from '../../utils/githubApi'
@@ -55,54 +55,100 @@ function getFileInfo (path: string) {
 
 Page({
   data: {
+    fromShare: true,
+    marginTop: 0,
+    filePath: '',
     fileContent: '',
     fileType: 'unknown',
     treeData: [],
-    showSidebar: true,
+    showSidebar: false,
     repoDetail: {
       full_name: 'vuejs/vue',
-      name: 'vue',
+      name: '...',
       fork: false,
-      stargazers_count: 1,
-      watchers_count: 2,
-      language: 'vue',
-      forks_count: 3,
-      open_issues_count: 4,
-      master_branch: 'master',
-      default_branch: 'master'
+      stargazers_count: 0,
+      watchers_count: 0,
+      language: '...',
+      forks_count: 0,
+      open_issues_count: 0,
+      master_branch: '...',
+      default_branch: '...'
     }
   },
-  onLoad () {
-    const repoDetail = app.globalData.repoDetail || {
-      full_name: 'vuejs/vue'
+  onShareAppMessage () {
+    return {
+      title: 'Github Time',
+      desc: `分享代码: ${this.data.repoDetail.full_name} ${this.data.filePath}`,
+      path: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&p=${this.data.filePath}`
     }
-
-    this.setData!({
-      repoDetail
-    });
-
-    (async () => {
-      wx.showLoading({
-        title: '正在加载'
+  },
+  onLoad (options: any) {
+    const query = wx.createSelectorQuery().in(this)
+    query.select('.top-search-bar').boundingClientRect().exec((res: any) => {
+      this.setData!({
+        marginTop: res[0].top
       })
-      try {
-        const treeData = parseTree(await github.getFileTree({ fullRepoName: repoDetail.full_name })).tree
-        console.log('treeData', treeData)
-        this.setData!({
-          treeData
-        });
-      } catch (e) {}
-      wx.hideLoading()
-    })()
+    })
+
+    if (app.globalData.repoDetail) {
+      this.setData!({
+        fromShare: false,
+        repoDetail: app.globalData.repoDetail
+      })
+    }
+
+    const fullRepoName = options.r || this.data.repoDetail.full_name
+    const filePath = options.p || ''
+
+    if (fullRepoName && filePath) {
+      this.viewFile(fullRepoName, filePath)
+    }
+
+    if (!filePath) {
+      // 显示目录树
+      this.setData!({
+        showSidebar: true,
+      })
+      // 加载目录树
+      this.loadFileTree(fullRepoName)
+    }
   },
-  async viewFile (e: any) {
+  onViewFileClick (e: any) {
+    this.viewFile(this.data.repoDetail.full_name, e.detail.path)
+  },
+  showFileTree () {
+    if (this.data.treeData.length === 0) {
+      this.loadFileTree(this.data.repoDetail.full_name)
+    }
+    this.setData!({
+      showSidebar: true
+    })
+  },
+  hideFileTree () {
+    this.setData!({
+      showSidebar: false
+    })
+  },
+
+  async loadFileTree (fullRepoName:string) {
     wx.showLoading({
       title: '正在加载'
     })
     try {
-      const filePath = e.detail.path
+      const treeData = parseTree(await github.getFileTree({ fullRepoName })).tree
+      this.setData!({
+        treeData
+      });
+    } catch (e) {}
+    wx.hideLoading()
+  },
+  async viewFile (fullRepoName:string, filePath: string) {
+    wx.showLoading({
+      title: '正在加载'
+    })
+    try {
       const content = await github.getFileContent({
-        fullRepoName: this.data.repoDetail.full_name,
+        fullRepoName,
         filePath
       })
       console.log('content:', content)
@@ -115,15 +161,5 @@ Page({
       })
     } catch (e) {}
     wx.hideLoading()
-  },
-  toggleMenu () {
-    this.setData!({
-      showSidebar: true
-    })
-  },
-  clickCodeView () {
-    this.setData!({
-      showSidebar: false
-    })
   }
 })

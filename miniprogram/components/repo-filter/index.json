@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "mp-button-group": "/common/components/button-group/index"
+    "mp-button-group": "/common/components/button-group/index",
+    "wux-selectable": "/common/lib/wux/selectable/index"
   }
 }

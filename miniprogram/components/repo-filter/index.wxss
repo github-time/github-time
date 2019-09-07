@@ -1,5 +1,4 @@
 /**index.wxss**/
-
 .filter-view {
   padding: 8rpx 0;
   position: absolute;

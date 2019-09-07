@@ -6,5 +6,8 @@
   >
 </mp-navigation-bar>
 
-<!-- <mp-prism code="{{myCode}}" language="{{myLanguage}}"></mp-prism> -->
-<mp-markdown content="{{myContent}}"></mp-markdown>
+<!-- <mp-code-highlight code="{{myCode}}" language="{{myLanguage}}"></mp-code-highlight> -->
+<!-- <mp-markdown content="{{myContent}}"></mp-markdown> -->
+
+<view class="icon-code-branch"></view>
+<view class="icon-code-branch-box"></view>
