@@ -1,8 +1,9 @@
 {
   "usingComponents": {
+    "mp-load-more": "/components/load-more/index",
     "mp-button-group": "/common/components/button-group/index",
     "mp-fill-view": "/common/components/fill-view/index",
-    "mp-repo-list": "/components/repo-list/index",
+    "mp-data-list": "/components/data-list/index",
     "mp-repo-filter": "/components/repo-filter/index",
     "wux-search-bar": "/common/lib/wux/search-bar/index"
   }

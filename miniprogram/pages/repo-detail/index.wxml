@@ -56,17 +56,16 @@
     </wux-cell-group>
     <wux-white-space></wux-white-space>
 
-
   </view>
   <view hidden="{{current!=='readme'}}">
     <mp-load-more wx:if="{{!readmeContent}}"></mp-load-more>
     <mp-markdown wx:else content="{{readmeContent}}"></mp-markdown>
   </view>
   <view hidden="{{current!=='issues'}}">
-    <todo-coming-soon />
+    <mp-todo-coming-soon />
   </view>
   <view hidden="{{current!=='discuss'}}">
-    <todo-coming-soon />
+    <mp-todo-coming-soon />
   </view>
 </mp-fill-view>
 

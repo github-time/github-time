@@ -3,13 +3,13 @@
     "mp-load-more": "/components/load-more/index",
     "mp-markdown": "/common/components/markdown/index",
     "mp-fill-view": "/common/components/fill-view/index",
+    "mp-todo-coming-soon": "/components/todo-coming-soon/index",
     "wux-tabs": "/common/lib/wux/tabs/index",
     "wux-tab": "/common/lib/wux/tab/index",
     "wux-cell-group": "/common/lib/wux/cell-group/index",
     "wux-cell": "/common/lib/wux/cell/index",
     "wux-card": "/common/lib/wux/card/index",
     "wux-wing-blank": "/common/lib/wux/wing-blank/index",
-    "wux-white-space": "/common/lib/wux/white-space/index",
-    "todo-coming-soon": "/components/todo-coming-soon/index"
+    "wux-white-space": "/common/lib/wux/white-space/index"
   }
 }

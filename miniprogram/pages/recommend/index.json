@@ -1,8 +1,7 @@
 {
   "usingComponents": {
-    "mp-load-more": "/components/load-more/index",
     "mp-fill-view": "/common/components/fill-view/index",
-    "mp-repo-list": "/components/repo-list/index",
+    "mp-data-list": "/components/data-list/index",
     "wux-fab-button": "/common/lib/wux/fab-button/index",
     "wux-tabs": "/common/lib/wux/tabs/index",
     "wux-tab": "/common/lib/wux/tab/index"

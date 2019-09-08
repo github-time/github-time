@@ -1,30 +1,10 @@
 /**index.wxss**/
 .repo-card {
   background: var(--color-white);
-  height: 200rpx;
-  overflow: hidden;
   margin: 12rpx 0;
   padding: 8rpx;
   padding-left: 20rpx;
   padding-right: 32rpx;
-}
-
-.repo-name {
-  font-size: var(--font-size-large);
-  line-height: 1.6em;
-}
-
-.repo-meta {
-  font-size: var(--font-size-small);
-  color: var(--color-primary);
-}
-
-.repo-description {
-  font-size: var(--font-size-regular);
-  color: #999;
-  overflow: hidden;
-  height: 2.8em;
-  line-height: 1.4em;
 }
 
 .repo-icon {
@@ -36,18 +16,45 @@
   border: 1px solid var(--background-color-base)
 }
 
+.repo-name {
+  font-size: var(--font-size-large);
+  line-height: 1.6em;
+}
+
 .repo-time {
-  float: right;
-  margin-top: 6rpx;
-  text-align: right;
-  padding-right: 8rpx;
   font-size: var(--font-size-mini);
   color: #bbb;
 }
 
+.repo-description {
+  clear: right;
+  font-size: var(--font-size-regular);
+  color: #999;
+  overflow: hidden;
+  max-height: 2.8em;
+  line-height: 1.4em;
+  margin: 8rpx 0;
+}
+
+.repo-footer {
+  display: flex;
+  align-items: flex-end;
+}
+
+.repo-meta {
+  flex: 1;
+  text-align: right;
+  font-size: var(--font-size-small);
+  color: var(--color-primary);
+}
+
+.repo-meta .repo-meta-icon {
+  margin-left: 8rpx;
+}
+
 .repo-language {
+  flex: 1;
   color: var(--color-black);
-  margin-left: 12rpx;
   font-size: var(--font-size-small);
 }
 

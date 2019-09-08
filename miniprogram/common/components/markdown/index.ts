@@ -8,6 +8,10 @@ Component({
     content: {
       type: String,
       value: ''
+    },
+    height: {
+      type: String,
+      value: '100%'
     }
   },
   data: {

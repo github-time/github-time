@@ -59,7 +59,7 @@ Page({
   async loadReposTrending ({ since = 'daily', language = '' } : { since?: 'daily' | 'weekly' | 'monthly', language?: string } = {}) {
     this.data.since = since
     this.data.language = language
-    this.setData!({ repoList: null })
+    this.setData!({ repoList: [null] })
 
     wx.showLoading({
       title: `显示${SINCE_MAP[since]}趋势`
@@ -71,7 +71,8 @@ Page({
         full_name: `${item.author}/${item.name}`,
         description: item.description,
         language: item.language,
-        stargazers_count: item.currentPeriodStars,
+        currentPeriodStars: item.currentPeriodStars,
+        stargazers_count: item.stars,
         forks_count: item.forks,
         owner: {
           avatar_url: item.avatar

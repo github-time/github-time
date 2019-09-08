@@ -12,9 +12,10 @@
 <mp-fill-view>
   <swiper class="fill" current="{{ index }}" bindchange="onSwiperChange">
     <swiper-item>
-      <mp-load-more wx:if="{{!repoList}}"></mp-load-more>
-      <mp-load-more wx:elif="{{repoList.length===0}}" no-data></mp-load-more>
-      <mp-repo-list wx:else repo-list="{{repoList}}"></mp-repo-list>
+      <mp-data-list
+        list="{{repoList}}"
+        item-template="trending-repo"
+        />
     </swiper-item>
     <swiper-item>
       开发者

@@ -1,6 +1,8 @@
 import render from './mp-prism-render'
 
 const PAGE_SIZE = 48
+const pre = PAGE_SIZE / 2
+const post = PAGE_SIZE / 2
 
 function debounce (this: any, func: Function, wait: number) {
   let timer = 0
@@ -34,8 +36,6 @@ const renderNecessary = debounce(function (vm: any) {
     const currentStart = vm.data.currentStart
     const currentEnd = vm.data.currentEnd
 
-    const pre = PAGE_SIZE / 2
-    const post = PAGE_SIZE / 2
     const current = vm.data.firstVisibleLineNo
     const visibleStart = Math.max(0, current - pre)
     const visibleEnd = current + PAGE_SIZE + post
@@ -89,7 +89,7 @@ Component({
   },
   data: {
     currentStart: 0,
-    currentEnd: PAGE_SIZE * 2,
+    currentEnd: PAGE_SIZE * 2 + pre + post,
     firstVisibleLineNo: 0,
     maxRenderLineNo: 0,
     codeRowsCache: [],
@@ -104,7 +104,7 @@ Component({
         this.data.codeRowsCache = codeRowsCache
         this.setData({
           rawText: '',
-          codeRows: codeRowsCache.slice(0, PAGE_SIZE * 2) // 仅渲染前 2 页
+          codeRows: codeRowsCache.slice(0, PAGE_SIZE * 2 + pre + post) // 仅渲染前 2 页
         })
       } catch (e) {
         console.warn('render code with prism failed: ', e)

@@ -1,0 +1,22 @@
+<!--index.wxml-->
+<import src="./templates/trending-repo.wxml" />
+<import src="./templates/repo.wxml" />
+<mp-load-more wx:if="{{list.length===1 && list[0]===null}}" loading></mp-load-more>
+<mp-load-more wx:elif="{{list.length===0}}" no-data></mp-load-more>
+<scroll-view
+  wx:else
+  hidden="{{hidden}}"
+  scroll-y
+  style="height: 100%;"
+  bindscrolltolower="onLoadMore">
+  <view
+    wx:for="{{list}}"
+    wx:key="index"
+    data-detail="{{item}}"
+    class="repo-card"
+    bind:tap="onItemClick"
+    >
+    <template is="{{itemTemplate}}" data="{{item}}"></template>
+  </view>
+  <mp-load-more wx:if="{{showLoadMore}}" loading="{{autoLoadMore || isLoading}}" bind:tap="onLoadMore"></mp-load-more>
+</scroll-view>

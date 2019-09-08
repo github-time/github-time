@@ -1,4 +1,7 @@
 /**index.wxss**/
+.btn-toggle-filter {
+  margin-left: 12rpx;
+}
 
 .filter-view {
   max-height: 60vh;

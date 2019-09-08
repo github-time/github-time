@@ -5,9 +5,13 @@
       <text class="cuIcon-notice"></text>
       <text class="no-data-text text">没有更多数据了</text>
     </blcok>
-    <block wx:else>
+    <block wx:elif="{{loading}}">
       <view class="loading"></view>
       <text class="text">正在加载</text>
     </block>
+    <blcok wx:else>
+      <text class="cuIcon-notice"></text>
+      <text class="no-data-text text">点击加载更多</text>
+    </blcok>
   </view>
 </wux-divider>

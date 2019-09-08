@@ -1,1 +1,22 @@
 /**index.wxss**/
+
+page {
+  background-image: var(--gradualGreen);
+}
+
+.bg {
+  background: var(--background-color-base)
+}
+
+.my-dashboard {
+  height: 50vh;
+}
+
+.top-radius {
+  padding: 20rpx 20rpx 0 20rpx;
+  border-radius: 20rpx 20rpx 0 0;
+}
+
+.wux-card {
+  background: none !important;
+}

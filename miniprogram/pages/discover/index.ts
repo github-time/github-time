@@ -1,8 +1,8 @@
 //index.js
 import Page from '../../common/page/index'
-//获取应用实例
 import github from '../../utils/githubApi'
 
+//获取应用实例
 // import { IMyApp } from '../../app'
 // const app = getApp<IMyApp>()
 
@@ -14,7 +14,7 @@ Page({
     queriedPageNo: 0,
     pageSize: 10,
     repoList: [] as github.repos.SearchResultItem[],
-    showFilterView: !false,
+    showFilterView: false,
     filters: {}
   },
   onToggleFilter() {
@@ -97,21 +97,21 @@ Page({
 
     console.log('do search:', query)
     this.data.queriedPageNo = 0
-    wx.showLoading({
-      title: '正在加载'
+    this.setData!({
+      repoList: [null]
     })
     try {
       const searchResult = await github.searchRepositories({
         query,
         pageSize: this.data.pageSize
       })
+      await new Promise((resolve) => { setTimeout(resolve, 1000)})
       this.setData!({ repoList: searchResult.items })
     } catch (e) {
 
     }
-    wx.hideLoading()
   },
-  async lower () {
+  async onLoadMore () {
     const toQueryPageNo = Math.floor(this.data.repoList.length / this.data.pageSize) + 1
     if (this.data.queriedPageNo < toQueryPageNo) {
       try {

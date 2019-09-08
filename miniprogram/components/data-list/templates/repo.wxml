@@ -1,0 +1,37 @@
+<!--index.wxml-->
+<wxs module="utils">
+module.exports = {
+  encode: function (str) {
+    return str ? str.replace('#', 'shap').replace('++', 'pp') : 'null'
+  }
+}
+</wxs>
+
+<template name="repo">
+  <image
+    class="repo-icon"
+    src="{{item.owner.avatar_url}}"
+    data-detail="{{item.owner}}"
+    catchtap="onIconClick"></image>
+
+  <view class="repo-header">
+    <text class="text-cut repo-name">{{item.name}}</text>
+  </view>
+
+  <view class="repo-time">
+    <text class="cuIcon-upload"></text> {{item.updated_at}}
+  </view>
+
+  <view class="repo-description">{{item.description}}</view>
+
+  <view class="repo-footer">
+    <view class="repo-language">
+      <view class="repo-language-icon lang-{{utils.encode(item.language)}}"></view> {{item.language}}
+    </view>
+    <view class="repo-meta">
+      <text class="repo-meta-icon cuIcon-favor"></text> {{item.stargazers_count}}
+      <text class="repo-meta-icon cuIcon-fork"></text> {{item.forks_count}}
+      <text class="repo-meta-icon cuIcon-question"></text> {{item.open_issues}}
+    </view>
+  </view>
+</template>

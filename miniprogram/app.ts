@@ -13,11 +13,6 @@ export interface IMyApp {
 
 App<IMyApp>({
   onLaunch() {
-    if (wx.cloud) {
-      wx.cloud.init({
-        traceUser: true
-      })
-    }
     wx.getSystemInfo({
       success: e => {
         this.globalData.StatusBar = e.statusBarHeight;
@@ -26,6 +21,13 @@ App<IMyApp>({
         this.globalData.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
       }
     })
+
+    if (wx.cloud) {
+      wx.cloud.init({
+        traceUser: true
+      })
+    }
+
     // 登录
     wx.login({
       success(_res) {

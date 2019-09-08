@@ -90,6 +90,29 @@ async function searchUsers ({
   })
 }
 
+async function getUserRepositories ({
+  owner,
+  pageSize,
+  pageNo = 1,
+  sort = 'stars',
+  order = 'desc'
+}: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Promise<github.repos.SearchResultItem[]> {
+  const url = `${githubApiUrl}/users/${owner}/repos?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
+  console.log(`searchRepositories: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
+  return new Promise((resolve, reject) => {
+    requestWithCache({
+      url,
+      success(res) {
+        if (res.statusCode === 200) {
+          resolve(res.data as github.repos.SearchResultItem[])
+        } else {
+          reject(new Error(`statusCode: ${res.statusCode}`))
+        }
+      }
+    }, { timeout: 30, group: 'getUserRepositories'})
+  })
+}
+
 async function getUserStaring ({
   owner,
   pageSize,
@@ -207,5 +230,6 @@ export default {
   getReadmeContent,
   getFileTree,
   getUserStaring,
+  getUserRepositories,
   getGithubTrending
 }

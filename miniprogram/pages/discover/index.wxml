@@ -26,7 +26,7 @@
 <wux-search-bar
   clear
   controlled
-  value="{{ value }}"
+  value="{{ keyword }}"
   placeholder="请输入搜索关键字"
   bind:change="onKeywordChange"
   bind:focus="onSearchBarFocus"
@@ -43,8 +43,11 @@
   ></mp-repo-filter>
 
 <mp-fill-view>
-  <mp-repo-list
-    repo-list="{{repoList}}"
-    bindscrolltolower="lower">
-    ></mp-repo-list>
+  <mp-data-list
+    list="{{repoList}}"
+    item-template="repo"
+    show-load-more
+    auto-load-more
+    bind:loadmore="onLoadMore"
+    />
 </mp-fill-view>

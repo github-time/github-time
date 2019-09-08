@@ -51,7 +51,7 @@ Page({
     }
     wx.hideLoading()
   },
-  async lower () {
+  async onLoadMore () {
     const toQueryPageNo = Math.floor(this.data.repoList.length / this.data.pageSize) + 1
     if (this.data.queriedPageNo < toQueryPageNo) {
       try {

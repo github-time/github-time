@@ -1,15 +1,65 @@
 <!--index.wxml-->
-<navigation-bar bgColor="bg-gradual-green">
+<navigation-bar class="text-white">
   <view slot="content">Github Time</view>
 </navigation-bar>
+<mp-fill-view>
+  <wux-white-space></wux-white-space>
+  <wux-wing-blank size="large">
+    <view class="bg-white light top-radius shadow-warp margin-top">
+      <wux-card bordered="{{false}}" title="{{repoDetail.full_name}}" actions="{{ actions }}" bind:action="onAction">
+        <view slot="body">
+          username
+        </view>
+        <view slot="footer">
+          Issues: {{repoDetail.open_issues_count}}
+          Star: {{repoDetail.stargazers_count}}
+          Fork: {{repoDetail.forks_count}}
+        </view>
+      </wux-card>
+    </view>
+  </wux-wing-blank>
 
-<wux-cell-group title="联系我们">
-  <wux-cell title="意见反馈" is-link open-type="feedback" bind:feedback="onFeedback"></wux-cell>
-  <wux-cell title="商务合作" is-link></wux-cell>
-</wux-cell-group>
+  <view class="bg">
+    <wux-tabs wux-class="bordered" controlled current="{{ key }}" bindchange="onTabsChange">
+      <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
+    </wux-tabs>
 
-<wux-white-space></wux-white-space>
+    <swiper class="my-dashboard" current="{{ index }}" bindchange="onSwiperChange">
+      <swiper-item>
+        <mp-data-list
+          list="{{repoList}}"
+          show-load-more
+          bind:loadmore="onLoadMore"
+          />
+      </swiper-item>
+      <swiper-item>
+        <mp-todo-coming-soon />
+      </swiper-item>
+      <swiper-item>
+        <mp-todo-coming-soon />
+      </swiper-item>
+      <swiper-item>
+        <mp-todo-coming-soon />
+      </swiper-item>
+      <swiper-item>
+        <mp-todo-coming-soon />
+      </swiper-item>
+    </swiper>
 
-<wux-cell-group>
-  <wux-cell title="设置" is-link bind:contact="onContact"></wux-cell>
-</wux-cell-group>
+    <wux-cell-group title="关于 Github Time">
+      <wux-cell title="赞赏支持" is-link bind:tap="showQrcode"></wux-cell>
+      <wux-cell wx:if="{{false}}" title="捐赠支持" is-link></wux-cell>
+      <wux-cell wx:if="{{false}}" title="看广告支持" is-link bind:tap="showAd"></wux-cell>
+      <wux-cell title="意见反馈" is-link open-type="feedback" bind:feedback="onFeedback"></wux-cell>
+      <wux-cell wx:if="{{false}}" title="商务合作" is-link></wux-cell>
+      <wux-cell title="更新日志" is-link></wux-cell>
+    </wux-cell-group>
+
+    <wux-white-space></wux-white-space>
+
+    <wux-cell-group>
+      <wux-cell title="设置" is-link bind:contact="onContact"></wux-cell>
+    </wux-cell-group>
+    <wux-white-space></wux-white-space>
+  </view>
+</mp-fill-view>

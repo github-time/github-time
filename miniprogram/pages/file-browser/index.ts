@@ -24,6 +24,10 @@ const fileTypeMap = [
     type: 'properties'
   },
   {
+    test: /\.g4$/i,
+    type: 'ebnf'
+  },
+  {
     test: /\.md$/i,
     type: 'md'
   },

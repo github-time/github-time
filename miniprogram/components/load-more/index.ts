@@ -8,6 +8,10 @@ Component({
     noData: {
       type: Boolean,
       value: false
+    },
+    loading: {
+      type: Boolean,
+      value: false
     }
   }
 })
