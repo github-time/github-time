@@ -63,7 +63,7 @@
     </wux-cell-group>
 
     <wux-cell-group title="作者信息">
-      <wux-cell title="用户名" extra="{{repoDetail.owner.login}}" is-link></wux-cell>
+      <wux-cell title="用户名" extra="{{repoDetail.owner.login}}" is-link bind:tap="viewOwner"></wux-cell>
     </wux-cell-group>
     <wux-white-space></wux-white-space>
 

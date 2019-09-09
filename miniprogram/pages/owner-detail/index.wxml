@@ -3,3 +3,5 @@
   <view slot="backText">返回</view>
   <view slot="content">作者详情</view>
 </navigation-bar>
+
+<mp-todo-coming-soon></mp-todo-coming-soon>

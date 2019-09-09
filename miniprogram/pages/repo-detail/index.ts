@@ -97,10 +97,7 @@ Page({
       this.loadTags(repoDetail.id)
     } else {
       (async () => {
-        const detail = await this.loadRepositoryDetail(repoDetail.full_name)
-        this.setData!({
-          repoDetail: detail
-        })
+        const detail = app.globalData.repoDetail = await this.loadRepositoryDetail(repoDetail.full_name)
         this.loadTags(detail.id)
       })()
     }
@@ -169,7 +166,14 @@ Page({
       wx.navigateTo({
         url: '/pages/file-browser/index'
       })
+    } else if (e.detail.action.type === 'viewOwner') {
+      this.viewOwner()
     }
+  },
+  viewOwner () {
+    wx.navigateTo({
+      url: '/pages/owner-detail/index'
+    })
   },
   onRemoveTag (e: any) {
     const tag = e.currentTarget.dataset.detail
