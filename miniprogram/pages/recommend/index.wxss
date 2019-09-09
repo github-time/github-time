@@ -2,3 +2,9 @@
 page {
   padding-bottom: 50px;
 }
+
+.info {
+  padding: 4rpx 8rpx;
+  color: var(--color-text-regular);
+  border-bottom: 1px solid var(--border-color-base)
+}

@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "mp-fill-view": "/common/components/fill-view/index",
+    "wux-index": "/common/lib/wux/index/index",
+    "wux-index-item": "/common/lib/wux/index-item/index"
+  }
+}

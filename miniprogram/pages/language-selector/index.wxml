@@ -1,0 +1,17 @@
+<navigation-bar bgColor="bg-gradual-green" isBack>
+  <view slot="backText">返回</view>
+  <view slot="content">选择编程语言</view>
+</navigation-bar>
+<mp-fill-view>
+  <wux-index height="100%" bind:change="onChange">
+    <wux-index-item wx:for="{{ alphabet }}" wx:key="" name="{{ item.initial }}">
+      <view class="demo-item"
+        wx:for="{{ item.cells }}"
+        wx:for-item="cell"
+        wx:key=""
+        data-detail="{{cell}}"
+        bind:tap="onSelect"
+        >{{ cell.name }}</view>
+    </wux-index-item>
+  </wux-index>
+</mp-fill-view>

@@ -1,0 +1,29 @@
+<!--index.wxml-->
+<wxs module="utils">
+module.exports = {
+  encode: function (str) {
+    return str ? str.replace('#', 'shap').replace('++', 'pp') : 'null'
+  }
+}
+</wxs>
+
+<template name="trending-user">
+  <view catchtap="onIconClick" data-detail="{{item.owner}}">
+    <image
+      class="repo-icon"
+      src="{{item.owner.avatar_url}}"
+      ></image>
+    <view class="user-name text-cut">
+      <text class="cuIcon-people"></text>
+      {{item.owner.name}}
+    </view>
+    <view class="user-login text-cut">{{item.owner.login}}</view>
+  </view>
+  <view class="user-repo">
+    <view class="repo-name text-cut">
+      <text class="cuIcon-medal"></text>
+      {{item.name}}
+    </view>
+    <view class="repo-description">{{item.description}}</view>
+  </view>
+</template>

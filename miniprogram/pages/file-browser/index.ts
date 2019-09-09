@@ -67,6 +67,7 @@ Page({
     treeData: [],
     showSidebar: false,
     repoDetail: {
+      id: undefined,
       full_name: 'vuejs/vue',
       name: '...',
       fork: false,
@@ -94,13 +95,6 @@ Page({
       })
     })
 
-    if (app.globalData.repoDetail) {
-      this.setData!({
-        fromShare: false,
-        repoDetail: app.globalData.repoDetail
-      })
-    }
-
     const fullRepoName = options.r || this.data.repoDetail.full_name
     const filePath = options.p || ''
 
@@ -108,13 +102,22 @@ Page({
       this.viewFile(fullRepoName, filePath)
     }
 
+    if (app.globalData.repoDetail) {
+      this.setData!({
+        fromShare: false,
+        repoDetail: app.globalData.repoDetail
+      })
+    } else {
+      this.setData!({
+        repoDetail: {
+          full_name: fullRepoName
+        }
+      })
+    }
+
     if (!filePath) {
       // 显示目录树
-      this.setData!({
-        showSidebar: true,
-      })
-      // 加载目录树
-      this.loadFileTree(fullRepoName)
+      this.showFileTree ()
     }
   },
   onViewFileClick (e: any) {
@@ -124,6 +127,9 @@ Page({
     if (this.data.treeData.length === 0) {
       this.loadFileTree(this.data.repoDetail.full_name)
     }
+    if (this.data.repoDetail.id === undefined) {
+      this.loadRepositoryDetail(this.data.repoDetail.full_name)
+    }
     this.setData!({
       showSidebar: true
     })
@@ -131,6 +137,13 @@ Page({
   hideFileTree () {
     this.setData!({
       showSidebar: false
+    })
+  },
+
+  async loadRepositoryDetail (fullRepoName:string) {
+    const repoDetail = await github.getRepositoryDetail(fullRepoName)
+    this.setData!({
+      repoDetail
     })
   },
 
@@ -146,6 +159,7 @@ Page({
     } catch (e) {}
     wx.hideLoading()
   },
+
   async viewFile (fullRepoName:string, filePath: string) {
     wx.showLoading({
       title: '正在加载'

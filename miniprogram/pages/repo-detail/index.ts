@@ -15,6 +15,7 @@ const app = getApp<IMyApp>()
 
 Page({
   data: {
+    fromShare: true,
     current: 'summary',
     tabs: [
       {
@@ -62,27 +63,47 @@ Page({
       text: "评论",
     }],
     readmeContent: '',
-    repoDetail: {} as github.repos.SearchResultItem,
+    repoDetail: {
+      id: undefined as undefined|number,
+      full_name: 'udock/vue-cli-plugin-udock'
+    },
     tags: [] as string[]
   },
-  onLoad() {
-    const repoDetail = app.globalData.repoDetail || {
-      // full_name: 'vuejs/vue',
-      full_name: 'udock/vue-cli-plugin-udock',
-      id: 11730342
+  onShareAppMessage () {
+    return {
+      title: 'Github Time',
+      desc: `分享仓库: ${this.data.repoDetail.full_name}`,
+      path: `/pages/repo-detail/index?r=${this.data.repoDetail.full_name}`
+    }
+  },
+  onLoad(options: any) {
+    const fullRepoName = options.r || this.data.repoDetail.full_name
+
+    if (app.globalData.repoDetail) {
+      this.setData!({
+        fromShare: false,
+        repoDetail: app.globalData.repoDetail
+      })
+    } else {
+      this.setData!({
+        repoDetail: {
+          full_name: fullRepoName
+        }
+      })
     }
 
-    const repoId = (repoDetail as github.repos.SearchResultItem).id + ''
-    const tagIds = (remuData.repoWithTags as any)[repoId]
-    let tags = []
-    if (tagIds) {
-      tags = tagIds.map((item: string) => tagMap[item])
+    const repoDetail = this.data.repoDetail
+    if (repoDetail.id !== undefined) {
+      this.loadTags(repoDetail.id)
+    } else {
+      (async () => {
+        const detail = await this.loadRepositoryDetail(repoDetail.full_name)
+        this.setData!({
+          repoDetail: detail
+        })
+        this.loadTags(detail.id)
+      })()
     }
-
-    this.setData!({
-      repoDetail,
-      tags
-    })
   },
   onTabsChange(e: any) {
     const { key } = e.detail
@@ -169,5 +190,24 @@ Page({
     this.setData!({
       istrue: false
     })
-  }
+  },
+
+  loadTags (repoId: number) {
+    const tagIds = (remuData.repoWithTags as any)[repoId]
+    let tags = []
+    if (tagIds) {
+      tags = tagIds.map((item: string) => tagMap[item])
+    }
+    this.setData!({
+      tags
+    })
+  },
+
+  async loadRepositoryDetail (fullRepoName:string) {
+    const repoDetail = await github.getRepositoryDetail(fullRepoName)
+    this.setData!({
+      repoDetail
+    })
+    return repoDetail
+  },
 })

@@ -29,9 +29,9 @@ module.exports = {
       <view class="repo-language-icon lang-{{utils.encode(item.language)}}"></view> {{item.language}}
     </view>
     <view class="repo-meta">
-      <text class="repo-meta-icon cuIcon-favor"></text> {{item.stargazers_count}}
-      <text class="repo-meta-icon cuIcon-fork"></text> {{item.forks_count}}
-      <text class="repo-meta-icon cuIcon-question"></text> {{item.open_issues}}
+      <text class="repo-meta-icon cuIcon-favor">{{item.stargazers_count}}</text>
+      <text class="repo-meta-icon cuIcon-fork">{{item.forks_count}}</text>
+      <text class="repo-meta-icon cuIcon-question">{{item.open_issues}}</text>
     </view>
   </view>
 </template>

@@ -25,7 +25,7 @@ async function searchTopics ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 120, group: 'searchTopics'})
+    }, { timeout: 120, group: 'SearchData#topics'})
   })
 }
 
@@ -63,7 +63,24 @@ async function searchRepositories ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 30, group: 'searchRepositories'})
+    }, { timeout: 30, group: 'SearchData#repos'})
+  })
+}
+
+async function getRepositoryDetail (fullRepoName: string): Promise<github.repos.SearchResultItem> {
+  const url = `${githubApiUrl}/repos/${fullRepoName}`
+  console.log(`getRepositoryDetail: fullRepoName=${fullRepoName}`)
+  return new Promise((resolve, reject) => {
+    requestWithCache({
+      url,
+      success(res) {
+        if (res.statusCode === 200) {
+          resolve(res.data as github.repos.SearchResultItem)
+        } else {
+          reject(new Error(`statusCode: ${res.statusCode}`))
+        }
+      }
+    }, { timeout: 30, group: `RepoData#${fullRepoName}`})
   })
 }
 
@@ -86,7 +103,7 @@ async function searchUsers ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 30, group: 'searchUsers'})
+    }, { timeout: 30, group: 'SearchData#users'})
   })
 }
 
@@ -109,7 +126,7 @@ async function getUserRepositories ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 30, group: 'getUserRepositories'})
+    }, { timeout: 30, group: `UserData#${owner}`})
   })
 }
 
@@ -132,7 +149,7 @@ async function getUserStaring ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 30, group: `getUserStaring#${owner}`})
+    }, { timeout: 30, group: `UserData#${owner}`})
   })
 }
 
@@ -152,7 +169,7 @@ async function getFileTree ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 60, group: `getFileTree#${fullRepoName}`})
+    }, { timeout: 60, group: `RepoData#${fullRepoName}`})
   })
 }
 
@@ -173,7 +190,7 @@ async function getReadmeContent ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 60, group: `getFileContent#${fullRepoName}`}) // 共享 getFileContent 缓存组
+    }, { timeout: 60, group: `RepoData#${fullRepoName}`}) // 共享 getFileContent 缓存组
   })
 }
 
@@ -194,16 +211,16 @@ async function getFileContent ({
           reject(new Error(`statusCode: ${res.statusCode}`))
         }
       }
-    }, { timeout: 60, group: `getFileContent#${fullRepoName}`})
+    }, { timeout: 60, group: `RepoData#${fullRepoName}`})
   })
 }
 
-async function getGithubTrending ({
+async function getGithubReposTrending ({
   language = '',
   since = 'daily'
-}: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Promise<github.trending.SearchResultItem[]> {
-  const url = `https://github-trending-api.now.sh?language=${language}&since=${since}`
-  console.log(`getGithubTrending: language=${language} since=${since}`)
+}: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Promise<github.trending.Repository[]> {
+  const url = `https://github-trending-api.now.sh/repositories?language=${language}&since=${since}`
+  console.log(`getGithubRepoTrending: language=${language} since=${since}`)
   return new Promise((resolve, reject) => {
     callCloudFunctionWithCache({
       name: 'request',
@@ -217,7 +234,30 @@ async function getGithubTrending ({
           reject(new Error(`errMsg: ${res.errMsg}`))
         }
       }
-    }, { timeout: 60, group: `getGithubTrending`})
+    }, { timeout: 60, group: 'TrendingData#repos' })
+  })
+}
+
+async function getGithubUsersTrending ({
+  language = '',
+  since = 'daily'
+}: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Promise<github.trending.Developer[]> {
+  const url = `https://github-trending-api.now.sh/developers?language=${language}&since=${since}`
+  console.log(`getGithubUserTrending: language=${language} since=${since}`)
+  return new Promise((resolve, reject) => {
+    callCloudFunctionWithCache({
+      name: 'request',
+      data: {
+        url
+      },
+      success: (res) => {
+        if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
+          resolve((res.result as any).data)
+        } else {
+          reject(new Error(`errMsg: ${res.errMsg}`))
+        }
+      }
+    }, { timeout: 60, group: `TrendingData#users`})
   })
 }
 
@@ -225,11 +265,13 @@ export default {
   getAllTopics,
   searchTopics,
   searchRepositories,
+  getRepositoryDetail,
   searchUsers,
   getFileContent,
   getReadmeContent,
   getFileTree,
   getUserStaring,
   getUserRepositories,
-  getGithubTrending
+  getGithubReposTrending,
+  getGithubUsersTrending
 }

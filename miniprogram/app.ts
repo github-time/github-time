@@ -1,13 +1,22 @@
 //app.ts
+
+type Signal = {
+  timestamp: number
+  event: string
+  data: any
+}
+
 export interface IMyApp {
   userInfoReadyCallback?(res: wx.UserInfo): void
   globalData: {
-    StatusBar: number,
-    CustomBar: number,
-    Custom: wx.Rect,
-    ownerDetail?: github.repos.OwnerInfo,
-    repoDetail?: github.repos.SearchResultItem,
+    StatusBar: number
+    CustomBar: number
+    Custom: wx.Rect
+    ownerDetail?: github.repos.OwnerInfo
+    repoDetail?: github.repos.SearchResultItem
     userInfo?: wx.UserInfo
+    token?: string
+    signal?: Signal
   }
 }
 

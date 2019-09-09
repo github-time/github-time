@@ -14,15 +14,16 @@ module.exports = {
     data-detail="{{item.owner}}"
     catchtap="onIconClick"></image>
   <view class="repo-name">{{item.name}}</view>
-  <view class="repo-trending-star text-red">
-    +{{item.currentPeriodStars}}<text class="cuIcon-favorfill"></text>
-  </view>
+
   <view class="repo-description">{{item.description}}</view>
   <view class="repo-footer">
-    <view class="repo-language"><view class="repo-language-icon lang-{{utils.encode(item.language)}}"></view> {{item.language || 'Null'}}</view>
+    <view class="repo-language">
+      <view class="repo-language-icon lang-{{utils.encode(item.language)}}"></view> {{item.language || 'Null'}}
+    </view>
     <view class="repo-meta">
-      <text class="cuIcon-favor"></text> {{item.stargazers_count}}
-      <text class="cuIcon-fork"></text> {{item.forks_count}}
+      <text class="repo-meta-icon cuIcon-favorfill text-red">+{{item.currentPeriodStars}}</text>
+      <text class="repo-meta-icon cuIcon-favor">{{item.stargazers_count}}</text>
+      <text class="repo-meta-icon cuIcon-fork">{{item.forks_count}}</text>
     </view>
   </view>
 </template>

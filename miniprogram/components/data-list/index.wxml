@@ -1,5 +1,6 @@
 <!--index.wxml-->
 <import src="./templates/trending-repo.wxml" />
+<import src="./templates/trending-user.wxml" />
 <import src="./templates/repo.wxml" />
 <mp-load-more wx:if="{{list.length===1 && list[0]===null}}" loading></mp-load-more>
 <mp-load-more wx:elif="{{list.length===0}}" no-data></mp-load-more>

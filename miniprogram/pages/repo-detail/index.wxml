@@ -1,8 +1,10 @@
 <!--miniprogram/pages/repo-detail/index.wxml-->
-<navigation-bar bgColor="bg-gradual-green" isBack="{{true}}">
+<navigation-bar bgColor="bg-gradual-green" isBack="{{!fromShare}}" showHome="{{fromShare}}">
   <view slot="backText">返回</view>
   <view slot="content">项目详情</view>
+  <view wx:if="{{fromShare}}" slot="homeText">返回首页</view>
 </navigation-bar>
+
 <wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">
   <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
 </wux-tabs>
@@ -12,6 +14,15 @@
     <wux-wing-blank size="default">
       <wux-white-space></wux-white-space>
       <wux-card full title="{{repoDetail.full_name}}" actions="{{ actions }}" bind:action="onAction">
+        <view slot="extra">
+          <wux-button
+              clear
+              type="balanced"
+              slot="right"
+              open-type="share">
+              <text  class="sidebar-icon cuIcon-share"></text>
+            </wux-button>
+        </view>
         <view slot="body">
           {{repoDetail.description}}
         </view>

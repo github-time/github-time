@@ -10,7 +10,7 @@
       <text class="text">正在加载</text>
     </block>
     <blcok wx:else>
-      <text class="cuIcon-notice"></text>
+      <text class="cuIcon-attention"></text>
       <text class="no-data-text text">点击加载更多</text>
     </blcok>
   </view>

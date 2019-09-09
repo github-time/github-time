@@ -5,9 +5,13 @@
 
 <wux-fab-button position="bottomRight" buttons="{{ buttons }}" bind:click="onActionClick" />
 
-<wux-tabs wux-class="bordered" controlled current="{{ key }}" bindchange="onTabsChange">
+<wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">
   <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
 </wux-tabs>
+
+<view class="info">
+  {{current==='repos' ? repoSinceDisplay : userSinceDisplay}}趋势 > 语言: {{(current==='repos' ? repoLanguageDisplay : userLanguageDisplay) || '所有'}}
+</view>
 
 <mp-fill-view>
   <swiper class="fill" current="{{ index }}" bindchange="onSwiperChange">
@@ -18,7 +22,10 @@
         />
     </swiper-item>
     <swiper-item>
-      开发者
+      <mp-data-list
+        list="{{userList}}"
+        item-template="trending-user"
+        />
     </swiper-item>
   </swiper>
 </mp-fill-view>
