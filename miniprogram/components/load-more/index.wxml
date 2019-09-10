@@ -1,7 +1,10 @@
-<!--index.wxml-->
-<wux-divider>
+<wux-divider wux-class="wux-divider">
   <view class="loadmore">
-    <blcok wx:if="{{noData}}">
+    <blcok wx:if="{{error}}">
+      <text class="cuIcon-repair"></text>
+      <text class="no-data-text text">出错了，请重试</text>
+    </blcok>
+    <blcok wx:elif="{{noData}}">
       <text class="cuIcon-notice"></text>
       <text class="no-data-text text">没有更多数据了</text>
     </blcok>

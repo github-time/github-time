@@ -1,4 +1,8 @@
 /**index.wxss**/
+.wux-divider {
+    margin: 10rpx 0 20rpx;
+}
+
 .loadmore {
 	display: inline-block;
     vertical-align: middle;

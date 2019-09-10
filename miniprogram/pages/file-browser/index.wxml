@@ -25,7 +25,7 @@
   </view>
 </view>
 
-<mp-fill-view>
+<mp-fill-view bind:tap="onTapViewer">
   <mp-markdown wx:if="{{fileType === 'md'}}" content="{{fileContent}}"></mp-markdown>
   <view wx:elif="{{fileType === 'img'}}">图片</view>
   <mp-code-highlight wx:else code="{{fileContent}}" language="{{fileType}}"></mp-code-highlight>

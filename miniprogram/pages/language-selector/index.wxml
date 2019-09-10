@@ -3,7 +3,7 @@
   <view slot="content">选择编程语言</view>
 </navigation-bar>
 <mp-fill-view>
-  <wux-index height="100%" bind:change="onChange">
+  <wux-index height="100%">
     <wux-index-item wx:for="{{ alphabet }}" wx:key="" name="{{ item.initial }}">
       <view class="demo-item"
         wx:for="{{ item.cells }}"

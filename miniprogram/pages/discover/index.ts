@@ -5,6 +5,10 @@ import github from '../../utils/githubApi'
 //获取应用实例
 // import { IMyApp } from '../../app'
 // const app = getApp<IMyApp>()
+type RepoList = {
+  status: string,
+  data: github.repos.SearchResultItem[]
+}
 
 Page({
   data: {
@@ -13,9 +17,16 @@ Page({
     query: '',
     queriedPageNo: 0,
     pageSize: 10,
-    repoList: [] as github.repos.SearchResultItem[],
+    repoList: {
+      status: 'done',
+      data: []
+    } as RepoList,
     showFilterView: false,
     filters: {}
+  },
+  onShow(this: any) {
+    const tabBar = this.getTabBar()
+    if (tabBar) tabBar.init()
   },
   onToggleFilter() {
     this.setData!({
@@ -98,32 +109,34 @@ Page({
     console.log('do search:', query)
     this.data.queriedPageNo = 0
     this.setData!({
-      repoList: [null]
+      repoList: { status: 'loading' }
     })
-    try {
-      const searchResult = await github.searchRepositories({
-        query,
-        pageSize: this.data.pageSize
-      })
-      await new Promise((resolve) => { setTimeout(resolve, 1000)})
-      this.setData!({ repoList: searchResult.items })
-    } catch (e) {
-
-    }
+    const result = await github.searchRepositories({
+      query,
+      pageSize: this.data.pageSize
+    })
+    await new Promise((resolve) => { setTimeout(resolve, 1000)})
+    this.setData!({
+      repoList: {
+        status: result.status,
+        data: result.data!.items
+      }
+    })
   },
   async onLoadMore () {
-    const toQueryPageNo = Math.floor(this.data.repoList.length / this.data.pageSize) + 1
+    const toQueryPageNo = Math.floor(this.data.repoList.data.length / this.data.pageSize) + 1
     if (this.data.queriedPageNo < toQueryPageNo) {
-      try {
-        const repos: github.repos.SearchResult = await github.searchRepositories({
-          query: this.data.query,
-          pageSize: this.data.pageSize,
-          pageNo: toQueryPageNo
-        })
-        this.setData!({ repoList: this.data!.repoList.concat(repos.items) })
-      } catch (e) {
-
-      }
+      const result = await github.searchRepositories({
+        query: this.data.query,
+        pageSize: this.data.pageSize,
+        pageNo: toQueryPageNo
+      })
+      this.setData!({
+        repoList: {
+          status: result.status,
+          data: this.data!.repoList.data.concat(result.data!.items)
+        }
+      })
     }
   }
 })

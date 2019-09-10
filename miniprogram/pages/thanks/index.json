@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "wux-cell-group": "/common/lib/wux/cell-group/index",
+    "mp-fill-view": "/common/components/fill-view/index",
+    "mp-data-list": "/components/data-list/index"
+  }
+}

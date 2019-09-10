@@ -4,15 +4,9 @@ import Page from '../../common/page/index'
 // import { IMyApp } from '../../app'
 
 // const app = getApp<IMyApp>()
-
-// import jsfile from '../../mock/jsfile'
-// import mdfile from '../../mock/mdfile'
-
 Page({
   data: {
-    myContent: '',
-    myLanguage: '',
-    myCode: ''
+
   },
   onLoad() {
 

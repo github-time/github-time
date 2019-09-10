@@ -12,14 +12,24 @@ const SINCE_MAP = {
   monthly: '月'
 }
 
+type RepoList = {
+  status: string,
+  data?: github.trending.Repository[]
+}
+
+type UserList = {
+  status: string,
+  data?: github.trending.Developer[]
+}
+
 Page({
   data: {
     current: 'repos',
     index: 0,
-    repoSince: 'daily',
+    repoSince: 'daily' as 'daily' | 'weekly' | 'monthly',
     repoSinceDisplay: SINCE_MAP['daily'],
     repoLanguage: '',
-    userSince: 'daily',
+    userSince: 'daily' as 'daily' | 'weekly' | 'monthly',
     userSinceDisplay: SINCE_MAP['daily'],
     userLanguage: '',
     tabs: [
@@ -58,8 +68,8 @@ Page({
       }
     ],
 
-    repoList: [null] as github.trending.Repository[] | [null],
-    userList: [null] as github.trending.Developer[] | [null]
+    repoList: { status: 'init' } as RepoList,
+    userList: { status: 'init' } as UserList
   },
 
   async loadReposTrending ({ since = 'daily', language = '' } : { since?: 'daily' | 'weekly' | 'monthly', language?: string } = {}) {
@@ -67,30 +77,37 @@ Page({
       repoSince: since,
       repoSinceDisplay: SINCE_MAP[since],
       repoLanguage: language,
-      repoList: [null]
+      repoList: { status: 'loading' }
     })
 
     wx.showLoading({
       title: `显示${SINCE_MAP[since]}趋势`
     })
     const t = new Date().getTime()
-    const data = (await github.getGithubReposTrending({ since, language })).map((item) => {
-      return {
-        name: item.name,
-        full_name: `${item.author}/${item.name}`,
-        description: item.description,
-        language: item.language,
-        currentPeriodStars: item.currentPeriodStars,
-        stargazers_count: item.stars,
-        forks_count: item.forks,
-        owner: {
-          avatar_url: item.avatar
+    const result = await github.getGithubReposTrending({ since, language })
+    if (result.status === 'done') {
+      const data = result.data!.map((item) => {
+        return {
+          name: item.name,
+          full_name: `${item.author}/${item.name}`,
+          description: item.description,
+          language: item.language,
+          currentPeriodStars: item.currentPeriodStars,
+          stargazers_count: item.stars,
+          forks_count: item.forks,
+          owner: {
+            avatar_url: item.avatar
+          }
         }
-      }
-    })
+      })
+      // await new Promise((resolve) => { setTimeout(resolve, 1000) })
+      this.setData!({ repoList: {status: result.status, data }})
+    } else if (result.status === 'error') {
+      this.setData!({
+        repoList: result
+      })
+    }
     setTimeout(wx.hideLoading, 1000 - new Date().getTime() + t)
-    // await new Promise((resolve) => { setTimeout(resolve, 1000) })
-    this.setData!({ repoList: data })
   },
 
   async loadUsersTrending ({ since = 'daily', language = '' } : { since?: 'daily' | 'weekly' | 'monthly', language?: string } = {}) {
@@ -98,39 +115,49 @@ Page({
       userSince: since,
       userSinceDisplay: SINCE_MAP[since],
       erLanguage: language,
-      userList: [null]
+      userList: { status: 'loading' }
      })
 
     wx.showLoading({
       title: `显示${SINCE_MAP[since]}趋势`
     })
     const t = new Date().getTime()
-    const data = (await github.getGithubUsersTrending({ since, language })).map((user) => {
-      return {
-        name: user.repo.name,
-        full_name: `${user.username}/${user.repo.name}`,
-        description: user.repo.description,
-        html_url: user.repo.url,
-        owner: {
-          name: user.name,
-          login: user.username,
-          avatar_url: user.avatar,
-          type: user.type,
-          html_url: user.url
+    const result = await github.getGithubUsersTrending({ since, language })
+    if (result.status === 'done') {
+      const data = result.data!.map((user) => {
+        return {
+          name: user.repo.name,
+          full_name: `${user.username}/${user.repo.name}`,
+          description: user.repo.description,
+          html_url: user.repo.url,
+          owner: {
+            name: user.name,
+            login: user.username,
+            avatar_url: user.avatar,
+            type: user.type,
+            html_url: user.url
+          }
         }
-      }
-    })
+      })
+      // await new Promise((resolve) => { setTimeout(resolve, 1000) })
+      this.setData!({ userList: {status: result.status, data} })
+    } else if (result.status === 'error') {
+      this.setData!({
+        userList: result
+      })
+    }
     setTimeout(wx.hideLoading, 1000 - new Date().getTime() + t)
-    // await new Promise((resolve) => { setTimeout(resolve, 1000) })
-    this.setData!({ userList: data })
   },
 
   onLoad() {
-    this.loadReposTrending()
+    this.loadReposTrending({
+      language: this.data.repoLanguage,
+      since: this.data.repoSince
+    })
   },
-
   onShow(this: any) {
-    this.getTabBar().init()
+    const tabBar = this.getTabBar()
+    if (tabBar) tabBar.init()
     const signal = app.globalData.signal
     if (signal && signal.event === 'select-code-language' && new Date().getTime() - signal.timestamp < 500) {
       signal.timestamp = 0
@@ -146,6 +173,11 @@ Page({
         this.loadUsersTrending({since: this.data.userSince, language: signal.data.urlParam})
       }
     }
+  },
+
+  onRetry () {
+    this.initRepoTrending(true)
+    this.initUsersTrending(true)
   },
 
   onRepoListItemClick (e: any) {
@@ -164,9 +196,7 @@ Page({
         index,
     })
 
-    if (key === 'developers' && this.data.userList[0] === null) {
-      this.loadUsersTrending()
-    }
+    this.initUsersTrending()
   },
 
   onSwiperChange(e: any) {
@@ -177,6 +207,25 @@ Page({
       this.setData!({
         current: key,
         index,
+      })
+      this.initUsersTrending()
+    }
+  },
+
+  initRepoTrending (force: boolean = false) {
+    if (this.data.current === 'repos' && (force || this.data.userList.status === 'init')) {
+      this.loadReposTrending({
+        language: this.data.repoLanguage,
+        since: this.data.repoSince
+      })
+    }
+  },
+
+  initUsersTrending (force: boolean = false) {
+    if (this.data.current === 'developers' && (force || this.data.userList.status === 'init')) {
+      this.loadUsersTrending({
+        language: this.data.userLanguage,
+        since: this.data.userSince
       })
     }
   },

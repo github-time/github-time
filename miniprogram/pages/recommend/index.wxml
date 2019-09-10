@@ -19,12 +19,14 @@
       <mp-data-list
         list="{{repoList}}"
         item-template="trending-repo"
+        bind:retry="onRetry"
         />
     </swiper-item>
     <swiper-item>
       <mp-data-list
         list="{{userList}}"
         item-template="trending-user"
+        bind:retry="onRetry"
         />
     </swiper-item>
   </swiper>

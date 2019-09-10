@@ -1919,12 +1919,7 @@ Page({
       alphabet,
     })
   },
-  onChange (e: any) {
-    console.log('onChange', e.detail)
-  },
   onSelect (e: any) {
-    console.log('onSelect', e.currentTarget.dataset.detail)
-
     app.globalData.signal = {
       timestamp: new Date().getTime(),
       event: 'select-code-language',

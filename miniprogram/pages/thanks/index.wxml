@@ -1,0 +1,12 @@
+<!--miniprogram/pages/thanks/index.wxml-->
+<navigation-bar bgColor="bg-gradual-green" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">感谢</view>
+</navigation-bar>
+
+<wux-cell-group title="感谢以下开源项目">
+  <mp-data-list
+  list="{{repoList}}"
+  item-template="repo"
+  />
+</wux-cell-group>

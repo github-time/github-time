@@ -3,21 +3,36 @@ import Page from '../../common/page/index'
 import github from '../../utils/githubApi'
 
 //获取应用实例
-// import { IMyApp } from '../../app'
-// const app = getApp<IMyApp>()
+import { IMyApp } from '../../app'
+const app = getApp<IMyApp>()
+
+type RepoList = {
+  status: string,
+  data: github.repos.SearchResultItem[]
+}
 
 Page({
   data: {
+    githubConfig: {} as any,
     currentTab: 'recommend',
     owner: '',
     keyword: '',
     queriedPageNo: 0,
     pageSize: 10,
-    repoList: [] as github.repos.SearchResultItem[],
+    repoList: {
+      status: 'init'
+    } as RepoList,
     showFilterView: false
   },
   onLoad() {
-    this.doSearch('vaniship')
+    this.loadUserStaring()
+  },
+  onShow(this: any) {
+    const tabBar = this.getTabBar()
+    if (tabBar) tabBar.init()
+    if (app.settings.isGithubUserChanged(this)) {
+      this.loadUserStaring()
+    }
   },
   onToggleFilter() {
     this.setData!({
@@ -32,38 +47,47 @@ Page({
       showFilterView: false
     })
   },
-  async doSearch (owner: string) {
-    this.setData!({
-      owner
+  onGotoSettings () {
+    wx.navigateTo({
+      url: '/pages/settings/index'
     })
-    this.data.queriedPageNo = 0
-    wx.showLoading({
-      title: '正在加载'
-    })
-    try {
-      const searchResult = await github.getUserStaring({
+  },
+  async loadUserStaring () {
+    const githubConfig = this.data.githubConfig = app.settings.get('githubConfig', {})
+    const owner = githubConfig.user
+    if (owner) {
+      this.setData!({
+        githubConfig,
+        repoList: { status: 'loading' },
+        owner
+      })
+      this.data.queriedPageNo = 0
+      const result = await github.getUserStaring({
         owner: owner,
         pageSize: this.data.pageSize
       })
-      this.setData!({ repoList: searchResult })
-    } catch (e) {
-
+      this.setData!({ repoList: result })
+    } else {
+      this.setData!({
+        githubConfig,
+        repoList: { status: 'done', data: [] }
+      })
     }
-    wx.hideLoading()
   },
   async onLoadMore () {
-    const toQueryPageNo = Math.floor(this.data.repoList.length / this.data.pageSize) + 1
+    const toQueryPageNo = Math.floor(this.data.repoList.data.length / this.data.pageSize) + 1
     if (this.data.queriedPageNo < toQueryPageNo) {
-      try {
-        const repos: github.repos.SearchResultItem = await github.getUserStaring({
-          owner: this.data.owner,
-          pageSize: this.data.pageSize,
-          pageNo: toQueryPageNo
-        })
-        this.setData!({ repoList: this.data!.repoList.concat(repos) })
-      } catch (e) {
-
-      }
+      const result = await github.getUserStaring({
+        owner: this.data.owner,
+        pageSize: this.data.pageSize,
+        pageNo: toQueryPageNo
+      })
+      this.setData!({
+        repoList: {
+          status: result.status,
+          data: this.data!.repoList.data.concat(result.data!)
+        }
+      })
     }
   },
 })

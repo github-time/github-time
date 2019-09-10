@@ -59,6 +59,7 @@ function getFileInfo (path: string) {
 
 Page({
   data: {
+    lastTap: 0,
     fromShare: true,
     marginTop: 0,
     filePath: '',
@@ -120,6 +121,12 @@ Page({
       this.showFileTree ()
     }
   },
+  onTapViewer (e: any) {
+    if (e.timeStamp - this.data.lastTap < 250) {
+      this.showFileTree()
+    }
+    this.data.lastTap = e.timeStamp
+  },
   onViewFileClick (e: any) {
     this.viewFile(this.data.repoDetail.full_name, e.detail.path)
   },
@@ -140,23 +147,33 @@ Page({
     })
   },
 
-  async loadRepositoryDetail (fullRepoName:string) {
-    const repoDetail = await github.getRepositoryDetail(fullRepoName)
-    this.setData!({
-      repoDetail
-    })
+  async loadRepositoryDetail (fullRepoName: string) {
+    const result = await github.getRepositoryDetail(fullRepoName)
+    if (result.status === 'done') {
+      this.setData!({
+        repoDetail: result.data
+      })
+    } else if (result.status === 'error') {
+      console.error('Get repository detail failed: ', result.error)
+    }
   },
 
   async loadFileTree (fullRepoName:string) {
     wx.showLoading({
       title: '正在加载'
     })
-    try {
-      const treeData = parseTree(await github.getFileTree({ fullRepoName })).tree
-      this.setData!({
-        treeData
-      });
-    } catch (e) {}
+    const result = await github.getFileTree({ fullRepoName })
+    if (result.status === 'done') {
+      try {
+        this.setData!({
+          treeData: parseTree(result.data!).tree
+        });
+      } catch (e) {
+        console.error('Parse file tree failed: ', e)
+      }
+    } else if (result.status === 'error'){
+      console.error('Get file tree failed: ', result.error)
+    }
     wx.hideLoading()
   },
 
@@ -164,12 +181,12 @@ Page({
     wx.showLoading({
       title: '正在加载'
     })
-    try {
-      const content = await github.getFileContent({
-        fullRepoName,
-        filePath
-      })
-      console.log('content:', content)
+    const result= await github.getFileContent({
+      fullRepoName,
+      filePath
+    })
+    if (result.status === 'done') {
+      const content = result.data
       const fileInfo = getFileInfo(filePath)
       this.setData!({
         showSidebar: false,
@@ -177,7 +194,9 @@ Page({
         fileContent: content,
         fileType: fileInfo.type
       })
-    } catch (e) {}
+    } else if (result.status === 'error') {
+      console.error('Get file content failed: ', result.error)
+    }
     wx.hideLoading()
   }
 })

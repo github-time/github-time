@@ -1,7 +1,8 @@
-<wux-tabbar controlled current="{{ current }}" bind:change="onChange">
+<wux-tabbar wux-class="wux-tabbar" controlled current="{{ current }}" bind:change="onChange">
   <wux-tabbar-item wx:for="{{ list }}" wx:key="index" key="{{item.key}}">
     <text slot="icon-on" class="cuIcon-{{item.icon}}"></text>
     <text slot="icon-off" class="cuIcon-{{item.icon}}"></text>
     {{item.text}}
   </wux-tabbar-item>
 </wux-tabbar>
+<view class="wux-tabbar-fix"></view>

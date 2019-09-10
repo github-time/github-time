@@ -69,8 +69,8 @@
     </view>
     <view class="filter-view-group-title">编程语言</view>
     <mp-button-group multi-select list="{{languages}}" bindchange="onLanguagesChange"></mp-button-group>
-    <view class="filter-view-group-title">主题</view>
-    <mp-button-group multi-select list="{{topics}}" bindchange="onTopicsChange"></mp-button-group>
+    <!-- <view class="filter-view-group-title">主题</view>
+    <mp-button-group multi-select list="{{topics}}" bindchange="onTopicsChange"></mp-button-group> -->
     <view class="filter-view-group-title">最新提交</view>
     <mp-button-group list="{{updateTime}}" bindchange="onUpdateTimeChange"></mp-button-group>
   </view>

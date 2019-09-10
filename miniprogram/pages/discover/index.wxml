@@ -48,6 +48,7 @@
     item-template="repo"
     show-load-more
     auto-load-more
+    bind:retry="onLoadMore"
     bind:loadmore="onLoadMore"
     />
 </mp-fill-view>

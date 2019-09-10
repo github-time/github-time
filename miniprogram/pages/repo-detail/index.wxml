@@ -32,8 +32,8 @@
           Fork: {{repoDetail.forks_count}}
         </view>
       </wux-card>
-      <wux-white-space></wux-white-space>
-      <wux-card full title="标签">
+      <wux-white-space wx:if="{{false}}"></wux-white-space>
+      <wux-card wx:if="{{false}}" full title="标签">
         <view slot="body">
           <view class="tags">
             <button
@@ -69,7 +69,7 @@
 
   </view>
   <view hidden="{{current!=='readme'}}">
-    <mp-load-more wx:if="{{!readmeContent}}"></mp-load-more>
+    <mp-load-more wx:if="{{!readmeContent}}" loading></mp-load-more>
     <mp-markdown wx:else content="{{readmeContent}}"></mp-markdown>
   </view>
   <view hidden="{{current!=='issues'}}">

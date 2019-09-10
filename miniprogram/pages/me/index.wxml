@@ -1,4 +1,5 @@
 <!--index.wxml-->
+<view style="position: absolute; top: 0; left:0; bottom:50vh; right:0;" class="bg-gradual-green"></view>
 <navigation-bar class="text-white">
   <view slot="content">Github Time</view>
 </navigation-bar>
@@ -7,44 +8,59 @@
   <wux-wing-blank size="large">
     <view class="bg-white light top-radius shadow-warp margin-top">
       <wux-card bordered="{{false}}" title="{{repoDetail.full_name}}" actions="{{ actions }}" bind:action="onAction">
-        <view slot="body">
-          username
+        <view class="userinfo" slot="body">
+          <view wx:if="{{!hasUserInfo && canIUse}}" class="userinfo-avatar">
+            <view class="cuIcon-people text-gray text-center userinfo-avatar-icon"></view>
+          </view>
+          <image wx:else class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+          <view>
+            <button wx:if="{{!hasUserInfo && canIUse}}" class="cu-btn bg-green" style="width: 300rpx" open-type="getUserInfo" bindgetuserinfo="getUserInfo">登录</button>
+            <view wx:else class="userinfo-nickname">{{userInfo.nickName}}</view>
+            <view class="userinfo-github-user margin-top-sm">
+              <view wx:if="{{githubConfig.user}}">Github User: {{githubConfig.user}}</view>
+              <button wx:else class="cu-btn bg-green" style="width: 300rpx" bind:tap="showSettings">配置 Github 账户</button>
+            </view>
+          </view>
         </view>
         <view slot="footer">
-          Issues: {{repoDetail.open_issues_count}}
-          Star: {{repoDetail.stargazers_count}}
-          Fork: {{repoDetail.forks_count}}
+          <block wx:if="{{false}}" >
+            Issues: {{repoDetail.open_issues_count}}
+            Star: {{repoDetail.stargazers_count}}
+            Fork: {{repoDetail.forks_count}}
+          </block>
         </view>
       </wux-card>
     </view>
   </wux-wing-blank>
 
   <view class="bg">
-    <wux-tabs wux-class="bordered" controlled current="{{ key }}" bindchange="onTabsChange">
-      <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
-    </wux-tabs>
 
-    <swiper class="my-dashboard" current="{{ index }}" bindchange="onSwiperChange">
-      <swiper-item>
-        <mp-data-list
-          list="{{repoList}}"
-          show-load-more
-          bind:loadmore="onLoadMore"
-          />
-      </swiper-item>
-      <swiper-item>
-        <mp-todo-coming-soon />
-      </swiper-item>
-      <swiper-item>
-        <mp-todo-coming-soon />
-      </swiper-item>
-      <swiper-item>
-        <mp-todo-coming-soon />
-      </swiper-item>
-      <swiper-item>
-        <mp-todo-coming-soon />
-      </swiper-item>
-    </swiper>
+    <block wx:if="{{githubConfig.user}}">
+      <wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">
+        <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
+      </wux-tabs>
+      <swiper class="my-dashboard" current="{{ index }}" bindchange="onSwiperChange">
+        <swiper-item>
+          <mp-data-list
+            list="{{repoList}}"
+            show-load-more
+            bind:loadmore="loadMoreUserRepos"
+            />
+        </swiper-item>
+        <swiper-item>
+          <mp-todo-coming-soon />
+        </swiper-item>
+        <swiper-item>
+          <mp-todo-coming-soon />
+        </swiper-item>
+        <swiper-item>
+          <mp-todo-coming-soon />
+        </swiper-item>
+        <swiper-item>
+          <mp-todo-coming-soon />
+        </swiper-item>
+      </swiper>
+    </block>
 
     <wux-cell-group title="关于 Github Time">
       <wux-cell title="赞赏支持" is-link bind:tap="showQrcode"></wux-cell>
@@ -52,13 +68,14 @@
       <wux-cell wx:if="{{false}}" title="看广告支持" is-link bind:tap="showAd"></wux-cell>
       <wux-cell title="意见反馈" is-link open-type="feedback" bind:feedback="onFeedback"></wux-cell>
       <wux-cell wx:if="{{false}}" title="商务合作" is-link></wux-cell>
-      <wux-cell title="更新日志" is-link></wux-cell>
+      <wux-cell title="更新日志" is-link bind:tap="showLogs"></wux-cell>
+      <wux-cell title="感谢" is-link bind:tap="showThanks"></wux-cell>
     </wux-cell-group>
 
     <wux-white-space></wux-white-space>
 
     <wux-cell-group>
-      <wux-cell title="设置" is-link bind:contact="onContact"></wux-cell>
+      <wux-cell title="设置" is-link bind:tap="showSettings"></wux-cell>
     </wux-cell-group>
     <wux-white-space></wux-white-space>
   </view>

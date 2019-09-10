@@ -1,7 +1,30 @@
 /**index.wxss**/
 
-page {
-  background-image: var(--gradualGreen);
+.userinfo {
+  display: flex;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  border: 1px solid var(--background-color-base)
+}
+
+.userinfo-avatar-icon {
+  font-size: 64rpx;
+  line-height: 2em;
+}
+
+.userinfo-nickname {
+  font-size: var(--font-size-large);
+  color: var(--color-text-primary);
+}
+
+.userinfo-github-user {
+  font-size: var(--font-size-small);
+  color: var(--color-text-regular);
 }
 
 .bg {

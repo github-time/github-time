@@ -13,8 +13,11 @@ Component({
       value: false
     },
     list: {
-      type: Array,
-      value: [null],
+      type: Object,
+      value: {
+        status: 'loading',
+        data: []
+      },
       observer (this: any, val: any[]) {
         if (val && val[0] !== null) {
           this.setData!({
@@ -53,12 +56,18 @@ Component({
         url: '../owner-detail/index'
       })
     },
-    onLoadMore (e) {
-      if (!this.data.showLoadMore) return
-      if (e.type !== 'scrolltolower' || this.data.autoLoadMore) {
-        this.setData!({
-          isLoading: true
-        })
+    onScrollEnd (e) {
+      if (this.data.autoLoadMore) {
+        this.setData!({isLoading: true})
+        this.triggerEvent('loadmore', e)
+      }
+    },
+    onLoadMoreClick (e) {
+      if (this.data.list.status === 'error') {
+        this.setData!({isLoading: true})
+        this.triggerEvent('retry', e)
+      } else {
+        this.setData!({isLoading: true})
         this.triggerEvent('loadmore', e)
       }
     }

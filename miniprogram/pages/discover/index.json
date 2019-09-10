@@ -1,6 +1,5 @@
 {
   "usingComponents": {
-    "mp-load-more": "/components/load-more/index",
     "mp-button-group": "/common/components/button-group/index",
     "mp-fill-view": "/common/components/fill-view/index",
     "mp-data-list": "/components/data-list/index",

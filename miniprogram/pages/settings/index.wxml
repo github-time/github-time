@@ -1,0 +1,21 @@
+<!--miniprogram/pages/settings/index.wxml-->
+<navigation-bar bgColor="bg-gradual-green" isBack="{{true}}">
+  <view slot="backText">返回</view>
+  <view slot="content">设置</view>
+</navigation-bar>
+
+<form>
+  <view class="margin-top padding-sm text-gray">Github 配置</view>
+	<view class="cu-form-group">
+		<view class="title">Github User</view>
+		<wux-input controlled class="text-right" placeholder="Github 用户名" value="{{githubConfig.user}}" bind:change="onGithubUserChange"></wux-input>
+	</view>
+	<view class="cu-form-group">
+		<view class="title">Github Token</view>
+		<wux-input controlled class="text-right" placeholder="Github 令牌" value="{{githubConfig.token}}" bind:change="onGithuTokenChange"></wux-input>
+	</view>
+</form>
+
+<view class="padding flex flex-direction">
+  <button class="cu-btn bg-green lg" bind:tap="onSave">确定</button>
+</view>

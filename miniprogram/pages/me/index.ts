@@ -3,12 +3,20 @@ import Page from '../../common/page/index'
 import github from '../../utils/githubApi'
 
 //获取应用实例
-// import { IMyApp } from '../../app'
-// const app = getApp<IMyApp>()
+import { IMyApp } from '../../app'
+const app = getApp<IMyApp>()
+
+type RepoList = {
+  status: string,
+  data: github.repos.SearchResultItem[]
+}
 
 Page({
   data: {
-    owner: '',
+    githubConfig: {} as any,
+    userInfo: {},
+    hasUserInfo: false,
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
     pageSize: 5,
     queriedPageNo: 0,
     current: 'repos',
@@ -34,19 +42,74 @@ Page({
         title: '留言'
       }
     ],
-    repoList: [] as github.repos.SearchResultItem[]
+    repoList: {
+      status: 'init'
+    } as RepoList
   },
   onLoad() {
-    this.loadUserRepos('vaniship')
+    if (app.globalData.userInfo) {
+      this.setData!({
+        userInfo: app.globalData.userInfo,
+        hasUserInfo: true
+      })
+    } else if (this.data.canIUse){
+      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+      // 所以此处加入 callback 以防止这种情况
+      app.userInfoReadyCallback = (res: any) => {
+        this.setData!({
+          userInfo: { ...this.data.userInfo, ...res.userInfo },
+          hasUserInfo: true
+        })
+      }
+    } else {
+      // 在没有 open-type=getUserInfo 版本的兼容处理
+      wx.getUserInfo({
+        success: res => {
+          app.globalData.userInfo = res.userInfo
+          this.setData!({
+            userInfo: res.userInfo,
+            hasUserInfo: true
+          })
+        }
+      })
+    }
+    this.setData!({userInfo: this.data.userInfo})
+    this.loadUserRepos()
+  },
+  onShow(this: any) {
+    const tabBar = this.getTabBar()
+    if (tabBar) tabBar.init()
+    if (app.settings.isGithubUserChanged(this)) {
+      this.loadUserRepos()
+    }
+  },
+
+  getUserInfo (e: any) {
+    app.globalData.userInfo = e.detail.userInfo
+    this.setData!({
+      userInfo: e.detail.userInfo,
+      hasUserInfo: true
+    })
   },
   onTabsChange(e: any) {
     const { key } = e.detail
     const index = this.data.tabs.map((n) => n.key).indexOf(key)
 
     this.setData!({
-        key,
-        index,
+      current: key,
+      index,
     })
+  },
+  onSwiperChange(e: any) {
+    const { current: index, source } = e.detail
+    const { key } = this.data.tabs[index]
+
+    if (!!source) {
+      this.setData!({
+        current: key,
+        index,
+      })
+    }
   },
   showAd () {
     let rewardedVideoAd: any
@@ -72,48 +135,70 @@ Page({
     }
   },
   showQrcode () {
-    const zanCodeUrl = 'https://6769-github-time-mp-1300157824.tcb.qcloud.la/common/images/github-time-zancode.jpeg?sign=af482ff2a4fe00cc50d7812b1b27d752&t=1567909481'
+    const zanCodeUrl = app.globalData.zanCodeUrl
     wx.previewImage({
       urls: [zanCodeUrl],
       current: zanCodeUrl
     })
   },
-
-  async loadUserRepos (owner: string) {
-    this.setData!({
-      owner
+  showThanks () {
+    wx.navigateTo({
+      url: '/pages/thanks/index'
     })
-
-    if (!owner) return
-
-    console.log('list user repos:', owner)
-    this.data.queriedPageNo = 0
-    wx.showLoading({
-      title: '正在加载'
+  },
+  showLogs () {
+    wx.navigateTo({
+      url: '/pages/logs/index'
     })
-    try {
+  },
+  showSettings () {
+    wx.navigateTo({
+      url: '/pages/settings/index'
+    })
+  },
+
+  async loadUserRepos () {
+    const githubConfig = this.data.githubConfig =  app.settings.get('githubConfig', {})
+    const owner = githubConfig.user
+    if (owner) {
+      this.data.queriedPageNo = 0
+      wx.showLoading({
+        title: '正在加载'
+      })
       const repos = await github.getUserRepositories({
         owner,
         pageSize: this.data.pageSize
       })
-      this.setData!({ repoList: repos })
-    } catch (e) {
-
+      this.setData!({
+        githubConfig,
+        repoList: repos
+      })
+      wx.hideLoading()
+    } else {
+      this.setData!({
+        githubConfig,
+        repoList: { status: 'done', data: [] }
+      })
     }
-    wx.hideLoading()
   },
-  async onLoadMore () {
-    const toQueryPageNo = Math.floor(this.data.repoList.length / this.data.pageSize) + 1
-    if (this.data.queriedPageNo < toQueryPageNo) {
-      try {
-        const repos = await github.getUserRepositories({
-          owner: this.data.owner,
+  async loadMoreUserRepos () {
+    const owner = this.data.githubConfig.user
+    if (owner) {
+      const toQueryPageNo = Math.floor(this.data.repoList.data.length / this.data.pageSize) + 1
+      if (this.data.queriedPageNo < toQueryPageNo) {
+        const result = await github.getUserRepositories({
+          owner,
           pageSize: this.data.pageSize,
           pageNo: toQueryPageNo
         })
-        this.setData!({ repoList: this.data!.repoList.concat(repos) })
-      } catch (e) {
-
+        this.setData!({
+          repoList: {
+            status: result.status,
+            data: result.data
+              ? this.data!.repoList.data.concat(result.data)
+              : this.data!.repoList.data
+          }
+        })
       }
     }
   }

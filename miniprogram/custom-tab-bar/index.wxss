@@ -1,0 +1,8 @@
+.wux-tabbar {
+  height: 100rpx;
+}
+
+.wux-tabbar-fix {
+  height: calc(env(safe-area-inset-bottom) / 2);
+  background: white;
+}

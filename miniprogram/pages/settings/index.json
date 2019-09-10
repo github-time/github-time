@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "wux-input": "/common/lib/wux/input/index",
+    "wux-cell": "/common/lib/wux/cell/index",
+    "wux-cell-group": "/common/lib/wux/cell-group/index"
+  }
+}

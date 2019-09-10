@@ -1,4 +1,4 @@
-/* miniprogram/pages/owner-detail/index.wxss */
+/* miniprogram/pages/repo-detail/index.wxss */
 
 .top-simple-tab-bar {
   font-size: 14px;

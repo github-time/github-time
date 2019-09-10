@@ -12,6 +12,10 @@ Component({
     loading: {
       type: Boolean,
       value: false
+    },
+    error: {
+      type: Boolean,
+      value: false
     }
   }
 })

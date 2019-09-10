@@ -65,7 +65,7 @@ Page({
     readmeContent: '',
     repoDetail: {
       id: undefined as undefined|number,
-      full_name: 'udock/vue-cli-plugin-udock'
+      full_name: 'vuejs/vue'
     },
     tags: [] as string[]
   },
@@ -97,71 +97,63 @@ Page({
       this.loadTags(repoDetail.id)
     } else {
       (async () => {
-        const detail = app.globalData.repoDetail = await this.loadRepositoryDetail(repoDetail.full_name)
-        this.loadTags(detail.id)
+        const result = await github.getRepositoryDetail(repoDetail.full_name)
+        if (result.status === 'done') {
+          const detail = app.globalData.repoDetail = result.data!
+          this.setData!({
+            repoDetail: detail
+          })
+          this.loadTags(detail.id)
+        } else if (result.status === 'error') {
+          console.error('Load repository detail failed: ', result.error)
+        }
       })()
     }
   },
   onTabsChange(e: any) {
     const { key } = e.detail
-
-    if (!this.data.readmeLoaded && key === 'readme') {
-      this.data.readmeLoaded = true;
-      (async () => {
-        try {
-          const readmeContent = await github.getReadmeContent({
-            fullRepoName: this.data.repoDetail.full_name
-          })
-          this.setData!({
-            readmeContent
-          })
-        } catch (e) {}
-      })()
-    }
-
     const index = this.data.tabs.map((n) => n.key).indexOf(key)
-
     this.setData!({
         current: key,
         index,
     })
+    this.loadReadmeContent()
   },
 
-  catchTouchMove () {
-    return false
-  },
+  // onSwiperChange(e: any) {
+  //   const { current: index, source } = e.detail
+  //   const { key } = this.data.tabs[index]
 
-  onSwiperChange(e: any) {
-    const { current: index, source } = e.detail
-    const { key } = this.data.tabs[index]
+  //   if (!!source) {
+  //     this.setData!({
+  //       current: key,
+  //       index,
+  //     })
+  //     this.loadReadmeContent()
+  //   }
+  // },
 
-    if (!this.data.readmeLoaded && key === 'readme') {
+  async loadReadmeContent () {
+    if (!this.data.readmeLoaded && this.data.current === 'readme') {
       this.data.readmeLoaded = true;
       wx.showLoading({
         title: '正在加载'
-      });
-      (async () => {
-        try {
-          const readmeContent = await github.getReadmeContent({
-            fullRepoName: this.data.repoDetail.full_name
-          })
-          this.setData!({
-            readmeContent
-          })
-        } catch (e) {}
-        wx.hideLoading()
-      })()
-    }
-
-    if (!!source) {
-      this.setData!({
-        key,
-        index,
       })
+      const result = await github.getReadmeContent({
+        fullRepoName: this.data.repoDetail.full_name
+      })
+      if (result.status === 'done') {
+        this.setData!({
+          readmeContent: result.data
+        })
+      } else if (result.status === 'error'){
+        console.error('Get readme content failed: ', result.error)
+      }
+      wx.hideLoading()
     }
   },
+
   onAction (e: any) {
-    console.log('action', e)
     if (e.detail.action.type === 'viewCode') {
       wx.navigateTo({
         url: '/pages/file-browser/index'
@@ -205,13 +197,5 @@ Page({
     this.setData!({
       tags
     })
-  },
-
-  async loadRepositoryDetail (fullRepoName:string) {
-    const repoDetail = await github.getRepositoryDetail(fullRepoName)
-    this.setData!({
-      repoDetail
-    })
-    return repoDetail
-  },
+  }
 })
