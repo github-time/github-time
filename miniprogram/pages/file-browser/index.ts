@@ -105,7 +105,7 @@ Page({
 
     if (app.globalData.repoDetail) {
       this.setData!({
-        fromShare: false,
+        fromShare: !!(options.r || options.p),
         repoDetail: app.globalData.repoDetail
       })
     } else {

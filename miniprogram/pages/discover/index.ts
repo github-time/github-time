@@ -43,6 +43,11 @@ Page({
       keyword: e.detail.value
     })
   },
+  onKeywordClear () {
+    this.setData!({
+      keyword: ''
+    })
+  },
   onSearchCancel () {
     this.setData!({
       showFilterView: false

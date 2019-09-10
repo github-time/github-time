@@ -7,10 +7,10 @@
 }
 
 .repo-icon {
-  height: 96rpx;
-  width: 96rpx;
+  height: 96rpx !important;
+  width: 96rpx !important;
   float: left;
-  margin: 0 16rpx 32rpx 0;
+  margin: 0 24rpx 32rpx 0;
   border-radius: 50%;
   border: 1px solid var(--background-color-base)
 }

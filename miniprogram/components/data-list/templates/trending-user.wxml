@@ -12,7 +12,11 @@ module.exports = {
     <image
       class="repo-icon"
       src="{{item.owner.avatar_url}}"
-      ></image>
+      data-detail="{{item.owner}}"
+      error="load\nfailed"
+      >
+      <!-- <image class="repo-icon" src="{{item.owner.avatar_placeholder}}" slot="loading" /> -->
+    </image>
     <view class="user-name text-cut">
       <text class="cuIcon-people"></text>
       {{item.owner.name}}

@@ -1,6 +1,14 @@
 //index.js
 //获取应用实例
 import { IMyApp } from '../../app'
+// import * as Identicon from 'identicon.js'
+// import md5 = require('blueimp-md5')
+
+// const options = {
+//   margin: 0.2,                              // 20% margin
+//   size: 48,                                // 420px square
+//   format: 'png'                             // use SVG instead of PNG
+// }
 
 const app = getApp<IMyApp>()
 Component({
@@ -18,9 +26,17 @@ Component({
         status: 'loading',
         data: []
       },
-      observer (this: any, val: any[]) {
-        if (val && val[0] !== null) {
+      observer (this: any, val: any) {
+        if (val && val.status === 'done') {
+          // val.data.forEach((element: any) => {
+          //   if (element.owner.avatar_url) {
+          //     const hash = md5(element.owner.avatar_url)
+          //     // @ts-ignore
+          //     element.owner.avatar_placeholder = `data:image/png;base64,${new Identicon(hash, options).toString()}`
+          //   }
+          // })
           this.setData!({
+            // list: val,
             isLoading: false
           })
         }

@@ -2,6 +2,7 @@
   "component": true,
   "usingComponents": {
     "wux-white-space": "/common/lib/wux/white-space/index",
+    "wux-image": "/common/lib/wux/image/index",
     "mp-load-more": "../load-more/index"
   }
 }

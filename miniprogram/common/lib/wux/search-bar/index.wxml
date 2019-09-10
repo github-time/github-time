@@ -32,6 +32,6 @@
             <text class="{{ classes.text }}">{{ placeholder }}</text>
         </label>
     </view>
-    <view class="{{ classes.cancel }}" wx:if="{{ showCancel || inputFocus || (inputValue && inputValue.length > 0) }}" bindtap="onCancel">{{ cancelText }}</view>
+    <!-- <view class="{{ classes.cancel }}" wx:if="{{ showCancel || inputFocus || (inputValue && inputValue.length > 0) }}" bindtap="onCancel">{{ cancelText }}</view> -->
     <slot name="right"></slot>
 </view>

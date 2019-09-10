@@ -79,3 +79,5 @@
     <button class="btn-primary" type="primary" size="mini" bindtap="onSubmit">完成</button>
   </view>
 </view>
+
+<view hidden="{{hidden}}" class="back" bind:tap="onCancel"></view>

@@ -9,7 +9,7 @@
 
 .filter-view-filters {
   padding: 0 20rpx;
-  max-height: 60vh;
+  max-height: 40vh;
   overflow: auto;
 }
 
@@ -47,4 +47,14 @@
 
 .filter-view .btn-primary {
   background: var(--color-primary)
+}
+
+.back {
+  background: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 40vh;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
 }
