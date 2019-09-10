@@ -4,9 +4,8 @@
   <view slot="content">感谢</view>
 </navigation-bar>
 
-<wux-cell-group title="感谢以下开源项目">
-  <mp-data-list
+<view class="group-title">感谢以下开源项目</view>
+<mp-data-list
   list="{{repoList}}"
   item-template="repo"
   />
-</wux-cell-group>
