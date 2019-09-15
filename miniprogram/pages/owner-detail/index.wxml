@@ -1,7 +1,71 @@
 <!--miniprogram/pages/owner-detail/index.wxml-->
-<navigation-bar bgColor="bg-gradual-green" isBack="{{true}}">
+<wxs module="utils">
+  module.exports = {
+    sortDate: function (str) {
+      return str ? str.split('T')[0] : ''
+    }
+  }
+</wxs>
+
+<navigation-bar bgColor="bg-gradual-green" isBack="{{!fromShare}}" showHome="{{fromShare}}">
   <view slot="backText">返回</view>
   <view slot="content">作者详情</view>
+  <view wx:if="{{fromShare}}" slot="homeText">返回首页</view>
 </navigation-bar>
 
-<mp-todo-coming-soon></mp-todo-coming-soon>
+<wux-white-space></wux-white-space>
+<wux-wing-blank>
+  <view class="card-radius">
+    <wux-button
+      class="owner-share"
+      clear
+      type="balanced"
+      open-type="share">
+      <text  class="sidebar-icon cuIcon-share"></text>
+    </wux-button>
+    <wux-card bordered="{{false}}" style="clear:both">
+      <view class="owner-info" slot="body">
+        <image class="owner-avatar" src="{{ownerDetail.avatar_url}}" mode="cover"></image>
+        <view>
+          <view class="owner-name">{{ownerDetail.name || ownerDetail.login}}</view>
+          <view class="owner-user">{{ownerDetail.login}}{{ ownerDetail.email ? ' (' + ownerDetail.email + ')' : ''}}</view>
+          <view class="owner-type margin-top-xs">账户类型: {{ownerDetail.type}}</view>
+          <view class="owner-type margin-top-xs">账户区域: {{ownerDetail.location || '未知'}}</view>
+        </view>
+      </view>
+      <view slot="footer" class="owner-footer">
+        <view class="text-sm">
+          Followers: {{ownerDetail.followers}} | Following: {{ownerDetail.following}}
+        </view>
+        <view class="created-at text-right text-gray text-xs">
+          注册时间: {{utils.sortDate(ownerDetail.created_at)}}
+        </view>
+      </view>
+    </wux-card>
+  </view>
+</wux-wing-blank>
+<wux-white-space></wux-white-space>
+<wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">
+  <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
+</wux-tabs>
+
+<mp-fill-view>
+  <swiper class="fill" current="{{ index }}" bindchange="onSwiperChange">
+    <swiper-item>
+      <mp-data-list
+        item-template="repo"
+        key="id"
+        query="{{query}}"
+        page-size="{{10}}"
+        fetch-data="{{getUserRepos}}"
+        show-load-more
+        auto-load-more
+        auto-load
+        />
+    </swiper-item>
+    <swiper-item>
+      <mp-todo-coming-soon />
+    </swiper-item>
+  </swiper>
+</mp-fill-view>
+

@@ -1,5 +1,15 @@
 {
   "usingComponents": {
-    "mp-todo-coming-soon": "/components/todo-coming-soon/index"
+    "mp-fill-view": "/common/components/fill-view/index",
+    "mp-data-list": "/components/data-list/index",
+    "mp-todo-coming-soon": "/components/todo-coming-soon/index",
+    "wux-tabs": "/common/lib/wux/tabs/index",
+    "wux-tab": "/common/lib/wux/tab/index",
+    "wux-button": "/common/lib/wux/button/index",
+    "wux-white-space": "/common/lib/wux/white-space/index",
+    "wux-cell": "/common/lib/wux/cell/index",
+    "wux-cell-group": "/common/lib/wux/cell-group/index",
+    "wux-wing-blank": "/common/lib/wux/wing-blank/index",
+    "wux-card": "/common/lib/wux/card/index"
   }
 }

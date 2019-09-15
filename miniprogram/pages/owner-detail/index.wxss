@@ -1,1 +1,62 @@
 /* miniprogram/pages/owner-detail/index.wxss */
+.owner-info {
+  display: flex;
+}
+
+.owner-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  border: 1px solid var(--background-color-base)
+}
+
+.owner-share {
+  position: absolute;
+  right: 0;
+  z-index: 100;
+}
+
+.owner-name {
+  flex: 1;
+  font-size: var(--font-size-large);
+}
+
+.owner-user {
+  font-size: var(--font-size-small);
+  color: var(--color-text-regular);
+}
+
+.owner-type {
+  font-size: var(--font-size-small);
+  color: var(--color-text-regular);
+}
+
+.bg {
+  background: var(--background-color-base)
+}
+
+.top-radius {
+  padding: 20rpx 20rpx 0 20rpx;
+  border-radius: 20rpx 20rpx 0 0;
+}
+
+.wux-card {
+  background: none !important;
+}
+
+.card-radius {
+  position: relative;
+  border-radius: 24rpx;
+  background: var(--color-white)
+}
+
+.owner-footer {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.created-at {
+  flex: 1;
+}
