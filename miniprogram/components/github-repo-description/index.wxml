@@ -1,0 +1,5 @@
+<!--index.wxml-->
+<block wx:for="{{parsedContent}}" wx:key="index">
+  <image wx:if="{{item.type==='emoji'}}" src="{{item.value}}" class="emoji"></image>
+  <text wx:elif="{{item.type==='text'}}">{{item.value}}</text>
+</block>

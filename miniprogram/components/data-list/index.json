@@ -3,6 +3,7 @@
   "usingComponents": {
     "wux-white-space": "/common/lib/wux/white-space/index",
     "wux-image": "/common/lib/wux/image/index",
+    "mp-github-repo-description": "../github-repo-description/index",
     "mp-load-more": "../load-more/index"
   }
 }
