@@ -24,12 +24,20 @@ const fileTypeMap = [
     type: 'properties'
   },
   {
-    test: /\.g4$/i,
-    type: 'ebnf'
+    test: /\.m$/i,
+    type: 'c'
+  },
+  {
+    test: /\.h$/i,
+    type: 'c'
   },
   {
     test: /\.md$/i,
     type: 'md'
+  },
+  {
+    test: /\.g4$/i,
+    type: 'ebnf'
   },
   {
     test: /\.(png|jpeg|jpg|gif)$/i,
@@ -181,13 +189,24 @@ Page({
     wx.showLoading({
       title: '正在加载'
     })
+    const fileInfo = getFileInfo(filePath)
+    if (fileInfo.type === 'img') {
+      this.setData!({
+        showSidebar: false,
+        filePath,
+        fileContent: '',
+        fileType: fileInfo.type
+      })
+      setTimeout(wx.hideLoading, 1500)
+      return
+    }
+
     const result= await github.getFileContent({
       fullRepoName,
       filePath
     })
     if (result.status === 'done') {
       const content = result.data
-      const fileInfo = getFileInfo(filePath)
       this.setData!({
         showSidebar: false,
         filePath,
