@@ -16,12 +16,12 @@
       <wux-card full title="{{repoDetail.full_name}}" actions="{{ actions }}" bind:action="onAction">
         <view slot="extra">
           <wux-button
-              clear
-              type="balanced"
-              slot="right"
-              open-type="share">
-              <text  class="sidebar-icon cuIcon-share"></text>
-            </wux-button>
+            clear
+            type="balanced"
+            slot="right"
+            open-type="share">
+            <text  class="sidebar-icon cuIcon-share"></text>
+          </wux-button>
         </view>
         <view slot="body">
           {{repoDetail.description}}

@@ -20,31 +20,18 @@ Component({
       type: Boolean,
       value: false
     },
-    list: {
-      type: Object,
-      value: {
-        status: 'loading',
-        data: []
-      },
-      observer (this: any, val: any) {
-        if (val && val.status === 'done') {
-          // val.data.forEach((element: any) => {
-          //   if (element.owner.avatar_url) {
-          //     const hash = md5(element.owner.avatar_url)
-          //     // @ts-ignore
-          //     element.owner.avatar_placeholder = `data:image/png;base64,${new Identicon(hash, options).toString()}`
-          //   }
-          // })
-          this.setData!({
-            // list: val,
-            isLoading: false
-          })
-        }
-      }
-    },
     itemTemplate: {
       type: String,
       value: 'repo'
+    },
+    autoLoad: {
+      type: Boolean,
+      value: false,
+      observer (this: any, val) {
+        if (val) {
+          this.reloadData()
+        }
+      }
     },
     showLoadMore: {
       type: Boolean,
@@ -54,14 +41,46 @@ Component({
       type: Boolean,
       value: false
     },
-    isLoading: {
-      type: Boolean,
-      value: false
+    key: {
+      type: String,
+      value: 'id'
     },
+    query: {
+      type: Object,
+      value: {},
+      observer (this: any) {
+        if (!this.data.autoLoad) return
+        this.reloadData()
+      }
+    },
+    pageSize: {
+      type: Number,
+      value: 5
+    },
+    fetchData: {
+      type: Function,
+      value: () => []
+    }
+  },
+  data: {
+    toQueryPageNo: 1,
+    list: [],
+    status: 'init',
+    reloadBusy: false,
+    loadMoreBusy: false
+  },
+  lifetimes: {
+    async attached () {
+      if (this.data.autoLoad) {
+        // @ts-ignore
+        this.reloadData()
+      }
+    }
   },
   methods: {
     onItemClick (e: any) {
       app.globalData.repoDetail = e.currentTarget.dataset.detail
+      app.globalData.ownerDetail = e.currentTarget.dataset.detail.owner
       wx.navigateTo({
         url: '../repo-detail/index'
       })
@@ -72,20 +91,53 @@ Component({
         url: '../owner-detail/index'
       })
     },
-    onScrollEnd (e) {
+    onScrollEnd () {
       if (this.data.autoLoadMore) {
-        this.setData!({isLoading: true})
-        this.triggerEvent('loadmore', e)
+        // @ts-ignore
+        this.onLoadMoreClick()
       }
     },
-    onLoadMoreClick (e) {
-      if (this.data.list.status === 'error') {
-        this.setData!({isLoading: true})
-        this.triggerEvent('retry', e)
-      } else {
-        this.setData!({isLoading: true})
-        this.triggerEvent('loadmore', e)
+    onLoadMoreClick () {
+      if (this.data.status !== 'no-data' && this.data.status !== 'loading') {
+        // 设置为加载中状态
+        this.setData({
+          status: 'loading',
+        })
+        this.triggerEvent(this.data.status === 'error' ? 'retry' : 'loadmore')
+        // @ts-ignore
+        this.loadMoreData()
       }
+    },
+    async reloadData () {
+      if (this.data.reloadBusy || !this.data.query) return
+      this.data.reloadBusy = true
+      this.setData({
+        status: 'loading',
+        toQueryPageNo: 1,
+        list: [],
+      })
+      this.triggerEvent('reload')
+      // @ts-ignore
+      await this.loadMoreData()
+      this.data.reloadBusy = false
+    },
+    async loadMoreData () {
+      if (this.data.loadMoreBusy) return
+      this.data.loadMoreBusy = true
+      const result = await this.data.fetchData(this.data.query, this.data.pageSize, this.data.toQueryPageNo)
+      if (result.status === 'done') {
+        if (result.data.length < this.data.pageSize) {
+          // 返回数据不足一页
+          result.status = 'no-data'
+        } else {
+          this.data.toQueryPageNo++
+        }
+      }
+      this.setData({
+        status: result.status,
+        list: this.data.list.concat(result.data)
+      })
+      this.data.loadMoreBusy = false
     }
   }
 })

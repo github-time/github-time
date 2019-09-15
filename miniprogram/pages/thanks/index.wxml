@@ -6,6 +6,10 @@
 
 <view class="group-title">感谢以下开源项目</view>
 <mp-data-list
-  list="{{repoList}}"
   item-template="repo"
+  key="id"
+  query="{{query}}"
+  page-size="{{10}}"
+  fetch-data="{{getThanksRepos}}"
+  auto-load
   />

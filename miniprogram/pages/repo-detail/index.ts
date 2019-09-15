@@ -81,7 +81,7 @@ Page({
 
     if (app.globalData.repoDetail) {
       this.setData!({
-        fromShare: false,
+        fromShare: !!options.r,
         repoDetail: app.globalData.repoDetail
       })
     } else {
@@ -100,6 +100,7 @@ Page({
         const result = await github.getRepositoryDetail(repoDetail.full_name)
         if (result.status === 'done') {
           const detail = app.globalData.repoDetail = result.data!
+          app.globalData.ownerDetail = result.data.owner!
           this.setData!({
             repoDetail: detail
           })
@@ -109,6 +110,7 @@ Page({
         }
       })()
     }
+    this.loadGithubEmojis()
   },
   onTabsChange(e: any) {
     const { key } = e.detail
@@ -132,6 +134,11 @@ Page({
   //     this.loadReadmeContent()
   //   }
   // },
+
+  async loadGithubEmojis () {
+    const emojis = await github.getGithubEmojis()
+    console.log('emojis', emojis)
+  },
 
   async loadReadmeContent () {
     if (!this.data.readmeLoaded && this.data.current === 'readme') {

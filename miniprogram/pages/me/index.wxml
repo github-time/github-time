@@ -7,7 +7,7 @@
   <wux-white-space></wux-white-space>
   <wux-wing-blank size="large">
     <view class="bg-white light top-radius shadow-warp margin-top">
-      <wux-card bordered="{{false}}" title="{{repoDetail.full_name}}" actions="{{ actions }}" bind:action="onAction">
+      <wux-card bordered="{{false}}">
         <view class="userinfo" slot="body">
           <view wx:if="{{!hasUserInfo && canIUse}}" class="userinfo-avatar">
             <view class="cuIcon-people text-gray text-center userinfo-avatar-icon"></view>
@@ -42,23 +42,27 @@
       <swiper class="my-dashboard" current="{{ index }}" bindchange="onSwiperChange">
         <swiper-item>
           <mp-data-list
-            list="{{repoList}}"
+            item-template="repo"
+            key="id"
+            query="{{query}}"
+            page-size="{{5}}"
+            fetch-data="{{getUserRepos}}"
             show-load-more
-            bind:loadmore="loadMoreUserRepos"
+            auto-load
             />
         </swiper-item>
+        <!-- <swiper-item>
+          <mp-todo-coming-soon />
+        </swiper-item> -->
         <swiper-item>
+          <mp-todo-coming-soon />
+        </swiper-item>
+        <!-- <swiper-item>
           <mp-todo-coming-soon />
         </swiper-item>
         <swiper-item>
           <mp-todo-coming-soon />
-        </swiper-item>
-        <swiper-item>
-          <mp-todo-coming-soon />
-        </swiper-item>
-        <swiper-item>
-          <mp-todo-coming-soon />
-        </swiper-item>
+        </swiper-item> -->
       </swiper>
     </block>
 

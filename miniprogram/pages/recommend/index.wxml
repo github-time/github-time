@@ -17,16 +17,22 @@
   <swiper class="fill" current="{{ index }}" bindchange="onSwiperChange">
     <swiper-item>
       <mp-data-list
-        list="{{repoList}}"
         item-template="trending-repo"
-        bind:retry="onRetry"
+        key="id"
+        query="{{reposQuery}}"
+        page-size="{{10}}"
+        fetch-data="{{getTrendingRepos}}"
+        auto-load
         />
     </swiper-item>
     <swiper-item>
       <mp-data-list
-        list="{{userList}}"
         item-template="trending-user"
-        bind:retry="onRetry"
+        key="id"
+        query="{{usersQuery}}"
+        page-size="{{10}}"
+        fetch-data="{{getTrendingUsers}}"
+        auto-load="{{enableLoadTrendingUsers}}"
         />
     </swiper-item>
   </swiper>

@@ -1,13 +1,8 @@
 <!--index.wxml-->
-<mp-navigation-bar
-  ext-class="my-navigation-bar"
-  title="Test"
-  back="{{false}}"
-  >
-</mp-navigation-bar>
-
 <!-- <mp-code-highlight code="{{myCode}}" language="{{myLanguage}}"></mp-code-highlight> -->
 <!-- <mp-markdown content="{{myContent}}"></mp-markdown> -->
 
 <view class="icon-code-branch"></view>
 <view class="icon-code-branch-box"></view>
+
+<image src="https://github.com/github-time/github-time-mp/raw/master/images/github.png"></image>

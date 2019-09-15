@@ -29,6 +29,7 @@
   value="{{ keyword }}"
   placeholder="请输入搜索关键字"
   bind:change="onKeywordChange"
+  bind:confirm="onKeywordChange"
   bind:focus="onSearchBarFocus"
   bind:clear="onKeywordClear">
   <button class="btn-toggle-filter" slot="right" bindtap="onToggleFilter" size="mini"><text class="cuIcon-filter"></text></button>
@@ -43,11 +44,13 @@
 
 <mp-fill-view>
   <mp-data-list
-    list="{{repoList}}"
     item-template="repo"
+    key="id"
+    query="{{query}}"
+    page-size="{{10}}"
+    fetch-data="{{searchRepos}}"
     show-load-more
     auto-load-more
-    bind:retry="onLoadMore"
-    bind:loadmore="onLoadMore"
+    auto-load
     />
 </mp-fill-view>

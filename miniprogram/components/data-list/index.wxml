@@ -2,16 +2,13 @@
 <import src="./templates/trending-repo.wxml" />
 <import src="./templates/trending-user.wxml" />
 <import src="./templates/repo.wxml" />
-<mp-load-more wx:if="{{list.status==='loading'}}" loading></mp-load-more>
-<mp-load-more wx:elif="{{list.status==='done' && list.data.length===0}}" no-data></mp-load-more>
 <scroll-view
-  wx:else
   hidden="{{hidden}}"
   scroll-y
   style="height: 100%;"
   bindscrolltolower="onScrollEnd">
   <view
-    wx:for="{{list.data}}"
+    wx:for="{{list}}"
     wx:key="index"
     data-detail="{{item}}"
     class="repo-card"
@@ -20,9 +17,10 @@
     <template is="{{itemTemplate}}" data="{{item}}"></template>
   </view>
   <mp-load-more
-    wx:if="{{showLoadMore || list.status==='error'}}"
-    error="{{list.status==='error'}}"
-    loading="{{autoLoadMore || isLoading}}"
+    wx:if="{{showLoadMore || status!=='done'}}"
+    error="{{status==='error'}}"
+    loading="{{status==='loading'}}"
+    no-data="{{status==='no-data'}}"
     bind:tap="onLoadMoreClick"
     ></mp-load-more>
   <wux-white-space></wux-white-space>

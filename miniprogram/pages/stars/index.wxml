@@ -24,11 +24,14 @@
 
 <mp-fill-view>
   <mp-data-list wx:if="{{githubConfig.user}}"
-    list="{{repoList}}"
+    item-template="repo"
+    key="id"
+    query="{{query}}"
+    page-size="{{10}}"
+    fetch-data="{{getUserStarsRepos}}"
     show-load-more
     auto-load-more
-    bind:loadmore="onLoadMore"
-    bind:retry="onLoadMore"
+    auto-load
     />
   <view class="text-center" wx:else>
     <view class="text-gray text-center text-lg margin">请先设置 Github 账户信息</view>

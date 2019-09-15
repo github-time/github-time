@@ -6,45 +6,45 @@ import github from '../../utils/githubApi'
 import { IMyApp } from '../../app'
 const app = getApp<IMyApp>()
 
-type RepoList = {
-  status: string,
-  data: github.repos.SearchResultItem[]
-}
-
 Page({
   data: {
     githubConfig: {} as any,
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    pageSize: 5,
-    queriedPageNo: 0,
     current: 'repos',
     tabs: [
       {
         key: 'repos',
         title: '我的仓库'
       },
-      {
-        key: 'activity',
-        title: '动态'
-      },
+      // {
+      //   key: 'activity',
+      //   title: '动态'
+      // },
       {
         key: 'footprint',
         title: '足迹'
       },
-      {
-        key: 'issues',
-        title: 'Issues'
-      },
-      {
-        key: 'message',
-        title: '留言'
-      }
+      // {
+      //   key: 'issues',
+      //   title: 'Issues'
+      // },
+      // {
+      //   key: 'message',
+      //   title: '留言'
+      // }
     ],
-    repoList: {
-      status: 'init'
-    } as RepoList
+    query: {},
+    async getUserRepos (query: any, pageSize: number, pageNo: number) {
+      const result = await github.getUserRepositories({
+        owner: query.owner,
+        pageSize,
+        pageNo
+      })
+      // await new Promise((resolve) => {setTimeout(resolve, 2000)})
+      return result
+    }
   },
   onLoad() {
     if (app.globalData.userInfo) {
@@ -161,45 +161,18 @@ Page({
     const githubConfig = this.data.githubConfig =  app.settings.get('githubConfig', {})
     const owner = githubConfig.user
     if (owner) {
-      this.data.queriedPageNo = 0
       wx.showLoading({
         title: '正在加载'
       })
-      const repos = await github.getUserRepositories({
-        owner,
-        pageSize: this.data.pageSize
-      })
       this.setData!({
-        githubConfig,
-        repoList: repos
+        query: { owner },
+        githubConfig
       })
       wx.hideLoading()
     } else {
       this.setData!({
-        githubConfig,
-        repoList: { status: 'done', data: [] }
+        githubConfig
       })
-    }
-  },
-  async loadMoreUserRepos () {
-    const owner = this.data.githubConfig.user
-    if (owner) {
-      const toQueryPageNo = Math.floor(this.data.repoList.data.length / this.data.pageSize) + 1
-      if (this.data.queriedPageNo < toQueryPageNo) {
-        const result = await github.getUserRepositories({
-          owner,
-          pageSize: this.data.pageSize,
-          pageNo: toQueryPageNo
-        })
-        this.setData!({
-          repoList: {
-            status: result.status,
-            data: result.data
-              ? this.data!.repoList.data.concat(result.data)
-              : this.data!.repoList.data
-          }
-        })
-      }
     }
   }
 })

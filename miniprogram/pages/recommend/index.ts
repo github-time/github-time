@@ -12,26 +12,12 @@ const SINCE_MAP = {
   monthly: '月'
 }
 
-type RepoList = {
-  status: string,
-  data?: github.trending.Repository[]
-}
-
-type UserList = {
-  status: string,
-  data?: github.trending.Developer[]
-}
-
 Page({
   data: {
     current: 'repos',
     index: 0,
-    repoSince: 'daily' as 'daily' | 'weekly' | 'monthly',
     repoSinceDisplay: SINCE_MAP['daily'],
-    repoLanguage: '',
-    userSince: 'daily' as 'daily' | 'weekly' | 'monthly',
     userSinceDisplay: SINCE_MAP['daily'],
-    userLanguage: '',
     tabs: [
       {
         key: 'repos',
@@ -67,26 +53,22 @@ Page({
         icon: 'read',
       }
     ],
-
-    repoList: { status: 'init' } as RepoList,
-    userList: { status: 'init' } as UserList
-  },
-
-  async loadReposTrending ({ since = 'daily', language = '' } : { since?: 'daily' | 'weekly' | 'monthly', language?: string } = {}) {
-    this.setData!({
-      repoSince: since,
-      repoSinceDisplay: SINCE_MAP[since],
-      repoLanguage: language,
-      repoList: { status: 'loading' }
-    })
-
-    wx.showLoading({
-      title: `显示${SINCE_MAP[since]}趋势`
-    })
-    const t = new Date().getTime()
-    const result = await github.getGithubReposTrending({ since, language })
-    if (result.status === 'done') {
-      const data = result.data!.map((item) => {
+    reposQuery: {
+      since: 'daily' as 'daily' | 'weekly' | 'monthly',
+      language: ''
+    },
+    usersQuery: {
+      since: 'daily' as 'daily' | 'weekly' | 'monthly',
+      language: ''
+    },
+    enableLoadTrendingUsers: false,
+    async getTrendingRepos (query: any) {
+      const result = await github.getGithubReposTrending({
+        since: query.since,
+        language: query.language
+      })
+      // await new Promise((resolve) => {setTimeout(resolve, 2000)})
+      const data = result.data.map((item) => {
         return {
           name: item.name,
           full_name: `${item.author}/${item.name}`,
@@ -96,35 +78,23 @@ Page({
           stargazers_count: item.stars,
           forks_count: item.forks,
           owner: {
-            avatar_url: item.avatar
+            avatar_url: item.avatar,
+            login: item.author
           }
         }
       })
-      // await new Promise((resolve) => { setTimeout(resolve, 1000) })
-      this.setData!({ repoList: {status: result.status, data }})
-    } else if (result.status === 'error') {
-      this.setData!({
-        repoList: result
+      return {
+        status: result.status,
+        data
+      }
+    },
+    async getTrendingUsers (query: any) {
+      const result = await github.getGithubUsersTrending({
+        since: query.since,
+        language: query.language
       })
-    }
-    setTimeout(wx.hideLoading, 1000 - new Date().getTime() + t)
-  },
-
-  async loadUsersTrending ({ since = 'daily', language = '' } : { since?: 'daily' | 'weekly' | 'monthly', language?: string } = {}) {
-    this.setData!({
-      userSince: since,
-      userSinceDisplay: SINCE_MAP[since],
-      erLanguage: language,
-      userList: { status: 'loading' }
-     })
-
-    wx.showLoading({
-      title: `显示${SINCE_MAP[since]}趋势`
-    })
-    const t = new Date().getTime()
-    const result = await github.getGithubUsersTrending({ since, language })
-    if (result.status === 'done') {
-      const data = result.data!.map((user) => {
+      // await new Promise((resolve) => {setTimeout(resolve, 2000)})
+      const data = result.data.map((user) => {
         return {
           name: user.repo.name,
           full_name: `${user.username}/${user.repo.name}`,
@@ -139,21 +109,15 @@ Page({
           }
         }
       })
-      // await new Promise((resolve) => { setTimeout(resolve, 1000) })
-      this.setData!({ userList: {status: result.status, data} })
-    } else if (result.status === 'error') {
-      this.setData!({
-        userList: result
-      })
+      return {
+        status: result.status,
+        data
+      }
     }
-    setTimeout(wx.hideLoading, 1000 - new Date().getTime() + t)
   },
 
   onLoad() {
-    this.loadReposTrending({
-      language: this.data.repoLanguage,
-      since: this.data.repoSince
-    })
+
   },
   onShow(this: any) {
     const tabBar = this.getTabBar()
@@ -165,19 +129,24 @@ Page({
         this.setData({
           repoLanguageDisplay: signal.data.name
         })
-        this.loadReposTrending({since: this.data.repoSince, language: signal.data.urlParam})
+        this.setData!({
+          reposQuery: {
+            since: this.data.reposQuery.since,
+            language: signal.data.urlParam
+          }
+        })
       } else if (this.data.current === 'developers') {
         this.setData({
           userLanguageDisplay: signal.data.name
         })
-        this.loadUsersTrending({since: this.data.userSince, language: signal.data.urlParam})
+        this.setData!({
+          usersQuery: {
+            since: this.data.usersQuery.since,
+            language: signal.data.urlParam
+          }
+        })
       }
     }
-  },
-
-  onRetry () {
-    this.initRepoTrending(true)
-    this.initUsersTrending(true)
   },
 
   onRepoListItemClick (e: any) {
@@ -196,7 +165,7 @@ Page({
         index,
     })
 
-    this.initUsersTrending()
+    this.setData!({enableLoadTrendingUsers: true})
   },
 
   onSwiperChange(e: any) {
@@ -208,34 +177,26 @@ Page({
         current: key,
         index,
       })
-      this.initUsersTrending()
-    }
-  },
-
-  initRepoTrending (force: boolean = false) {
-    if (this.data.current === 'repos' && (force || this.data.userList.status === 'init')) {
-      this.loadReposTrending({
-        language: this.data.repoLanguage,
-        since: this.data.repoSince
-      })
-    }
-  },
-
-  initUsersTrending (force: boolean = false) {
-    if (this.data.current === 'developers' && (force || this.data.userList.status === 'init')) {
-      this.loadUsersTrending({
-        language: this.data.userLanguage,
-        since: this.data.userSince
-      })
+      this.setData!({enableLoadTrendingUsers: true})
     }
   },
 
   onActionClick (e: any) {
     if (e.detail.value.type === 'since') {
       if (this.data.current === 'repos') {
-        this.loadReposTrending({since: e.detail.value.value, language: this.data.repoLanguage})
+        this.setData!({
+          reposQuery: {
+            since: e.detail.value.value,
+            language: this.data.reposQuery.language
+          }
+        })
       } else if (this.data.current === 'developers') {
-        this.loadUsersTrending({since: e.detail.value.value, language: this.data.userLanguage})
+        this.setData!({
+          usersQuery: {
+            since: e.detail.value.value,
+            language: this.data.usersQuery.language
+          }
+        })
       }
     } else if (e.detail.value.type === 'language') {
       wx.navigateTo({
@@ -243,5 +204,4 @@ Page({
       })
     }
   }
-
 })

@@ -5,24 +5,28 @@ import github from '../../utils/githubApi'
 //获取应用实例
 // import { IMyApp } from '../../app'
 // const app = getApp<IMyApp>()
-type RepoList = {
-  status: string,
-  data: github.repos.SearchResultItem[]
-}
 
 Page({
   data: {
     currentTab: 'recommend',
     keyword: '',
-    query: '',
-    queriedPageNo: 0,
-    pageSize: 10,
-    repoList: {
-      status: 'done',
-      data: []
-    } as RepoList,
     showFilterView: false,
-    filters: {}
+    filters: {},
+    query: {
+      query: 'stars:>50000'
+    },
+    async searchRepos (query: any, pageSize: number, pageNo: number) {
+      const result = await github.searchRepositories({
+        query: query.query,
+        pageSize,
+        pageNo
+      })
+      await new Promise((resolve) => { setTimeout(resolve, 1000)})
+      return {
+        status: result.status,
+        data: result.data.items
+      }
+    }
   },
   onShow(this: any) {
     const tabBar = this.getTabBar()
@@ -101,47 +105,10 @@ Page({
       showFilterView: false
     })
     this.data.filters = e.detail
-    this.doSearch(this.makeQueryString(this.data.keyword, this.data.filters))
-  },
-  async doSearch (query: string) {
-    if (query === this.data.query) return
     this.setData!({
-      query
-    })
-
-    if (!query) return
-
-    console.log('do search:', query)
-    this.data.queriedPageNo = 0
-    this.setData!({
-      repoList: { status: 'loading' }
-    })
-    const result = await github.searchRepositories({
-      query,
-      pageSize: this.data.pageSize
-    })
-    await new Promise((resolve) => { setTimeout(resolve, 1000)})
-    this.setData!({
-      repoList: {
-        status: result.status,
-        data: result.data!.items
+      query: {
+        query: this.makeQueryString(this.data.keyword, this.data.filters)
       }
     })
-  },
-  async onLoadMore () {
-    const toQueryPageNo = Math.floor(this.data.repoList.data.length / this.data.pageSize) + 1
-    if (this.data.queriedPageNo < toQueryPageNo) {
-      const result = await github.searchRepositories({
-        query: this.data.query,
-        pageSize: this.data.pageSize,
-        pageNo: toQueryPageNo
-      })
-      this.setData!({
-        repoList: {
-          status: result.status,
-          data: this.data!.repoList.data.concat(result.data!.items)
-        }
-      })
-    }
   }
 })
