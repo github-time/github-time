@@ -17,6 +17,7 @@ export type CacheOptions = {
   key?: string
   group?: string
   timeout?: number
+  maxsize?: number
 }
 
 export default class CacheMagager {
@@ -64,7 +65,8 @@ export default class CacheMagager {
   }
 
   put (key: string, value: string, options: CacheOptions) {
-    if (value.length > this.maxCacheItemSize) {
+    const maxsize = options.maxsize || this.maxCacheItemSize
+    if (value.length > maxsize) {
       return
     }
     const storage = this.storage
