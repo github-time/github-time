@@ -24,6 +24,7 @@ type PropertyType =
   | BooleanConstructor
   | ObjectConstructor
   | ArrayConstructor
+  | FunctionConstructor
   | null;
 
 type ObserverCallback = (
