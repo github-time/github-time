@@ -88,6 +88,7 @@ Component({
     }
   },
   data: {
+    totalNo: 0,
     currentStart: 0,
     currentEnd: PAGE_SIZE * 2 + pre + post,
     firstVisibleLineNo: 0,
@@ -103,6 +104,7 @@ Component({
         const codeRowsCache = render(code, language)
         this.data.codeRowsCache = codeRowsCache
         this.setData({
+          totalNo: codeRowsCache.length,
           rawText: '',
           codeRows: codeRowsCache.slice(0, PAGE_SIZE * 2 + pre + post) // 仅渲染前 2 页
         })

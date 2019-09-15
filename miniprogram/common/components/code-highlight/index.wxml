@@ -1,6 +1,13 @@
 <!--miniprogram/custom-tab-bar/index.wxml-->
+<view class="info-bar">
+  <view>render by prism.js</view>
+  <view class="meta">
+    总行数: {{totalNo}}
+    语言: {{language || '未设置'}}
+  </view>
+</view>
 <scroll-view
-  style="height: {{height}}"
+  style="height: calc({{height}} - 36rpx)"
   class="code-scroll-view"
   scroll-x
   scroll-y

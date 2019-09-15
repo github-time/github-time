@@ -1,3 +1,17 @@
+.info-bar {
+	display: flex;
+	height: 36rpx;
+	font-size: 24rpx;
+	background: #2d2d2d;
+	color: #555;
+	padding: 0 1em;
+}
+
+.meta {
+	flex: 1;
+	color: #777;
+	text-align: right;
+}
 
 .code-container {
 	color: #ccc;
