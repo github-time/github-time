@@ -4,8 +4,9 @@ import callCloudFunctionWithCache from './callCloudFunctionWithCache'
 
 const githubApiUrl = 'https://api.github.com'
 
+type ResultStatus = 'done'|'error'
 type Result<T> = Promise<{
-  status: 'done'|'error'
+  status: ResultStatus
   error?: Error
   data: T
 }>
@@ -25,27 +26,27 @@ async function searchTopics ({
 }: {keyword: string, pageSize: number, pageNo?: number}): Result<github.topics.SearchResult> {
   const url = `${githubApiUrl}/search/topics?q=${keyword}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchTopics`)
-  return new Promise((resolve) => {
-    requestWithCache({
+  return requestWithCache(
+    {
       url,
       header: {
         Accept: 'application/vnd.github.mercy-preview+json'
-      },
-      success(res) {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: res.data as github.topics.SearchResult
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: nullSearchResult()
-          })
-        }
       }
-    }, { timeout: 120, group: 'SearchData#topics'})
+    },
+    { timeout: 120, group: 'SearchData#topics'}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.topics.SearchResult
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: nullSearchResult()
+      }
+    }
   })
 }
 
@@ -73,48 +74,66 @@ async function searchRepositories ({
 }: {query: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.repos.SearchResult> {
   const url = `${githubApiUrl}/search/repositories?q=${query}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchRepositories: keyword=${query}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success(res) {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: res.data as github.repos.SearchResult
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: nullSearchResult()
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: 'SearchData#repos' }
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.repos.SearchResult
       }
-    }, { timeout: 30, group: 'SearchData#repos'})
+    } else {
+      return {
+        status: 'done' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: nullSearchResult()
+      }
+    }
   })
 }
 
-async function getRepositoryDetail (fullRepoName: string): Result<github.repos.SearchResultItem> {
+async function getRepositoryDetail (fullRepoName: string): Result<github.repos.RepoDetail> {
   const url = `${githubApiUrl}/repos/${fullRepoName}`
   console.log(`getRepositoryDetail: fullRepoName=${fullRepoName}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success(res) {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: res.data as github.repos.SearchResultItem
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: {} as any
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: `RepoData#${fullRepoName}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.repos.RepoDetail
       }
-    }, { timeout: 30, group: `RepoData#${fullRepoName}`})
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: {} as any
+      }
+    }
+  })
+}
+
+async function getUserDetail (owner: string): Result<github.users.UserDetail> {
+  const url = `${githubApiUrl}/users/${owner}`
+  console.log(`getUserDetail: login=${owner}`)
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: `UserData#${owner}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.users.UserDetail
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: {} as any
+      }
+    }
   })
 }
 
@@ -127,24 +146,22 @@ async function searchUsers ({
 }: {keyword: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.users.SearchResult> {
   const url = `${githubApiUrl}/search/users?q=${keyword}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchUsers: keyword=${keyword}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success(res) {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: res.data as github.users.SearchResult
-          })
-        } else {
-          resolve({
-            status: 'done',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: nullSearchResult()
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: 'SearchData#users'}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.users.SearchResult
       }
-    }, { timeout: 30, group: 'SearchData#users'})
+    } else {
+      return {
+        status: 'done' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: nullSearchResult()
+      }
+    }
   })
 }
 
@@ -157,24 +174,22 @@ async function getUserRepositories ({
 }: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.repos.SearchResultItem[]> {
   const url = `${githubApiUrl}/users/${owner}/repos?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchRepositories: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success(res) {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: res.data as github.repos.SearchResultItem[]
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: []
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: `UserData#${owner}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.repos.SearchResultItem[]
       }
-    }, { timeout: 30, group: `UserData#${owner}`})
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: []
+      }
+    }
   })
 }
 
@@ -187,24 +202,22 @@ async function getUserStaring ({
 }: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.repos.SearchResultItem[]> {
   const url = `${githubApiUrl}/users/${owner}/starred?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`getUserStaring: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success(res) {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: res.data as github.repos.SearchResultItem[]
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: []
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: `UserData#${owner}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.repos.SearchResultItem[]
       }
-    }, { timeout: 30, group: `UserData#${owner}`})
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: []
+      }
+    }
   })
 }
 
@@ -214,24 +227,22 @@ async function getFileTree ({
 }: { fullRepoName:string, ref?: string }): Result<github.repos.TreeItem[]> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/git/trees/${ref}?recursive=1`
   console.log(`getFileTree: fullRepoName=${fullRepoName}, ref=${ref}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success: (res) => {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: (res.data as {tree: any}).tree
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: []
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 60, group: `RepoData#${fullRepoName}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: (res.data as {tree: any}).tree
       }
-    }, { timeout: 60, group: `RepoData#${fullRepoName}`})
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: []
+      }
+    }
   })
 }
 
@@ -241,25 +252,23 @@ async function getReadmeContent ({
 }: {fullRepoName:string, ref?: string }): Result<string> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/readme?ref=${ref}`
   console.log(`getReadmeContent: fullRepoName=${fullRepoName}, ref=${ref}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success: (res) => {
-        if (res.statusCode === 200) {
-          // TODO: 支持缓存 key 替换
-          resolve({
-            status: 'done',
-            data: Base64.decode((res.data as github.repos.Contents).content)
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: ''
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 60, group: `RepoData#${fullRepoName}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      // TODO: 支持缓存 key 替换
+      return {
+        status: 'done' as ResultStatus,
+        data: Base64.decode((res.data as github.repos.Contents).content)
       }
-    }, { timeout: 60, group: `RepoData#${fullRepoName}`}) // 共享 getFileContent 缓存组
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: ''
+      }
+    }
   })
 }
 
@@ -270,24 +279,44 @@ async function getFileContent ({
 }: {fullRepoName:string, filePath: string, ref?: string }): Result<string> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/contents/${filePath}?ref=${ref}`
   console.log(`getFileContent: fullRepoName=${fullRepoName}, filePath=${filePath}, ref=${ref}`)
-  return new Promise((resolve) => {
-    requestWithCache({
-      url,
-      success: (res) => {
-        if (res.statusCode === 200) {
-          resolve({
-            status: 'done',
-            data: Base64.decode((res.data as github.repos.Contents).content)
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`statusCode: ${res.statusCode}`),
-            data: ''
-          })
-        }
+  return requestWithCache(
+    { url },
+    { timeout: 60, group: `RepoData#${fullRepoName}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: Base64.decode((res.data as github.repos.Contents).content)
       }
-    }, { timeout: 60, group: `RepoData#${fullRepoName}`})
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: ''
+      }
+    }
+  })
+}
+
+async function getGithubEmojis () {
+  const url = `${githubApiUrl}/emojis`
+  console.log(`getGithubEmojis...`)
+  return requestWithCache(
+    { url },
+    { timeout: 60 * 24 * 7, group: `GithubEmojis`, maxsize: 512 * 1024 }
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: ''
+      }
+    }
   })
 }
 
@@ -297,27 +326,27 @@ async function getGithubReposTrending ({
 }: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Result<github.trending.Repository[]> {
   const url = `https://github-trending-api.now.sh/repositories?language=${language}&since=${since}`
   console.log(`getGithubRepoTrending: language=${language} since=${since}`)
-  return new Promise((resolve) => {
-    callCloudFunctionWithCache({
+  return callCloudFunctionWithCache(
+    {
       name: 'request',
       data: {
         url
-      },
-      success: (res) => {
-        if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
-          resolve({
-            status: 'done',
-            data: (res.result as any).data
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`errMsg: ${res.errMsg}`),
-            data: []
-          })
-        }
       }
-    }, { timeout: 60, group: 'TrendingData#repos' })
+    },
+    { timeout: 60, group: 'TrendingData#repos' }
+  ).then((res) => {
+    if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: (res.result as any).data
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`errMsg: ${res.errMsg}`),
+        data: []
+      }
+    }
   })
 }
 
@@ -327,27 +356,27 @@ async function getGithubUsersTrending ({
 }: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Result<github.trending.Developer[]> {
   const url = `https://github-trending-api.now.sh/developers?language=${language}&since=${since}`
   console.log(`getGithubUserTrending: language=${language} since=${since}`)
-  return new Promise((resolve) => {
-    callCloudFunctionWithCache({
+  return callCloudFunctionWithCache(
+    {
       name: 'request',
       data: {
         url
-      },
-      success: (res) => {
-        if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
-          resolve({
-            status: 'done',
-            data: (res.result as any).data
-          })
-        } else {
-          resolve({
-            status: 'error',
-            error: new Error(`errMsg: ${res.errMsg}`),
-            data: []
-          })
-        }
       }
-    }, { timeout: 60, group: `TrendingData#users`})
+    },
+    { timeout: 60, group: `TrendingData#users`}
+  ).then((res) => {
+    if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: (res.result as any).data
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`errMsg: ${res.errMsg}`),
+        data: []
+      }
+    }
   })
 }
 
@@ -356,12 +385,14 @@ export default {
   searchTopics,
   searchRepositories,
   getRepositoryDetail,
+  getUserDetail,
   searchUsers,
   getFileContent,
   getReadmeContent,
   getFileTree,
   getUserStaring,
   getUserRepositories,
+  getGithubEmojis,
   getGithubReposTrending,
   getGithubUsersTrending
 }

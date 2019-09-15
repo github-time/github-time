@@ -16,53 +16,63 @@ for (let key in report.groups) {
   console.log(`${PREFIX} group ${key}: ${(report.groups[key] / 1024).toFixed(2)} K`)
 }
 console.log(`${PREFIX} totalSize: ${(report.totalSize / 1024 / 1024).toFixed(2)} M`)
+type Result = Promise<wx.RequestSuccessCallbackResult>
 
-export default function (req: wx.RequestOption, opts: CacheOptions) {
-  // if (Math.random() > 0.3) {
-  //   console.log('Mock wx.request error.')
-  //   req.success!({
-  //     statusCode: -500,
-  //     header: {},
-  //     data: {}
-  //   })
-  //   return
-  // }
-  const retry = 1
-  const key = opts.key || req.url
-  const cacheData = cacheMagager.get(key, { group: opts.group })
-  if (cacheData) {
-    // 缓存命中
-    req.success!(cacheData)
-    return
-  }
+const requestMap: { [key: string]: Result } = {}
+export default function (req: wx.RequestOption, opts: CacheOptions): Result {
+  const requestKey = JSON.stringify(req)
+  const requesting = requestMap[requestKey]
+  if (requesting) return requesting
 
-  let n = 0
-  const doRequest = () => {
-    // 发送请求
-    console.log(`wx.request: ${req.url}`)
-    wx.request({
-      url: req.url,
-      header: req.header,
-      success(res) {
-        console.log(`wx.request success:`, res)
-        if (res.statusCode === 200) {
-          // 请求成功，缓存数据
-          cacheMagager.put(key, JSON.stringify(res), { group: opts.group, timeout: opts.timeout })
+  const promise = requestMap[requestKey] = new Promise<wx.RequestSuccessCallbackResult>((resolve) => {
+    const retry = 1
+    const key = opts.key || req.url
+    const cacheData = cacheMagager.get(key, { group: opts.group })
+    if (cacheData) {
+      // 缓存命中
+      resolve(cacheData)
+      return
+    }
+    let n = 0
+    const doRequest = () => {
+      // 发送请求
+      console.log(`wx.request: ${req.url}`)
+      wx.request({
+        url: req.url,
+        header: req.header,
+        success(res) {
+          console.log(`wx.request success:`, res)
+          if (res.statusCode === 200) {
+            // 请求成功，缓存数据
+            cacheMagager.put(key, JSON.stringify(res), {
+              group: opts.group,
+              timeout: opts.timeout,
+              maxsize: opts.maxsize
+            })
+          }
+          resolve(res)
+        },
+        fail (res) {
+          if (n++ < retry) {
+            console.log(`wx.request failed retry ${n}`)
+            setTimeout(doRequest, 1000)
+            // 请求超时
+          } else {
+            console.log(`wx.request failed:`, res)
+            resolve({ statusCode: 500, header: {}, data: res.errMsg })
+          }
         }
-        req.success!(res)
-      },
-      fail (res) {
-        if (n++ < retry) {
-          console.log(`wx.request failed retry ${n}`)
-          setTimeout(doRequest, 1000)
-          // 请求超时
-        } else {
-          console.log(`wx.request failed:`, res)
-          req.success!({statusCode: 500, header: {}, data: res.errMsg })
-        }
-      }
-    })
-  }
-  doRequest()
+      })
+    }
+    doRequest()
+  }).then((res) => {
+    delete requestMap[requestKey]
+    return res
+  }).catch((error) => {
+    delete requestMap[requestKey]
+    return { statusCode: 500, header: {}, data: error.errMsg }
+  })
+
+  return promise
 }
 
