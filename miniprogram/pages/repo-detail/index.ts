@@ -67,7 +67,9 @@ Page({
       id: undefined as undefined|number,
       full_name: 'vuejs/vue'
     },
-    tags: [] as string[]
+    tags: [] as string[],
+    contexPath: '',
+    emojis: {}
   },
   onShareAppMessage () {
     return {
@@ -77,6 +79,10 @@ Page({
     }
   },
   onLoad(options: any) {
+    app.globalData.emojis.then((emojis) => {
+      this.setData!({ emojis })
+    })
+
     const fullRepoName = options.r || this.data.repoDetail.full_name
 
     if (app.globalData.repoDetail) {
@@ -145,7 +151,8 @@ Page({
       })
       if (result.status === 'done') {
         this.setData!({
-          readmeContent: result.data
+          readmeContent: result.data,
+          contexPath: `https://github.com/${this.data.repoDetail.full_name}/raw/master/`,
         })
       } else if (result.status === 'error'){
         console.error('Get readme content failed: ', result.error)

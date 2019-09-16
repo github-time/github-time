@@ -91,7 +91,7 @@ Page({
       master_branch: '...',
       default_branch: '...'
     },
-    baseUrl: '',
+    contexPath: '',
     history:[] as string[]
   },
   onShareAppMessage () {

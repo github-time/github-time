@@ -70,7 +70,13 @@
   </view>
   <view hidden="{{current!=='readme'}}">
     <mp-load-more wx:if="{{!readmeContent}}" loading></mp-load-more>
-    <mp-markdown wx:else content="{{readmeContent}}"></mp-markdown>
+    <mp-markdown
+      wx:else
+      content="{{readmeContent}}"
+      contexPath="{{contexPath}}"
+      emojis="{{emojis}}"
+      bind:action="onMarkdownAction"
+    ></mp-markdown>
   </view>
   <view hidden="{{current!=='issues'}}">
     <mp-todo-coming-soon />
