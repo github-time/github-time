@@ -10,10 +10,10 @@
 		<view class="title">Github User</view>
 		<wux-input controlled class="text-right" placeholder="Github 用户名" value="{{githubConfig.user}}" bind:change="onGithubUserChange"></wux-input>
 	</view>
-	<view class="cu-form-group">
+	<!-- <view class="cu-form-group">
 		<view class="title">Github Token</view>
 		<wux-input controlled class="text-right" placeholder="Github 令牌" value="{{githubConfig.token}}" bind:change="onGithuTokenChange"></wux-input>
-	</view>
+	</view> -->
 </form>
 
 <view class="padding flex flex-direction">
