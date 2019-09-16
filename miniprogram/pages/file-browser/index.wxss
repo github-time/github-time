@@ -151,4 +151,6 @@ page {
   padding-left: 15rpx;
 }
 
-
+.back {
+  padding-left: 8rpx;
+}

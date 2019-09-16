@@ -298,7 +298,9 @@ async function getFileContent ({
   })
 }
 
-async function getGithubEmojis () {
+type EmojiMap = {[key: string]: string}
+
+async function getGithubEmojis (): Result<EmojiMap> {
   const url = `${githubApiUrl}/emojis`
   console.log(`getGithubEmojis...`)
   return requestWithCache(
@@ -308,13 +310,13 @@ async function getGithubEmojis () {
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data
+        data: res.data as EmojiMap
       }
     } else {
       return {
         status: 'error' as ResultStatus,
         error: new Error(`statusCode: ${res.statusCode}`),
-        data: ''
+        data: {}
       }
     }
   })

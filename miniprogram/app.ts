@@ -1,4 +1,5 @@
 //app.ts
+import github from './utils/githubApi'
 import settings from './utils/settings'
 
 type Signal = {
@@ -19,6 +20,7 @@ export interface IMyApp {
     repoDetail?: github.repos.SearchResultItem
     userInfo?: wx.UserInfo
     signal?: Signal
+    emojis: Promise<{[key: string]: string}>
   }
 }
 
@@ -65,6 +67,7 @@ App<IMyApp>({
     StatusBar: 0,
     CustomBar: 0,
     Custom: {} as wx.Rect,
-    zanCodeUrl: 'https://6769-github-time-mp-1300157824.tcb.qcloud.la/common/images/github-time-zancode.jpeg?sign=af482ff2a4fe00cc50d7812b1b27d752&t=1567909481'
+    zanCodeUrl: 'https://6769-github-time-mp-1300157824.tcb.qcloud.la/common/images/github-time-zancode.jpeg?sign=af482ff2a4fe00cc50d7812b1b27d752&t=1567909481',
+    emojis: github.getGithubEmojis().then((res) => res.data)
   }
 })

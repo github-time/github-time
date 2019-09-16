@@ -1,5 +1,6 @@
 //index.js
-import github from '../../utils/githubApi'
+import { IMyApp } from '../../app'
+const app = getApp<IMyApp>()
 
 function parse (content: string, emojis: any) {
   const result = []
@@ -47,9 +48,8 @@ Component({
   },
   lifetimes: {
     async attached () {
-      const emojis = await github.getGithubEmojis() as any
       this.setData({
-        parsedContent: parse(this.data.content, emojis.data),
+        parsedContent: parse(this.data.content, app.globalData.emojis),
       })
     }
   }

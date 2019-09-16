@@ -4,7 +4,6 @@
   class="markdown-scroll-view"
   scroll-x
   scroll-y
-  bindscroll="onScroll"
   >
   <view class="markdown-container">
     <view>{{rawText}}</view>
@@ -20,7 +19,6 @@
           ><text>•  </text><text
             wx:for="{{item.itemValue}}"
             wx:key="index"
-            selectable
             decode
             data-href="{{item.href}}"
             bindtap="mdtap"
@@ -28,16 +26,29 @@
             selectable="{{true}}"
           >{{item.text}}</text></view>
       </view>
-      <view wx:else class="{{item.class}}"><text
+      <image wx:elif="{{item.type === 'image'}}" src="{{item.href}}"/>
+      <view wx:elif="{{item.type === 'link'}}"
+        class="markdown-body-a"
+        data-href="{{item.href}}"
+        bind:tap="onLinkTap">
+        {{item.text}}
+      </view>
+      <view wx:else class="{{item.class}}"><view
         wx:for="{{item.value}}"
         wx:key="index"
-        selectable
-        decode
-        data-href="{{item.href}}"
-        bindtap="mdtap"
+        style="display:inline-block;"
         class="{{item.tagName ? 'markdown-body-' + item.tagName : ''}}"
-        selectable="{{true}}"
-        >{{item.text}}</text></view>
+        ><image
+          wx:if="{{item.tagName==='emoji'}}"
+          class="emoji"
+          src="{{item.src}}"
+        /><text
+          wx:else
+          decode
+          data-href="{{item.href}}"
+          bindtap="mdtap"
+          selectable="{{true}}"
+        >{{item.text}}</text></view></view>
     </view>
   </view>
 </scroll-view>

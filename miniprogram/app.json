@@ -5,7 +5,11 @@
     "pages/stars/index",
     "pages/me/index",
     "pages/community/index",
-    "pages/activity/index"
+    "pages/activity/index",
+    "pages/repo-detail/index",
+    "pages/owner-detail/index",
+    "pages/file-browser/index",
+    "pages/thanks/index"
   ],
   "tabBar": {
     "custom": true,

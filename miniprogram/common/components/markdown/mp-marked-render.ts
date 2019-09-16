@@ -19,6 +19,9 @@ type Node = {
   type: string
   value: string|string[]|ListItem[]|Tag[]
   class?: string
+  href?: string
+  title?: string
+  text?: string
 }
 
 let nodes: Node[] = []
@@ -37,8 +40,34 @@ renderer.code = function (code: string, language: string) {
 renderer.blockquote = function (quote: string) {
   nodes.push({
     type: 'view',
-    value: getBlockValue(quote),
+    // @ts-ignore
+    value: getBlockValue(quote, this.emojis),
     class: 'markdown-body-blockquote'
+  })
+  return ''
+}
+
+renderer.link = function (href: string, title: string, text: string) {
+  nodes.push({
+    type: 'link',
+    value: '',
+    title,
+    href,
+    text,
+    class: ''
+  })
+  return ''
+}
+
+renderer.image = function (href: string, title: string, text: string) {
+  nodes.push({
+    type: 'image',
+    value: '',
+    title,
+    // @ts-ignore
+    href: encodeURI(/^http(|s):\/\//.test(href) ? href : this.contexPath + href),
+    text,
+    class: ''
   })
   return ''
 }
@@ -82,7 +111,8 @@ renderer.html = function (html: string) {
 renderer.heading = function (text: string, level: number) {
   nodes.push({
     type: 'view',
-    value: getBlockValue(text),
+    // @ts-ignore
+    value: getBlockValue(text, this.emojis),
     class: 'markdown-body-h' + level
   })
   return ''
@@ -105,7 +135,8 @@ renderer.list = function (body: string) {
       return
     }
     value.push({
-      itemValue: getBlockValue(li)
+      // @ts-ignore
+      itemValue: getBlockValue(li, this.emojis)
     })
   })
   nodes.push({
@@ -126,7 +157,8 @@ renderer.paragraph = function (text: string) {
     type = 'html'
     value = text
   } else {
-    value = getBlockValue(text)
+    // @ts-ignore
+    value = getBlockValue(text, this.emojis)
   }
   nodes.push({
     type,
@@ -139,6 +171,10 @@ renderer.paragraph = function (text: string) {
 renderer.table = function (header: string, body: string) {
   header = header.replace(/<td/g, '<td class="markdown-body-td"').replace(/<tr/g, '<tr class="markdown-body-tr"')
   body = body.replace(/<td/g, '<td class="markdown-body-td"').replace(/<tr/g, '<tr class="markdown-body-tr"')
+  body = body.replace(/:(\w+):/g, (m: string, g1: string) => {
+    // @ts-ignore
+    return this.emojis[g1] ? `<img class="emoji" src="${this.emojis[g1]}" />` : m
+  })
   nodes.push({
     type: 'html',
     value: `
@@ -151,9 +187,13 @@ renderer.table = function (header: string, body: string) {
   return ''
 }
 
-function getBlockValue (blockString: string) {
+function getBlockValue (blockString: string, emojis: {[key: string]: string}) {
   const value: Tag[] = []
   let tag: Tag|null = null
+  blockString = blockString.replace(/:(\w+):/g, (m: string, g1: string) => {
+    // @ts-ignore
+    return emojis[g1] ? `<emoji src="${emojis[g1]}" />` : m
+  })
   htmlParser(blockString, {
     start (tagName: string, attrs: htmlParser.Handler.Attr[]) {
       tag = { tagName }
@@ -162,6 +202,10 @@ function getBlockValue (blockString: string) {
         value.push(tag)
         tag = null
       } else if (tagName === 'img') {
+        tag.src = getAttr(attrs, 'src')
+        value.push(tag)
+        tag = null
+      } else if (tagName === 'emoji') {
         tag.src = getAttr(attrs, 'src')
         value.push(tag)
         tag = null
@@ -188,12 +232,15 @@ function getAttr (attrs: htmlParser.Handler.Attr[], attr: string) {
   return ''
 }
 
-export default function (md: string, imgPath: string) {
+export default function (md: string, {emojis = {}, contexPath = ''}: {emojis: {}; contexPath: string}) {
   nodes = []
+  // @ts-ignore
+  renderer.emojis = emojis
+  // @ts-ignore
+  renderer.contexPath = contexPath
   marked(md, {
     renderer,
     headerIds: false,
-    baseUrl: imgPath,
     breaks: true
   })
   const generatedNodes = nodes

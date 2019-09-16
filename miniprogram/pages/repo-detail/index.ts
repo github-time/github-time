@@ -110,7 +110,6 @@ Page({
         }
       })()
     }
-    this.loadGithubEmojis()
   },
   onTabsChange(e: any) {
     const { key } = e.detail
@@ -134,11 +133,6 @@ Page({
   //     this.loadReadmeContent()
   //   }
   // },
-
-  async loadGithubEmojis () {
-    const emojis = await github.getGithubEmojis()
-    console.log('emojis', emojis)
-  },
 
   async loadReadmeContent () {
     if (!this.data.readmeLoaded && this.data.current === 'readme') {

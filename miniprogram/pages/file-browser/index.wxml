@@ -4,6 +4,7 @@
   <view slot="content">代码浏览器</view>
   <view wx:if="{{fromShare}}" slot="homeText">返回首页</view>
 </navigation-bar>
+<wux-toptips id="wux-toptips" />
 
 <wux-search-bar
   class="top-search-bar"
@@ -20,13 +21,20 @@
 </wux-search-bar>
 
 <view class="header">
+  <view class="back" bind:tap="onBack"><text class="cuIcon-back"></text></view>
   <view class="header-title">
     <text>{{filePath}}</text>
   </view>
 </view>
 
 <mp-fill-view bind:tap="onTapViewer">
-  <mp-markdown wx:if="{{fileType === 'md'}}" content="{{fileContent}}"></mp-markdown>
+  <mp-markdown
+    wx:if="{{fileType === 'md'}}"
+    content="{{fileContent}}"
+    contexPath="{{contexPath}}"
+    emojis="{{emojis}}"
+    bind:action="onMarkdownAction"
+    ></mp-markdown>
   <view wx:elif="{{fileType === 'img'}}">
     <image src="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"></image>
   </view>
@@ -61,3 +69,4 @@
   </view>
 </view>
 <view style="top: {{marginTop}}px" class="sidebar-back" hidden="{{!showSidebar}}"  bindtap="hideFileTree"></view>
+

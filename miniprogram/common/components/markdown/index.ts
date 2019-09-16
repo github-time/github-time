@@ -12,6 +12,14 @@ Component({
     height: {
       type: String,
       value: '100%'
+    },
+    emojis: {
+      type: Object,
+      value: {}
+    },
+    contexPath: {
+      type: String,
+      value: {}
     }
   },
   data: {
@@ -22,7 +30,10 @@ Component({
     'content' (content: string) {
       try {
         console.log('render with markdown ...')
-        const markdownNodes = render(content, '')
+        const markdownNodes = render(content, {
+          emojis: this.data.emojis,
+          contexPath: this.data.contexPath
+        })
         const longContent = markdownNodes.length > 150
         this.setData({
           rawText: '',
@@ -45,6 +56,14 @@ Component({
           markdownNodes: []
         })
       }
+    }
+  },
+  methods: {
+    onLinkTap (e) {
+      this.triggerEvent('action', {
+        type: 'link-tap',
+        data: e.currentTarget.dataset
+      })
     }
   }
 })

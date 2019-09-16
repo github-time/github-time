@@ -1,4 +1,8 @@
 @import '../code-highlight/index.wxss';
+.emoji {
+  width:1em;
+  height:1em;
+}
 
 .markdown-body {
   -ms-text-size-adjust: 100%;
