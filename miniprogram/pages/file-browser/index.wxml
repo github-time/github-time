@@ -21,7 +21,7 @@
 </wux-search-bar>
 
 <view class="header">
-  <view class="back" bind:tap="onBack"><text class="cuIcon-back"></text></view>
+  <view class="back" bind:tap="onBack"><text class="cuIcon-back">后退</text></view>
   <view class="header-title">
     <text>{{filePath}}</text>
   </view>
