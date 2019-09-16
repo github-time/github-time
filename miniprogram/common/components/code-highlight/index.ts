@@ -123,7 +123,7 @@ Component({
       let query = wx.createSelectorQuery().in(this)
       // 单次查询基准滚动条 top
       query.select('.code-scroll-view').boundingClientRect((rect) => {
-        this.data.baseTop = rect.top
+        if (rect) this.data.baseTop = rect.top
       }).exec()
 
       // 计算可见行号
