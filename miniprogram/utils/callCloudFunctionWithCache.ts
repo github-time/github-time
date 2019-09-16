@@ -35,7 +35,7 @@ export default function (params: ICloud.CallFunctionParam, opts: CacheOptions): 
     const cacheData = cacheMagager.get(key, { group: opts.group })
     if (cacheData) {
       // 缓存命中
-      params.success!(cacheData)
+      resolve(cacheData)
       return
     }
 
