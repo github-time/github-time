@@ -48,8 +48,10 @@ Component({
   },
   lifetimes: {
     async attached () {
-      this.setData({
-        parsedContent: parse(this.data.content, app.globalData.emojis),
+      app.globalData.emojis.then((emojis) => {
+        this.setData({
+          parsedContent: parse(this.data.content, emojis),
+        })
       })
     }
   }
