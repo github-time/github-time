@@ -6,6 +6,11 @@ import github from '../../utils/githubApi'
 // @ts-ignore
 import { $wuxToptips } from '../../common/lib/wux/index'
 
+type HistoryItem = {
+  ref: string,
+  path: string
+}
+
 const app = getApp<IMyApp>()
 
 const fileTypeMap = [
@@ -93,7 +98,7 @@ Page({
       default_branch: ''
     },
     treeData: [],
-    history: [] as string[],
+    history: [] as HistoryItem[],
     branches: [] as string[]
   },
   onShareAppMessage () {
@@ -265,8 +270,10 @@ Page({
   onBack () {
     if (this.data.history.length > 1) {
       this.data.history.pop()
-      const filePath = this.data.history[this.data.history.length - 1]
-      this.viewFile(this.data.repoDetail.full_name, this.data.ref, filePath, true)
+      const fullRepoName = this.data.repoDetail.full_name
+      const history = this.data.history[this.data.history.length - 1]
+      this.viewFile(fullRepoName, history.ref, history.path, true)
+      this.loadFileTree(fullRepoName, history.ref)
     }
   },
 
@@ -349,6 +356,9 @@ Page({
       }
       wx.hideLoading()
     }
-    if (pushHistory) this.data.history.push(filePath)
+    if (pushHistory) this.data.history.push({
+      ref: this.data.ref,
+      path: filePath
+    })
   }
 })
