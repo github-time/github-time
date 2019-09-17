@@ -8,11 +8,10 @@ module.exports = {
 </wxs>
 
 <template name="trending-user">
-  <view catchtap="onIconClick" data-detail="{{item.owner}}">
+  <view mark:type="owner">
     <image
       class="repo-icon"
       src="{{item.owner.avatar_url}}"
-      data-detail="{{item.owner}}"
       error="load\nfailed"
       >
       <!-- <image class="repo-icon" src="{{item.owner.avatar_placeholder}}" slot="loading" /> -->
@@ -23,7 +22,7 @@ module.exports = {
     </view>
     <view class="user-login text-cut">{{item.owner.login}}</view>
   </view>
-  <view class="user-repo">
+  <view class="user-repo" mark:type="repo">
     <view class="repo-name text-cut">
       <text class="cuIcon-medal"></text>
       {{item.name}}

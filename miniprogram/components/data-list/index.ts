@@ -1,6 +1,5 @@
 //index.js
 //获取应用实例
-import { IMyApp } from '../../app'
 // import * as Identicon from 'identicon.js'
 // import md5 = require('blueimp-md5')
 
@@ -10,7 +9,6 @@ import { IMyApp } from '../../app'
 //   format: 'png'                             // use SVG instead of PNG
 // }
 
-const app = getApp<IMyApp>()
 Component({
   options: {
     addGlobalClass: true,
@@ -80,16 +78,9 @@ Component({
   },
   methods: {
     onItemClick (e: any) {
-      app.globalData.repoDetail = e.currentTarget.dataset.detail
-      app.globalData.ownerDetail = e.currentTarget.dataset.detail.owner
-      wx.navigateTo({
-        url: '../repo-detail/index'
-      })
-    },
-    onIconClick (e: any) {
-      app.globalData.ownerDetail = e.currentTarget.dataset.detail
-      wx.navigateTo({
-        url: '../owner-detail/index'
+      this.triggerEvent('itemclick', {
+        item: e.currentTarget.dataset.detail,
+        type: e.mark.type
       })
     },
     onScrollEnd () {

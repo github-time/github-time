@@ -149,10 +149,13 @@ Page({
     }
   },
 
-  onRepoListItemClick (e: any) {
-    app.globalData.repoDetail = e.currentTarget.dataset.detail
+  onItemClick (e: any) {
+    app.globalData.repoDetail = e.detail.item
+    app.globalData.ownerDetail = e.detail.item.owner
     wx.navigateTo({
-      url: '../repo-detail/index'
+      url: e.detail.type === 'owner'
+        ? '/pages/owner-detail/index'
+        : '/pages/repo-detail/index'
     })
   },
 

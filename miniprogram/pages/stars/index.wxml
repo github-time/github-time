@@ -32,6 +32,7 @@
     show-load-more
     auto-load-more
     auto-load
+    bind:itemclick="onStarRepoClick"
     />
   <view class="text-center" wx:else>
     <view class="text-gray text-center text-lg margin">请先设置 Github 账户信息</view>

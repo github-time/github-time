@@ -23,6 +23,7 @@
         page-size="{{10}}"
         fetch-data="{{getTrendingRepos}}"
         auto-load
+        bind:itemclick="onItemClick"
         />
     </swiper-item>
     <swiper-item>
@@ -33,6 +34,7 @@
         page-size="{{10}}"
         fetch-data="{{getTrendingUsers}}"
         auto-load="{{enableLoadTrendingUsers}}"
+        bind:itemclick="onItemClick"
         />
     </swiper-item>
   </swiper>

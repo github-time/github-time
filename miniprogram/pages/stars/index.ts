@@ -34,6 +34,15 @@ Page({
       this.loadUserStaring()
     }
   },
+  onStarRepoClick (e: any) {
+    app.globalData.repoDetail = e.detail.item
+    app.globalData.ownerDetail = e.detail.item.owner
+    wx.navigateTo({
+      url: e.detail.type === 'owner'
+        ? '/pages/owner-detail/index'
+        : '/pages/repo-detail/index'
+    })
+  },
   onToggleFilter() {
     this.setData!({
       showFilterView: !this.data.showFilterView

@@ -52,5 +52,6 @@
     show-load-more
     auto-load-more
     auto-load
+    bind:itemclick="onRepoClick"
     />
 </mp-fill-view>

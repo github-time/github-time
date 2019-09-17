@@ -11,8 +11,7 @@ module.exports = {
   <image
     class="repo-icon"
     src="{{item.owner.avatar_url}}"
-    data-detail="{{item.owner}}"
-    catchtap="onIconClick"
+    mark:type="owner"
     error="load\nfailed"
     >
     <!-- <image class="repo-icon" src="{{item.owner.avatar_placeholder}}" slot="loading" /> -->
