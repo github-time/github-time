@@ -1,4 +1,8 @@
 /**index.wxss**/
+.data-list-scroll {
+  height: 100%;
+}
+
 .repo-card {
   clear: both;
   background: var(--color-white);
