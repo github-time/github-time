@@ -47,9 +47,10 @@
             query="{{query}}"
             page-size="{{5}}"
             fetch-data="{{getUserRepos}}"
-            show-load-more
             auto-load
-            />
+            class="my-data-list">
+            <view slot="load-more" class="text-center" bind:tap="viewMoreStars">查看更多</view>
+          </mp-data-list>
         </swiper-item>
         <!-- <swiper-item>
           <mp-todo-coming-soon />

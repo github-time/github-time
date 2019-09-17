@@ -84,6 +84,11 @@ Page({
     }
   },
 
+  viewMoreStars () {
+    wx.switchTab({
+      url: '/pages/stars/index'
+    })
+  },
   getUserInfo (e: any) {
     app.globalData.userInfo = e.detail.userInfo
     this.setData!({
