@@ -212,5 +212,15 @@ declare namespace github {
       default_branch: string
       score: number
     }
+
+    type Commit = {
+      sha: string
+      url: string
+    }
+    type RepoBranche = {
+      name: string
+      commit: Commit
+      protected: boolean
+    }
   }
 }

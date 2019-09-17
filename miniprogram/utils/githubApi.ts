@@ -115,6 +115,28 @@ async function getRepositoryDetail (fullRepoName: string): Result<github.repos.R
   })
 }
 
+async function getRepositoryBranches (fullRepoName: string): Result<github.repos.RepoBranche[]> {
+  const url = `${githubApiUrl}/repos/${fullRepoName}/branches`
+  console.log(`getRepositoryBranches: fullRepoName=${fullRepoName}`)
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: `RepoData#${fullRepoName}`}
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.repos.RepoBranche[]
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: {} as any
+      }
+    }
+  })
+}
+
 async function getUserDetail (owner: string): Result<github.users.UserDetail> {
   const url = `${githubApiUrl}/users/${owner}`
   console.log(`getUserDetail: login=${owner}`)
@@ -229,7 +251,7 @@ async function getFileTree ({
   console.log(`getFileTree: fullRepoName=${fullRepoName}, ref=${ref}`)
   return requestWithCache(
     { url },
-    { timeout: 60, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`}
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -254,7 +276,7 @@ async function getReadmeContent ({
   console.log(`getReadmeContent: fullRepoName=${fullRepoName}, ref=${ref}`)
   return requestWithCache(
     { url },
-    { timeout: 60, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`}
   ).then((res) => {
     if (res.statusCode === 200) {
       // TODO: 支持缓存 key 替换
@@ -281,7 +303,7 @@ async function getFileContent ({
   console.log(`getFileContent: fullRepoName=${fullRepoName}, filePath=${filePath}, ref=${ref}`)
   return requestWithCache(
     { url },
-    { timeout: 60, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`}
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -387,6 +409,7 @@ export default {
   searchTopics,
   searchRepositories,
   getRepositoryDetail,
+  getRepositoryBranches,
   getUserDetail,
   searchUsers,
   getFileContent,

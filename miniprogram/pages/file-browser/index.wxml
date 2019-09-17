@@ -54,13 +54,10 @@
         <text class="icon-num fork-num">{{repoDetail.forks_count}}</text>
       </view>
     </view>
-    <!-- <picker class="branch-picker"
-      bindchange="branchPickerChange" value="{{0}}" range="{{repoDetail.branches}}">
-      <text class="sidebar-title-branch">{{repoDetail.default_branch}}</text>
-    </picker> -->
-    <view class="bg-white padding-left padding-right" style="border-radius: 18rpx">
-      <text class="sidebar-title-branch">{{repoDetail.default_branch}}</text>
-    </view>
+    <picker class="branch-picker"
+      bindchange="onBranchPickerChange" value="{{0}}" range="{{branches}}">
+      <text class="sidebar-title-branch">{{ref}}</text>
+    </picker>
   </view>
   <view class="sidebar-main">
     <view wx:for="{{treeData}}" wx:key="{{index}}" class="tree-item-1-level {{index%2 === 1 ? 'light' : ''}}">

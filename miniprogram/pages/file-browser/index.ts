@@ -69,43 +69,51 @@ function getFileInfo (path: string) {
 
 Page({
   data: {
-    emojis: {},
-    lastTap: 0,
     fromShare: true,
+    showSidebar: false,
+    lastTap: 0,
     marginTop: 0,
+    emojis: {},
+    ref: '',
     filePath: '',
     fileContent: '',
+    contexPath: '',
     fileType: 'unknown',
-    treeData: [],
-    showSidebar: false,
     repoDetail: {
       id: undefined,
       full_name: 'vuejs/vue',
-      name: '...',
+      name: '',
       fork: false,
       stargazers_count: 0,
       watchers_count: 0,
-      language: '...',
+      language: '',
       forks_count: 0,
       open_issues_count: 0,
-      master_branch: '...',
-      default_branch: '...'
+      master_branch: '',
+      default_branch: ''
     },
-    contexPath: '',
-    history:[] as string[]
+    treeData: [],
+    history: [] as string[],
+    branches: [] as string[]
   },
   onShareAppMessage () {
     return {
       title: 'Github Time',
       desc: `分享代码: ${this.data.repoDetail.full_name} ${this.data.filePath}`,
-      path: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&p=${this.data.filePath}`
+      path: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&b=${this.data.ref}&p=${this.data.filePath}&s=true`
     }
   },
-  onLoad (options: any) {
+  async onLoad (options: any) {
+    this.setData!({
+      fromShare: !!options.s
+    })
+
+    // 加载表情图标地址
     app.globalData.emojis.then((emojis) => {
       this.setData!({ emojis })
     })
 
+    // 计算侧边栏 margin-top
     const query = wx.createSelectorQuery().in(this)
     query.select('.top-search-bar').boundingClientRect().exec((res: any) => {
       this.setData!({
@@ -113,30 +121,58 @@ Page({
       })
     })
 
-    const fullRepoName = options.r || this.data.repoDetail.full_name
-    const filePath = options.p || ''
-
-    if (fullRepoName && filePath) {
-      this.viewFile(fullRepoName, filePath)
-    }
-
+    // 如果有，使用全局参数
     if (app.globalData.repoDetail) {
       this.setData!({
-        fromShare: !!(options.r || options.p) && (options.f !== 'inner'),
         repoDetail: app.globalData.repoDetail,
+        ref: app.globalData.repoDetail.default_branch
       })
-    } else {
-      this.setData!({
-        repoDetail: {
-          full_name: fullRepoName
-        }
+    }
+    const repoDetail = this.data.repoDetail
+
+    const fullRepoName = options.r || repoDetail.full_name
+    if (!fullRepoName) {
+      $wuxToptips().error({
+        hidden: false,
+        text: '未指定仓库...',
+        duration: 3000,
+        success: () => {
+          // 自动返回上一步
+          wx.navigateBack({ delta: 1 })
+        },
       })
+      return
     }
 
-    if (!filePath) {
-      // 显示目录树
+    let ref = options.b || this.data.ref
+    if (!ref) {
+      // 参数不全，获取仓库详情
+      const repoDetail = await this.loadRepositoryDetail(fullRepoName)
+      if (repoDetail) {
+        // 更新参数
+        ref = repoDetail.default_branch
+        this.setData!({
+          repoDetail,
+          ref
+        })
+      } else {
+        return
+      }
+    }
+
+    const filePath = options.p || ''
+    if (filePath) {
+      // 指定了文件路径，直接显示文件内容
+      this.viewFile(fullRepoName, ref, filePath)
+    } else {
+      // 未指定文件路径，显示文件目录树
       this.showFileTree ()
     }
+  },
+  onBranchPickerChange (e: any) {
+    const ref = this.data.branches[e.detail.value]
+    this.setData!({ ref })
+    this.loadFileTree(this.data.repoDetail.full_name, ref)
   },
   onTapViewer (e: any) {
     if (e.timeStamp - this.data.lastTap < 250) {
@@ -145,14 +181,27 @@ Page({
     this.data.lastTap = e.timeStamp
   },
   onViewFileClick (e: any) {
-    this.viewFile(this.data.repoDetail.full_name, e.detail.path)
+    this.viewFile(this.data.repoDetail.full_name, this.data.ref, e.detail.path)
   },
   showFileTree () {
+    if (this.data.branches.length === 0) {
+      github.getRepositoryBranches(this.data.repoDetail.full_name).then((result) => {
+        if (result.status === 'done') {
+          this.setData!({
+            branches: result.data.map((item) => item.name)
+          })
+        }
+      })
+    }
     if (this.data.treeData.length === 0) {
-      this.loadFileTree(this.data.repoDetail.full_name)
+      this.loadFileTree(this.data.repoDetail.full_name, this.data.ref)
     }
     if (this.data.repoDetail.id === undefined) {
-      this.loadRepositoryDetail(this.data.repoDetail.full_name)
+      this.loadRepositoryDetail(this.data.repoDetail.full_name).then((repoDetail) => {
+        if (repoDetail) {
+          this.setData!({ repoDetail })
+        }
+      })
     }
     this.setData!({
       showSidebar: true
@@ -185,7 +234,7 @@ Page({
             owner: { login }
           } as any
           wx.navigateTo({
-            url: `/pages/file-browser/index?r=${fullRepoName}&p=${filePath}&f=inner`
+            url: `/pages/file-browser/index?r=${fullRepoName}&p=${filePath}`
           })
         } else if (href.match(/^http(|s):\/\//)) {
           // 外部链接
@@ -207,7 +256,7 @@ Page({
             filePath = this.data.filePath.replace(/[^\/]+$/, '') + href
           }
           console.log('repo link:', href)
-          this.viewFile(fullRepoName, filePath)
+          this.viewFile(fullRepoName, this.data.ref, filePath)
         }
         break
     }
@@ -217,26 +266,31 @@ Page({
     if (this.data.history.length > 1) {
       this.data.history.pop()
       const filePath = this.data.history[this.data.history.length - 1]
-      this.viewFile(this.data.repoDetail.full_name, filePath, true)
+      this.viewFile(this.data.repoDetail.full_name, this.data.ref, filePath, true)
     }
   },
 
   async loadRepositoryDetail (fullRepoName: string) {
     const result = await github.getRepositoryDetail(fullRepoName)
     if (result.status === 'done') {
-      this.setData!({
-        repoDetail: result.data
-      })
+      return result.data
     } else if (result.status === 'error') {
+      $wuxToptips().error({
+        hidden: false,
+        text: '获取仓库详情失败...',
+        duration: 3000,
+        success() {},
+      })
       console.error('Get repository detail failed: ', result.error)
     }
+    return null
   },
 
-  async loadFileTree (fullRepoName:string) {
+  async loadFileTree (fullRepoName: string, ref: string) {
     wx.showLoading({
       title: '正在加载'
     })
-    const result = await github.getFileTree({ fullRepoName })
+    const result = await github.getFileTree({ fullRepoName, ref })
     if (result.status === 'done') {
       try {
         this.setData!({
@@ -251,8 +305,8 @@ Page({
     wx.hideLoading()
   },
 
-  async viewFile (fullRepoName:string, filePath: string, isBack: boolean = false) {
-    console.log(`viewFile: ${fullRepoName}/${filePath}`)
+  async viewFile (fullRepoName: string, ref: string, filePath: string, isBack: boolean = false) {
+    console.log(`viewFile: ref=${ref} ${fullRepoName}/${filePath}`)
     wx.showLoading({
       title: '正在加载'
     })
@@ -261,6 +315,7 @@ Page({
     if (fileInfo.type === 'img') {
       this.setData!({
         showSidebar: false,
+        ref,
         filePath,
         fileContent: '',
         fileType: fileInfo.type
@@ -270,11 +325,13 @@ Page({
       const result= await github.getFileContent({
         fullRepoName,
         filePath,
+        ref
       })
       if (result.status === 'done') {
         const content = result.data
         this.setData!({
           showSidebar: false,
+          ref,
           filePath,
           contexPath: `https://github.com/${fullRepoName}/raw/master/${filePath.replace(/[^\/]+$/, '')}`,
           fileContent: content,
