@@ -5,7 +5,7 @@
 <scroll-view
   hidden="{{hidden}}"
   scroll-y
-  style="height: 100%;"
+  class="data-list-scroll"
   bindscrolltolower="onScrollEnd">
   <view
     wx:for="{{list}}"
@@ -23,5 +23,6 @@
     no-data="{{status==='no-data'}}"
     bind:tap="onLoadMoreClick"
     ></mp-load-more>
+  <slot name="load-more"></slot>
   <wux-white-space></wux-white-space>
 </scroll-view>

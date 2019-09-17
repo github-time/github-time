@@ -13,7 +13,8 @@ import { IMyApp } from '../../app'
 const app = getApp<IMyApp>()
 Component({
   options: {
-    addGlobalClass: true
+    addGlobalClass: true,
+    multipleSlots: true
   },
   properties: {
     hidden: {
