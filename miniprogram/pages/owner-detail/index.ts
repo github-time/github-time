@@ -43,25 +43,22 @@ Page({
     }
   },
   onLoad(options: any) {
-    const owner = options.o || this.data.ownerDetail.login
+    this.setData!({
+      fromShare: !!options.s
+    })
 
+    // 如果有，使用全局参数
     if (app.globalData.ownerDetail) {
       this.setData!({
-        fromShare: !!options.o,
         ownerDetail: app.globalData.ownerDetail
       })
-    } else {
-      this.setData!({
-        ownerDetail: {
-          login: owner,
-          avatar_url: "https://github.com/testerSunshine.png"
-        }
-      })
     }
-
     const ownerDetail = this.data.ownerDetail
+
+    const owner = options.o || ownerDetail.login
+
     ;(async () => {
-      const result = await github.getUserDetail(ownerDetail.login)
+      const result = await github.getUserDetail(owner)
       if (result.status === 'done') {
         const detail = app.globalData.ownerDetail = result.data!
         this.setData!({

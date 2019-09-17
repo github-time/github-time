@@ -79,31 +79,30 @@ Page({
     }
   },
   onLoad(options: any) {
+    this.setData!({
+      fromShare: !!options.s
+    })
+
     app.globalData.emojis.then((emojis) => {
       this.setData!({ emojis })
     })
 
-    const fullRepoName = options.r || this.data.repoDetail.full_name
-
+    // 如果有，使用全局参数
     if (app.globalData.repoDetail) {
       this.setData!({
-        fromShare: !!options.r,
-        repoDetail: app.globalData.repoDetail
-      })
-    } else {
-      this.setData!({
-        repoDetail: {
-          full_name: fullRepoName
-        }
+        repoDetail: app.globalData.repoDetail,
+        ref: app.globalData.repoDetail.default_branch
       })
     }
-
     const repoDetail = this.data.repoDetail
+
+    const fullRepoName = options.r || repoDetail.full_name
+
     if (repoDetail.id !== undefined) {
       this.loadTags(repoDetail.id)
     } else {
       (async () => {
-        const result = await github.getRepositoryDetail(repoDetail.full_name)
+        const result = await github.getRepositoryDetail(fullRepoName)
         if (result.status === 'done') {
           const detail = app.globalData.repoDetail = result.data!
           app.globalData.ownerDetail = result.data.owner!
