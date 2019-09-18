@@ -47,15 +47,32 @@ Page({
       fromShare: !!options.s
     })
 
-    // 如果有，使用全局参数
-    if (app.globalData.ownerDetail) {
+    if (options.o) {
+      // 外部指定开发者
+      this.data.ownerDetail.login = options.o
       this.setData!({
-        ownerDetail: app.globalData.ownerDetail
+        ownerDetail: this.data.ownerDetail,
       })
+    } else if (app.globalData.ownerDetail) {
+      // 外部未指定，使用全局参数
+      this.setData!({
+        ownerDetail: app.globalData.ownerDetail,
+      })
+      delete app.globalData.repoDetail
+      delete app.globalData.ownerDetail
     }
-    const ownerDetail = this.data.ownerDetail
 
-    const owner = options.o || ownerDetail.login
+    const ownerDetail = this.data.ownerDetail
+    const owner = ownerDetail.login
+
+    app.footprint.push({
+      type: 'owner',
+      url: `/pages/owner-detail/index?o=${owner}`,
+      timestamp: new Date().getTime(),
+      meta: {
+        title: owner
+      }
+    })
 
     ;(async () => {
       const result = await github.getUserDetail(owner)

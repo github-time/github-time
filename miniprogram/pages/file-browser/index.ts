@@ -126,16 +126,32 @@ Page({
       })
     })
 
-    // 如果有，使用全局参数
-    if (app.globalData.repoDetail) {
+    if (options.r) {
+      // 外部指定仓库
+      this.data.repoDetail.full_name = options.r
+      this.setData!({
+        repoDetail: this.data.repoDetail,
+      })
+    } else if (app.globalData.repoDetail) {
+      // 外部未指定，使用全局参数
       this.setData!({
         repoDetail: app.globalData.repoDetail,
         ref: app.globalData.repoDetail.default_branch
       })
+      delete app.globalData.repoDetail
+      delete app.globalData.ownerDetail
     }
+
+    if (options.b) {
+      // 外部指定分支
+      this.setData!({
+        ref: options.b
+      })
+    }
+
     const repoDetail = this.data.repoDetail
 
-    const fullRepoName = options.r || repoDetail.full_name
+    const fullRepoName = repoDetail.full_name
     if (!fullRepoName) {
       $wuxToptips().error({
         hidden: false,
@@ -149,7 +165,7 @@ Page({
       return
     }
 
-    let ref = options.b || this.data.ref
+    let ref = this.data.ref
     if (!ref) {
       // 参数不全，获取仓库详情
       const repoDetail = await this.loadRepositoryDetail(fullRepoName)
@@ -171,7 +187,7 @@ Page({
       this.viewFile(fullRepoName, ref, filePath)
     } else {
       // 未指定文件路径，显示文件目录树
-      this.showFileTree ()
+      this.showFileTree()
     }
   },
   onBranchPickerChange (e: any) {
@@ -359,6 +375,14 @@ Page({
     if (pushHistory) this.data.history.push({
       ref: this.data.ref,
       path: filePath
+    })
+    app.footprint.push({
+      type: 'file',
+      url: `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`,
+      timestamp: new Date().getTime(),
+      meta: {
+        title: `${fullRepoName}/@${ref}/${filePath}`
+      }
     })
   }
 })

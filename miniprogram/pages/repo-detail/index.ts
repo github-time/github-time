@@ -65,7 +65,10 @@ Page({
     readmeContent: '',
     repoDetail: {
       id: undefined as undefined|number,
-      full_name: 'vuejs/vue'
+      full_name: 'vuejs/vue',
+      owner: {
+        login: 'vuejs'
+      }
     },
     tags: [] as string[],
     contexPath: '',
@@ -87,14 +90,23 @@ Page({
       this.setData!({ emojis })
     })
 
-    // 如果有，使用全局参数
-    if (app.globalData.repoDetail) {
+    if (options.r) {
+      // 外部指定仓库
+      this.data.repoDetail.full_name = options.r
       this.setData!({
-        repoDetail: app.globalData.repoDetail,
-        ref: app.globalData.repoDetail.default_branch
+        repoDetail: this.data.repoDetail,
       })
+    } else if (app.globalData.repoDetail) {
+      // 外部未指定，使用全局参数
+      this.setData!({
+        repoDetail: app.globalData.repoDetail
+      })
+      delete app.globalData.repoDetail
+      delete app.globalData.ownerDetail
     }
+
     const repoDetail = this.data.repoDetail
+    const fullRepoName = repoDetail.full_name
 
     const fullRepoName = options.r || repoDetail.full_name
 
@@ -104,8 +116,7 @@ Page({
       (async () => {
         const result = await github.getRepositoryDetail(fullRepoName)
         if (result.status === 'done') {
-          const detail = app.globalData.repoDetail = result.data!
-          app.globalData.ownerDetail = result.data.owner!
+          const detail = result.data!
           this.setData!({
             repoDetail: detail
           })
@@ -162,6 +173,8 @@ Page({
 
   onAction (e: any) {
     if (e.detail.action.type === 'viewCode') {
+      app.globalData.repoDetail = this.data.repoDetail as any
+      app.globalData.ownerDetail = this.data.repoDetail.owner as any
       wx.navigateTo({
         url: '/pages/file-browser/index'
       })
@@ -170,6 +183,8 @@ Page({
     }
   },
   viewOwner () {
+    app.globalData.repoDetail = this.data.repoDetail as any
+    app.globalData.ownerDetail = this.data.repoDetail.owner as any
     wx.navigateTo({
       url: '/pages/owner-detail/index'
     })
