@@ -9,7 +9,7 @@ const week = day * 7
 const month = day * 31
 const year = day * 365
 
-export default (format: string = '{YYYY}-{Mo}-{DD}') => {
+export default (format: string = '{YYYY}/{Mo}/{DD}') => {
   const template = tinytime(format, { padMonth: true, padDays: true })
   const config = {
     units: {

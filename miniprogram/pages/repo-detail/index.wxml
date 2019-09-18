@@ -1,4 +1,6 @@
 <!--miniprogram/pages/repo-detail/index.wxml-->
+<wxs module="common" src="../../wxs/common.wxs" />
+
 <navigation-bar bgColor="bg-gradual-green" isBack="{{!fromShare}}" showHome="{{fromShare}}">
   <view slot="backText">返回</view>
   <view slot="content">项目详情</view>
@@ -27,9 +29,9 @@
           {{repoDetail.description}}
         </view>
         <view slot="footer">
-          Issues: {{repoDetail.open_issues_count}}
-          Star: {{repoDetail.stargazers_count}}
-          Fork: {{repoDetail.forks_count}}
+          Issues: {{common.readableCount(repoDetail.open_issues_count)}}
+          Star: {{common.readableCount(repoDetail.stargazers_count)}}
+          Fork: {{common.readableCount(repoDetail.forks_count)}}
         </view>
       </wux-card>
       <wux-white-space wx:if="{{false}}"></wux-white-space>
@@ -57,9 +59,9 @@
     <wux-cell-group title="项目详情">
       <wux-cell title="项目语言" extra="{{repoDetail.language}}"></wux-cell>
       <wux-cell title="Watch" extra="{{repoDetail.watchers_count}}"></wux-cell>
-      <wux-cell title="创建时间" extra="{{repoDetail.created_at}}"></wux-cell>
-      <wux-cell title="最后提交" extra="{{repoDetail.pushed_at}}"></wux-cell>
-      <wux-cell title="最近更新" extra="{{repoDetail.updated_at}}"></wux-cell>
+      <wux-cell title="创建时间" extra="{{common.dateFormat(repoDetail.created_at)}}"></wux-cell>
+      <wux-cell title="最后提交" extra="{{common.dateFormat(repoDetail.pushed_at)}}"></wux-cell>
+      <wux-cell title="最近更新" extra="{{common.dateFormat(repoDetail.updated_at)}}"></wux-cell>
     </wux-cell-group>
 
     <wux-cell-group title="作者信息">

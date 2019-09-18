@@ -1,4 +1,6 @@
 <!--miniprogram/pages/owner-detail/index.wxml-->
+<wxs module="common" src="../../wxs/common.wxs" />
+
 <wxs module="utils">
   module.exports = {
     sortDate: function (str) {
@@ -35,10 +37,10 @@
       </view>
       <view slot="footer" class="owner-footer">
         <view class="text-sm">
-          Followers: {{ownerDetail.followers}} | Following: {{ownerDetail.following}}
+          Followers: {{common.readableCount(ownerDetail.followers)}} | Following: {{common.readableCount(ownerDetail.following)}}
         </view>
         <view class="created-at text-right text-gray text-xs">
-          注册时间: {{utils.sortDate(ownerDetail.created_at)}}
+          注册时间: {{common.dateFormat(ownerDetail.created_at, 'date')}}
         </view>
       </view>
     </wux-card>

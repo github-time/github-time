@@ -17,7 +17,7 @@
   </view>
 
   <view class="repo-time">
-    <text class="cuIcon-upload"></text> {{item.updated_at}}
+    <text class="cuIcon-upload"></text> {{common.dateFormat(item.updated_at)}}
   </view>
 
   <view class="repo-description">

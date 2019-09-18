@@ -1,8 +1,30 @@
+function formatNumber(n) {
+  n = n.toString()
+  return n[1] ? n : '0' + n
+}
+
 module.exports = {
   readableCount: function (val) {
     if (val > 1000) {
       return Math.round(val / 100) / 10 + 'K'
     }
     return val
+  },
+  dateFormat: function (date, type) {
+    var result = []
+    date = getDate(date)
+    if (!type || type === 'datetime' || type === 'date') {
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      var day = date.getDate()
+      result.push([year, month, day].map(formatNumber).join('/'))
+    }
+    if (!type || type === 'datetime' || type === 'time') {
+      var hour = date.getHours()
+      var minute = date.getMinutes()
+      var second = date.getSeconds()
+      result.push([hour, minute, second].map(formatNumber).join(':'))
+    }
+    return result.join(' ')
   }
 }
