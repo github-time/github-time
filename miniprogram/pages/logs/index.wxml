@@ -8,7 +8,23 @@
   <view class="cu-item text-cyan">
     <view class="bg-cyan content shadow">
       <view class="cu-capsule radius">
-        <view class="cu-tag bg-white text-cyan">v0.2.0</view>
+        <view class="cu-tag bg-white text-cyan">v0.3.0</view>
+        <view class="cu-tag line-white">2019/09/20</view>
+      </view>
+      <view class="margin-top-sm text-content"> 公测版本发布</view>
+      <view class="text-xs">
+        <view class="cuIcon-add"> 增强代码浏览器</view>
+        <view class="cuIcon-add"> Markdown 支持表情符号</view>
+        <view class="cuIcon-add"> 实现足迹功能</view>
+        <view class="cuIcon-magic"> 界面美化</view>
+        <view class="cuIcon-repair"> 修复bug</view>
+      </view>
+    </view>
+  </view>
+  <view class="cu-item text-green">
+    <view class="bg-green content shadow">
+      <view class="cu-capsule radius">
+        <view class="cu-tag bg-white text-green">v0.2.0</view>
         <view class="cu-tag line-white">2019/09/11</view>
       </view>
       <view class="margin-top-sm text-content">内测版本上线</view>
