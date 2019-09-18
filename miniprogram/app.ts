@@ -1,6 +1,7 @@
 //app.ts
 import github from './utils/githubApi'
 import settings from './utils/settings'
+import footprint from './utils/footprint'
 
 type Signal = {
   timestamp: number
@@ -11,6 +12,7 @@ type Signal = {
 export interface IMyApp {
   userInfoReadyCallback?(res: wx.UserInfo): void
   settings: typeof settings
+  footprint: typeof footprint
   globalData: {
     StatusBar: number
     CustomBar: number
@@ -63,6 +65,7 @@ App<IMyApp>({
     })
   },
   settings,
+  footprint,
   globalData: {
     StatusBar: 0,
     CustomBar: 0,

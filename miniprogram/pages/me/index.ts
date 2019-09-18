@@ -1,6 +1,7 @@
 //index.js
 import Page from '../../common/page/index'
 import github from '../../utils/githubApi'
+import footprint from '../../utils/footprint'
 
 //获取应用实例
 import { IMyApp } from '../../app'
@@ -13,6 +14,7 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     current: 'repos',
+    index: 0,
     tabs: [
       {
         key: 'repos',
@@ -44,6 +46,17 @@ Page({
       })
       // await new Promise((resolve) => {setTimeout(resolve, 2000)})
       return result
+    },
+    footprintQuery: {},
+    async getFootprints (query: any, pageSize: number, pageNo: number) {
+      return {
+        status: 'done',
+        data: footprint.getFootprint({
+          type: query.type,
+          pageSize,
+          pageNo
+        })
+      }
     }
   },
   onLoad() {
@@ -82,6 +95,9 @@ Page({
     if (app.settings.isGithubUserChanged(this)) {
       this.loadUserRepos()
     }
+    this.setData({
+      footprintQuery: {}
+    })
   },
 
   viewMoreStars () {
@@ -123,6 +139,12 @@ Page({
       url: e.detail.type === 'owner'
         ? '/pages/owner-detail/index'
         : '/pages/repo-detail/index'
+    })
+  },
+  onFootprintClick (e: any) {
+    console.log('onFootprintClick', e.detail)
+    wx.navigateTo({
+      url: e.detail.item.url
     })
   },
   showAd () {

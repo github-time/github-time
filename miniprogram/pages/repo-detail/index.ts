@@ -108,7 +108,14 @@ Page({
     const repoDetail = this.data.repoDetail
     const fullRepoName = repoDetail.full_name
 
-    const fullRepoName = options.r || repoDetail.full_name
+    app.footprint.push({
+      type: 'repo',
+      url: `/pages/repo-detail/index?r=${fullRepoName}`,
+      timestamp: new Date().getTime(),
+      meta: {
+        title: fullRepoName
+      }
+    })
 
     if (repoDetail.id !== undefined) {
       this.loadTags(repoDetail.id)

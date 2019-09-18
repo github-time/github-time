@@ -48,7 +48,8 @@
             page-size="{{5}}"
             fetch-data="{{getUserRepos}}"
             auto-load
-            class="my-data-list">
+            bind:itemclick="onStarRepoClick"
+            >
             <view slot="load-more" class="text-center" bind:tap="viewMoreStars">查看更多</view>
           </mp-data-list>
         </swiper-item>
@@ -56,7 +57,17 @@
           <mp-todo-coming-soon />
         </swiper-item> -->
         <swiper-item>
-          <mp-todo-coming-soon />
+          <mp-data-list
+            item-template="footprint"
+            key="id"
+            query="{{footprintQuery}}"
+            page-size="{{10}}"
+            fetch-data="{{getFootprints}}"
+            show-load-more
+            auto-load
+            bind:itemclick="onFootprintClick"
+            >
+          </mp-data-list>
         </swiper-item>
         <!-- <swiper-item>
           <mp-todo-coming-soon />
