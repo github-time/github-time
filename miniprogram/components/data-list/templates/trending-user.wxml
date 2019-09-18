@@ -1,12 +1,4 @@
 <!--index.wxml-->
-<wxs module="utils">
-module.exports = {
-  encode: function (str) {
-    return str ? str.replace('#', 'shap').replace('++', 'pp') : 'null'
-  }
-}
-</wxs>
-
 <template name="trending-user">
   <view mark:type="owner">
     <image

@@ -1,11 +1,6 @@
 <!--index.wxml-->
-<wxs module="utils">
-module.exports = {
-  encode: function (str) {
-    return str ? str.replace('#', 'shap').replace('++', 'pp') : 'null'
-  }
-}
-</wxs>
+<wxs module="common" src="../../../wxs/common.wxs" />
+<wxs module="utils" src="../utils.wxs" />
 
 <template name="trending-repo">
   <image
@@ -24,9 +19,9 @@ module.exports = {
       <view class="repo-language-icon lang-{{utils.encode(item.language)}}"></view> {{item.language || 'Null'}}
     </view>
     <view class="repo-meta">
-      <text class="repo-meta-icon cuIcon-favorfill text-red">+{{item.currentPeriodStars}}</text>
-      <text class="repo-meta-icon cuIcon-favor">{{item.stargazers_count}}</text>
-      <text class="repo-meta-icon cuIcon-fork">{{item.forks_count}}</text>
+      <text class="repo-meta-icon cuIcon-favorfill text-red">+{{common.readableCount(item.currentPeriodStars)}}</text>
+      <text class="repo-meta-icon cuIcon-favor">{{common.readableCount(item.stargazers_count)}}</text>
+      <text class="repo-meta-icon cuIcon-fork">{{common.readableCount(item.forks_count)}}</text>
     </view>
   </view>
 </template>

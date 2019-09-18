@@ -1,0 +1,8 @@
+module.exports = {
+  readableCount: function (val) {
+    if (val > 1000) {
+      return Math.round(val / 100) / 10 + 'K'
+    }
+    return val
+  }
+}

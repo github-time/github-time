@@ -1,3 +1,7 @@
+import DateReadable from './DateReadable'
+
+const makeDateReadable = DateReadable()
+
 type Footprint = {
   type: 'repo'|'owner'|'file',
   url: string
@@ -27,35 +31,13 @@ export default {
 
   getFootprint ({type, pageSize, pageNo}: {type: string, pageSize: number, pageNo: number}) {
     const pos = pageSize * (pageNo - 1)
+    const now = new Date().getTime()
     return footprints
       .filter((item) => !type || item.type === type)
       .slice(pos, pos + pageSize)
       .map((item) => {
         item = {...item}
-        let t = (new Date().getTime() - item.timestamp) / 1000
-        let s = '秒'
-        console.log('++++++', t)
-        if (t > 60) {
-          t = t / 60
-          s = '分钟'
-          if (t > 60) {
-            t = t / 60
-            s = '小时'
-            if (t > 24) {
-              t = t / 24
-              s = '天'
-              if (t > 31) {
-                t = t / 31
-                s = '月'
-                if (t > 12) {
-                  t = t / 12
-                  s = '年'
-                }
-              }
-            }
-          }
-        }
-        item.timestamp = `${t.toFixed()}${s} 之前` as any
+        item.timestamp = makeDateReadable(now - item.timestamp, item.timestamp) as any
         return item
       })
   }

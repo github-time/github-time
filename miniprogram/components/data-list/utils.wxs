@@ -1,0 +1,5 @@
+module.exports = {
+  encode: function (str) {
+    return str ? str.replace('#', 'shap').replace('++', 'pp') : 'null'
+  }
+}
