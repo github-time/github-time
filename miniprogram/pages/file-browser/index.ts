@@ -250,6 +250,11 @@ Page({
             filePath = matches[2].replace(/^\//, '')
           }
           console.log('github link:', href)
+          if (fullRepoName === this.data.repoDetail.full_name) {
+            // 本仓库链接,直接打开
+            this.viewFile(fullRepoName, this.data.ref, filePath)
+          } else {
+            // 其他仓库链接,跳转新页
           app.globalData.repoDetail = {
             full_name: fullRepoName,
             owner: { login }
@@ -257,6 +262,7 @@ Page({
           wx.navigateTo({
             url: `/pages/file-browser/index?r=${fullRepoName}&p=${filePath}`
           })
+          }
         } else if (href.match(/^http(|s):\/\//)) {
           // 外部链接
           $wuxToptips().info({
