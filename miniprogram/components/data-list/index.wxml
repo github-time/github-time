@@ -2,6 +2,7 @@
 <import src="./templates/trending-repo.wxml" />
 <import src="./templates/trending-user.wxml" />
 <import src="./templates/repo.wxml" />
+<import src="./templates/footprint.wxml" />
 <scroll-view
   hidden="{{hidden}}"
   scroll-y
@@ -17,7 +18,7 @@
     <template is="{{itemTemplate}}" data="{{item}}"></template>
   </view>
   <mp-load-more
-    wx:if="{{showLoadMore && status!=='done'}}"
+    wx:if="{{showLoadMore}}"
     error="{{status==='error'}}"
     loading="{{status==='loading'}}"
     no-data="{{status==='no-data'}}"
