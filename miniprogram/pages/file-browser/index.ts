@@ -99,7 +99,8 @@ Page({
     },
     treeData: [],
     history: [] as HistoryItem[],
-    branches: [] as string[]
+    branches: [] as string[],
+    showHistoryBack: false
   },
   onShareAppMessage () {
     return {
@@ -255,13 +256,13 @@ Page({
             this.viewFile(fullRepoName, this.data.ref, filePath)
           } else {
             // 其他仓库链接,跳转新页
-          app.globalData.repoDetail = {
-            full_name: fullRepoName,
-            owner: { login }
-          } as any
-          wx.navigateTo({
-            url: `/pages/file-browser/index?r=${fullRepoName}&p=${filePath}`
-          })
+            app.globalData.repoDetail = {
+              full_name: fullRepoName,
+              owner: { login }
+            } as any
+            wx.navigateTo({
+              url: `/pages/file-browser/index?r=${fullRepoName}&p=${filePath}`
+            })
           }
         } else if (href.match(/^http(|s):\/\//)) {
           // 外部链接
@@ -296,6 +297,9 @@ Page({
       const history = this.data.history[this.data.history.length - 1]
       this.viewFile(fullRepoName, history.ref, history.path, true)
       this.loadFileTree(fullRepoName, history.ref)
+      this.setData!({
+        showHistoryBack: this.data.history.length > 1
+      })
     }
   },
 
@@ -378,10 +382,15 @@ Page({
       }
       wx.hideLoading()
     }
-    if (pushHistory) this.data.history.push({
-      ref: this.data.ref,
-      path: filePath
-    })
+    if (pushHistory) {
+      this.data.history.push({
+        ref: this.data.ref,
+        path: filePath
+      })
+      this.setData!({
+        showHistoryBack: this.data.history.length > 1
+      })
+    }
     app.footprint.push({
       type: 'file',
       url: `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`,
