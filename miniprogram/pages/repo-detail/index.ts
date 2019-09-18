@@ -67,6 +67,8 @@ Page({
       text: "评论",
     }],
     readmeContent: '',
+    readmeRef: 'master',
+    readmeFilePath: 'README.md',
     repoDetail: {
       id: undefined as undefined|number,
       full_name: 'vuejs/vue',
@@ -161,18 +163,36 @@ Page({
   //   }
   // },
 
+  onMarkdownAction () {
+    wx.showToast({
+      icon: 'loading',
+      title: '使用代码浏览器打开...',
+      duration: 500
+    })
+    setTimeout(() => {
+      wx.hideToast()
+      app.globalData.repoDetail = this.data.repoDetail as any
+      app.globalData.ownerDetail = this.data.repoDetail.owner as any
+      wx.navigateTo({
+        url: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&b=${this.data.readmeRef}&p=${this.data.readmeFilePath}`
+      })
+    }, 500)
+  },
+
   async loadReadmeContent () {
     if (!this.data.readmeLoaded && this.data.current === 'readme') {
       this.data.readmeLoaded = true;
       wx.showLoading({
         title: '正在加载'
       })
-      const result = await github.getReadmeContent({
+      const result = await github.getReadme({
         fullRepoName: this.data.repoDetail.full_name
       })
       if (result.status === 'done') {
         this.setData!({
-          readmeContent: result.data,
+          readmeRef: result.data.ref,
+          readmeFilePath: result.data.path,
+          readmeContent: result.data.content,
           contexPath: `https://github.com/${this.data.repoDetail.full_name}/raw/master/`,
         })
       } else if (result.status === 'error'){

@@ -294,6 +294,47 @@ async function getReadmeContent ({
   })
 }
 
+async function getReadme ({
+  fullRepoName
+}: {fullRepoName:string, ref?: string }): Result<{content: string, path: string, ref: string}> {
+  const url = `${githubApiUrl}/repos/${fullRepoName}/readme`
+  console.log(`getReadme: fullRepoName=${fullRepoName}`)
+  return requestWithCache(
+    { url },
+    { timeout: 30, group: `RepoData#${fullRepoName}`}
+  ).then((res) => {
+    let path = 'README.md'
+    let ref = 'master'
+    if (res.statusCode === 200) {
+      // TODO: 支持缓存 key 替换
+      const contentInfo = res.data as github.repos.Contents
+      const matches = contentInfo.url.match(/^https:\/\/api\.github\.com\/repos\/\w+\/\w+\/contents\/(.*)?ref=(.*)$/)
+      if (matches) {
+        path = matches[1]
+        ref =  matches[2]
+      }
+      return {
+        status: 'done' as ResultStatus,
+        data: {
+          content: Base64.decode(contentInfo.content),
+          path,
+          ref
+        }
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: new Error(`statusCode: ${res.statusCode}`),
+        data: {
+          content: '',
+          path,
+          ref
+        }
+      }
+    }
+  })
+}
+
 async function getFileContent ({
   fullRepoName,
   filePath,
@@ -414,6 +455,7 @@ export default {
   searchUsers,
   getFileContent,
   getReadmeContent,
+  getReadme,
   getFileTree,
   getUserStaring,
   getUserRepositories,
