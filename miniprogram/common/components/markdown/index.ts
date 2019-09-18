@@ -64,6 +64,13 @@ Component({
         type: 'link-tap',
         data: e.currentTarget.dataset
       })
+    },
+    viewImage (e) {
+      const imgUrl = e.currentTarget.dataset.url
+      wx.previewImage({
+        urls: [imgUrl],
+        current: imgUrl
+      })
     }
   }
 })

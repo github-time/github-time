@@ -26,7 +26,11 @@
             selectable="{{true}}"
           >{{item.text}}</text></view>
       </view>
-      <image wx:elif="{{item.type === 'image'}}" src="{{item.href}}" mode="widthFix"/>
+      <image wx:elif="{{item.type === 'image'}}"
+        src="{{item.href}}"
+        mode="widthFix"
+        data-url="{{item.href}}"
+        bind:tap="viewImage"/>
       <view wx:elif="{{item.type === 'link'}}"
         class="markdown-body-a"
         data-href="{{item.href}}"
