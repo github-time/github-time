@@ -18,7 +18,7 @@
     <template is="{{itemTemplate}}" data="{{item}}"></template>
   </view>
   <mp-load-more
-    wx:if="{{showLoadMore}}"
+    wx:if="{{showLoadMore || status==='loading' || status==='error'}}"
     error="{{status==='error'}}"
     loading="{{status==='loading'}}"
     no-data="{{status==='no-data'}}"
