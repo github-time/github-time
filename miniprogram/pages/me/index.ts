@@ -62,6 +62,21 @@ Page({
       }
     }
   },
+  onShareAppMessage () {
+    if (this.data.githubConfig.user) {
+      return {
+        title: 'Github Time',
+        desc: `分享开发者: ${this.data.githubConfig.user}`,
+        path: `/pages/owner-detail/index?o=${this.data.githubConfig.user}&s=true`
+      }
+    } else {
+      return {
+        title: 'Github Time',
+        desc: 'Github 推荐',
+        path: `/pages/recommend/index`
+      }
+    }
+  },
   onLoad() {
     if (app.globalData.userInfo) {
       this.setData!({
