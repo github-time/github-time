@@ -17,11 +17,13 @@ Page({
     tabs: [
       {
         key: 'repos',
-        title: 'Ta的仓库'
+        title: 'Ta的仓库',
+        icon: 'medal'
       },
       {
         key: 'activity',
-        title: 'Ta的动态'
+        title: 'Ta的动态',
+        icon: 'activity'
       }
     ],
     query: null,
@@ -86,6 +88,13 @@ Page({
       }
     })()
     this.loadUserRepos()
+  },
+  onRepoClick (e: any) {
+    app.globalData.repoDetail = e.detail.item
+    app.globalData.ownerDetail = e.detail.item.owner
+    wx.navigateTo({
+      url: '/pages/repo-detail/index'
+    })
   },
   onTabsChange(e: any) {
     const { key } = e.detail

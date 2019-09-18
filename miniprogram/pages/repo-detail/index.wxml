@@ -8,7 +8,9 @@
 </navigation-bar>
 
 <wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">
-  <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
+  <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}">
+    <text class="cuIcon-{{item.icon}}"> {{item.title}}</text>
+  </wux-tab>
 </wux-tabs>
 
 <mp-fill-view>

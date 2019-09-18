@@ -18,15 +18,18 @@ Page({
     tabs: [
       {
         key: 'repos',
-        title: '我的仓库'
+        title: '我的仓库',
+        icon: 'medal'
       },
-      // {
-      //   key: 'activity',
-      //   title: '动态'
-      // },
+      {
+        key: 'activity',
+        title: '动态',
+        icon: 'activity'
+      },
       {
         key: 'footprint',
-        title: '足迹'
+        title: '足迹',
+        icon: 'footprint'
       },
       // {
       //   key: 'issues',

@@ -37,7 +37,9 @@
 
     <block wx:if="{{githubConfig.user}}">
       <wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">
-        <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}" title="{{item.title}}"></wux-tab>
+        <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}">
+          <text class="cuIcon-{{item.icon}}"> {{item.title}}</text>
+        </wux-tab>
       </wux-tabs>
       <swiper class="my-dashboard" current="{{ index }}" bindchange="onSwiperChange">
         <swiper-item>
@@ -53,9 +55,9 @@
             <view slot="load-more" class="text-center" bind:tap="viewMoreStars">查看更多</view>
           </mp-data-list>
         </swiper-item>
-        <!-- <swiper-item>
+        <swiper-item>
           <mp-todo-coming-soon />
-        </swiper-item> -->
+        </swiper-item>
         <swiper-item>
           <mp-data-list
             item-template="footprint"
@@ -79,19 +81,38 @@
     </block>
 
     <wux-cell-group title="关于 Github Time">
-      <wux-cell title="赞赏支持" is-link bind:tap="showQrcode"></wux-cell>
-      <wux-cell wx:if="{{false}}" title="捐赠支持" is-link></wux-cell>
-      <wux-cell wx:if="{{false}}" title="看广告支持" is-link bind:tap="showAd"></wux-cell>
-      <wux-cell title="意见反馈" is-link open-type="feedback" bind:feedback="onFeedback"></wux-cell>
-      <wux-cell wx:if="{{false}}" title="商务合作" is-link></wux-cell>
-      <wux-cell title="更新日志" is-link bind:tap="showLogs"></wux-cell>
-      <wux-cell title="感谢" is-link bind:tap="showThanks"></wux-cell>
+      <wux-cell is-link bind:tap="showQrcode">
+        <text class="cuIcon-appreciate"> 赞赏支持</text>
+      </wux-cell>
+      <wux-cell is-link open-type="share">
+        <text class="cuIcon-forward"> 分享支持</text>
+      </wux-cell>
+      <wux-cell wx:if="{{false}}" is-link>
+        <text class="cuIcon-redpacket"> 捐赠支持</text>
+      </wux-cell>
+      <wux-cell wx:if="{{false}}" is-link bind:tap="showAd">
+        <text class="cuIcon-video"> 看广告支持</text>
+      </wux-cell>
+      <wux-cell is-link open-type="feedback" bind:feedback="onFeedback">
+        <text class="cuIcon-service"> 意见反馈</text>
+      </wux-cell>
+      <wux-cell wx:if="{{false}}" is-link>
+        <text class="cuIcon-appreciate"> 商务合作</text>
+      </wux-cell>
+      <wux-cell is-link bind:tap="showLogs">
+        <text class="cuIcon-edit"> 更新日志</text>
+      </wux-cell>
+      <wux-cell is-link bind:tap="showThanks">
+        <text class="cuIcon-notice"> 感谢</text>
+      </wux-cell>
     </wux-cell-group>
 
     <wux-white-space></wux-white-space>
 
     <wux-cell-group>
-      <wux-cell title="设置" is-link bind:tap="showSettings"></wux-cell>
+      <wux-cell is-link bind:tap="showSettings">
+        <text class="cuIcon-settings"> 设置</text>
+      </wux-cell>
     </wux-cell-group>
     <wux-white-space></wux-white-space>
   </view>

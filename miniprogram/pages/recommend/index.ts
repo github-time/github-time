@@ -21,11 +21,13 @@ Page({
     tabs: [
       {
         key: 'repos',
-        title: '仓库'
+        title: '仓库',
+        icon: 'medal'
       },
       {
         key: 'developers',
-        title: '开发者'
+        title: '开发者',
+        icon: 'friendfamous'
       }
     ],
     buttons: [

@@ -9,7 +9,8 @@
     "pages/repo-detail/index",
     "pages/owner-detail/index",
     "pages/file-browser/index",
-    "pages/thanks/index"
+    "pages/thanks/index",
+    "pages/logs/index"
   ],
   "tabBar": {
     "custom": true,

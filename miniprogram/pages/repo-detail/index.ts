@@ -20,19 +20,23 @@ Page({
     tabs: [
       {
         key: 'summary',
-        title: '项目摘要'
+        title: '项目摘要',
+        icon: 'medal'
       },
       {
         key: 'readme',
-        title: '项目介绍'
+        title: '项目介绍',
+        icon: 'text'
       },
       {
         key: 'issues',
-        title: '问题'
+        title: '问题',
+        icon: 'question'
       },
       {
         key: 'discuss',
-        title: '讨论'
+        title: '讨论',
+        icon: 'community'
       }
     ],
     actions: [{
