@@ -308,7 +308,7 @@ async function getReadme ({
     if (res.statusCode === 200) {
       // TODO: 支持缓存 key 替换
       const contentInfo = res.data as github.repos.Contents
-      const matches = contentInfo.url.match(/^https:\/\/api\.github\.com\/repos\/\w+\/\w+\/contents\/(.*)?ref=(.*)$/)
+      const matches = contentInfo.url.match(/^https:\/\/api\.github\.com\/repos\/[\w-]+\/[\w-]+\/contents\/(.*)?ref=(.*)$/)
       if (matches) {
         path = matches[1]
         ref =  matches[2]

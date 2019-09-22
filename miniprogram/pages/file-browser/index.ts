@@ -238,13 +238,13 @@ Page({
     switch (e.detail.type) {
       case 'link-tap':
         const href = e.detail.data.href
-        let matches = href.match(/^https:\/\/github.com\/(\w+)\/(\w+)/)
+        let matches = href.match(/^https:\/\/github.com\/([\w-]+)\/([\w-]+)/)
         if (matches) {
           // Github 内部链接
           const fullRepoName = `${matches[1]}/${matches[2]}`
           const login = matches[1]
           let filePath = 'README.md'
-          matches = href.match(/^https:\/\/github.com\/\w+\/\w+\/blob\/(\w+)\/(.*)/)
+          matches = href.match(/^https:\/\/github.com\/[\w-]+\/[\w-]+\/blob\/([\w-]+)\/(.*)/)
           if (matches) {
             // 带文件路径
             // const branch = matches[1]
