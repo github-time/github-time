@@ -132,18 +132,22 @@
   padding: 8rpx 20rpx;
 }
 
-.line-num {
-  min-width: 28px;
-  /* color: rgba(27,31,35,0.3); */
+.code-text.line-num {
+	font-size: 20rpx;
+	text-align: right;
+	min-width: 3em;
+	padding-right: 8rpx;
+	margin-right: 8rpx;
+	color: #777;
+	background: #333;
+	line-height: 48rpx;
 }
 
-.code-row{
-  white-space:nowrap;
+.code-row {
+	white-space:nowrap;
 }
 
-.code-text{
+.code-text {
   display:inline-block;
-  /* font-size: 16rpx; */
-  /* line-height: 20rpx; */
-  /* height: 20rpx; */
+  font-size: 28rpx;
 }
