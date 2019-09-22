@@ -158,3 +158,22 @@ page {
 .tree-item-1-level{
   padding-left: 15rpx;
 }
+
+.file-search-result {
+  background: #eee;
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 12rpx 16rpx;
+  z-index: 100;
+}
+
+.file-search-result-scroll-view {
+  max-height: 40vh;
+  overflow: auto;
+}
+
+.file-search-result-item {
+  font-weight: 500;
+  padding: 8rpx 0;
+}

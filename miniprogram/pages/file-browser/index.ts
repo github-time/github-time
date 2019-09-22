@@ -1,4 +1,5 @@
 //index.js
+import * as minimatch from 'minimatch'
 import Page from '../../common/page/index'
 import { IMyApp } from '../../app'
 import parseTree from '../../utils/parseTree'
@@ -72,6 +73,42 @@ function getFileInfo (path: string) {
   }
 }
 
+function debounce (this: any, func: Function, wait: number) {
+  let timer = 0
+  return function (this: any) {
+    const context = this
+    const args = arguments
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      func.apply(context,args)
+    }, wait)
+  }
+}
+
+const doFileSearch = debounce((vm: any, query: string) => {
+  let maxCount = 25
+  const result = [] as string[] || vm.data.pathList.filter((item: string) => {
+    if (maxCount > 0) {
+      if (minimatch(item, query, {matchBase: true})) {
+        maxCount--
+        return true
+      }
+    }
+    return false
+  })
+  if (maxCount > 0) {
+    vm.data.pathList.forEach((item: string) => {
+        if (maxCount > 0 && minimatch(item, `*${query}*`, {matchBase: true}) && result.indexOf(item) === -1) {
+        result.push(item)
+        maxCount--
+      }
+    })
+  }
+  vm.setData!({
+    fileSearchResult: result
+  })
+}, 300) as (vm: any, query: string) => void
+
 Page({
   data: {
     fromShare: true,
@@ -79,6 +116,7 @@ Page({
     lastTap: 0,
     marginTop: 0,
     emojis: {},
+    keyword: '',
     ref: '',
     filePath: '',
     fileContent: '',
@@ -98,6 +136,9 @@ Page({
       default_branch: ''
     },
     treeData: [],
+    pathList: [] as string [],
+    fileSearchResult: [] as string[],
+    showFileSearchResult: false,
     history: [] as HistoryItem[],
     branches: [] as string[],
     showHistoryBack: false,
@@ -198,10 +239,37 @@ Page({
     this.loadFileTree(this.data.repoDetail.full_name, ref)
   },
   onTapViewer (e: any) {
+    this.setData!({
+      showFileSearchResult: false
+    })
     if (e.timeStamp - this.data.lastTap < 250) {
       this.showFileTree()
     }
     this.data.lastTap = e.timeStamp
+  },
+  async onSearchFocus () {
+    if (this.data.treeData.length === 0) {
+      await this.loadFileTree(this.data.repoDetail.full_name, this.data.ref)
+    }
+    this.setData!({
+      showSidebar: false,
+      showFileSearchResult: true
+    })
+  },
+  onSearchChange (e: any) {
+    const query = e.detail.value
+    this.setData!({
+      keyword: query
+    })
+    console.log('search:', query)
+
+    doFileSearch(this, query)
+  },
+  onSearchResultItemClick (e: any) {
+    this.viewFile(this.data.repoDetail.full_name, this.data.ref, e.currentTarget.dataset.path)
+    this.setData!({
+      showFileSearchResult: false
+    })
   },
   onViewFileClick (e: any) {
     this.viewFile(this.data.repoDetail.full_name, this.data.ref, e.detail.path)
@@ -237,6 +305,7 @@ Page({
       })
     }
     this.setData!({
+      showFileSearchResult: false,
       showSidebar: true
     })
   },
@@ -338,6 +407,7 @@ Page({
     if (result.status === 'done') {
       try {
         this.setData!({
+          pathList: result.data.filter(item => item.type === 'blob').map(item => item.path),
           treeData: parseTree(result.data!).tree
         });
       } catch (e) {
