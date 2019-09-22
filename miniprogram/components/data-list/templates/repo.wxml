@@ -16,8 +16,9 @@
     <text class="text-cut repo-name">{{item.name}}</text>
   </view>
 
-  <view class="repo-time">
-    <text class="cuIcon-upload"></text> {{common.dateFormat(item.updated_at)}}
+  <view class="repo-time text-cut">
+    <text class="cuIcon-upload margin-right-xs"> {{common.dateFormat(item.updated_at)}}</text>
+    <text class="cuIcon-people"> {{item.owner.login}}</text>
   </view>
 
   <view class="repo-description">
