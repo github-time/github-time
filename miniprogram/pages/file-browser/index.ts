@@ -399,5 +399,12 @@ Page({
         title: `${fullRepoName}/@${ref}/${filePath}`
       }
     })
+  },
+  viewImage (e: any) {
+    const imgUrl = e.currentTarget.dataset.url
+    wx.previewImage({
+      urls: [imgUrl],
+      current: imgUrl
+    })
   }
 })

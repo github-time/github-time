@@ -36,7 +36,11 @@
     bind:action="onMarkdownAction"
     ></mp-markdown>
   <view wx:elif="{{fileType === 'img'}}">
-    <image src="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"></image>
+    <image
+      src="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"
+      data-url="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"
+      mode="widthFix"
+      bind:tap="viewImage"/>
   </view>
   <mp-code-highlight wx:else code="{{fileContent}}" language="{{fileType}}"></mp-code-highlight>
 </mp-fill-view>
