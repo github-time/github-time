@@ -1,6 +1,7 @@
 {
   "usingComponents": {
     "mp-load-more": "/components/load-more/index",
+    "mp-github-repo-description": "/components/github-repo-description/index",
     "mp-markdown": "/common/components/markdown/index",
     "mp-fill-view": "/common/components/fill-view/index",
     "mp-todo-coming-soon": "/components/todo-coming-soon/index",

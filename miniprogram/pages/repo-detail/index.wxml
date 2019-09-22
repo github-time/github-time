@@ -28,7 +28,7 @@
           </wux-button>
         </view>
         <view slot="body">
-          {{repoDetail.description}}
+          <mp-github-repo-description content="{{repoDetail.description}}" />
         </view>
         <view slot="footer">
           Issues: {{common.readableCount(repoDetail.open_issues_count)}}

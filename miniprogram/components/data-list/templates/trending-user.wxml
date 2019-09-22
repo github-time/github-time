@@ -19,6 +19,8 @@
       <text class="cuIcon-medal"></text>
       {{item.name}}
     </view>
-    <view class="repo-description">{{item.description}}</view>
+    <view class="repo-description">
+      <mp-github-repo-description content="{{item.description}}" />
+    </view>
   </view>
 </template>

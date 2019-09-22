@@ -13,7 +13,9 @@
   </image>
   <view class="repo-name">{{item.name}}</view>
 
-  <view class="repo-description">{{item.description}}</view>
+  <view class="repo-description">
+    <mp-github-repo-description content="{{item.description}}" />
+  </view>
   <view class="repo-footer">
     <view class="repo-language">
       <view class="repo-language-icon lang-{{utils.encode(item.language)}}"></view> {{item.language || 'Null'}}

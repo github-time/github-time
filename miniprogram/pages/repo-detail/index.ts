@@ -126,7 +126,7 @@ Page({
     if (repoDetail.id !== undefined) {
       this.loadTags(repoDetail.id)
     } else {
-      (async () => {
+      ;(async () => {
         const result = await github.getRepositoryDetail(fullRepoName)
         if (result.status === 'done') {
           const detail = result.data!

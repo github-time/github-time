@@ -21,7 +21,7 @@
   </view>
 
   <view class="repo-description">
-    <mp-github-repo-description content="{{item.description}}"></mp-github-repo-description>
+    <mp-github-repo-description content="{{item.description}}" />
   </view>
 
   <view class="repo-footer">
