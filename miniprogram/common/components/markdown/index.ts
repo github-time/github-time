@@ -42,7 +42,7 @@ Component({
         this.setData({
           markdownNodes: longContent ? markdownNodes.slice(0, 50) : markdownNodes
         })
-
+        // console.log('markdown nodes:', markdownNodes.slice(0, 100))
         if (longContent) {
           setTimeout(() => {
             this.setData({
@@ -61,18 +61,9 @@ Component({
     }
   },
   methods: {
-    onLinkTap (e) {
-      this.triggerEvent('action', {
-        type: 'link-tap',
-        data: e.currentTarget.dataset
-      })
-    },
-    viewImage (e) {
-      const imgUrl = e.currentTarget.dataset.url
-      wx.previewImage({
-        urls: [imgUrl],
-        current: imgUrl
-      })
+    onAction (e) {
+      console.log('md-action', e)
+      this.triggerEvent('action', e.detail)
     }
   }
 })

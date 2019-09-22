@@ -6,30 +6,171 @@ import { strDiscode } from '../../lib/wxParse/wxDiscode'
 
 type Tag = {
   tagName?: string
-  text?: string
-  src?: string
+  text?: string|null
+  value?: Tag[]
   href?: string
-}
-
-type ListItem = {
-  itemValue: string|Tag[]
 }
 
 type Node = {
+  id: number
   type: string
-  value: string|string[]|ListItem[]|Tag[]
   class?: string
-  href?: string
   title?: string
   text?: string
+  value: Tag[]|string
+  children?: Tag[]
+  deleted?: boolean
 }
 
-let nodes: Node[] = []
-
 const renderer = new marked.Renderer()
+let nodes: Node[] = []
+let nodeIndex = 0
+let vars:any[] = []
+let varIndex = 0
 
+function rest () {
+  nodeIndex = 0
+  varIndex = 0
+  vars = []
+  nodes = []
+}
+
+function getAttr (attrs: htmlParser.Handler.Attr[], attr: string) {
+  for (var i = 0; i < attrs.length; i++) {
+    if (attrs[i].name === attr) {
+      return attrs[i].escaped
+    }
+  }
+  return ''
+}
+
+function parse (text: string, contexPath: string) {
+  const value: Tag[] = []
+  let tag: Tag|null = null
+  // 处理表情符号
+  text = text.replace(/:(\w+):/g, (m: string, g1: string) => {
+    // @ts-ignore
+    return emojis[g1] ? `<emoji src="${emojis[g1]}" />` : m
+  })
+  // @ts-ignore
+  htmlParser(text, {
+    start (tagName: string, attrs: htmlParser.Handler.Attr[]) {
+      tag = { tagName, value: [] }
+      if (tagName === 'br') {
+        tag.text = '\n'
+        value.push(tag)
+        tag = null
+      } else if (tagName === 'img') {
+        tag.text = null
+        const src = getAttr(attrs, 'src')
+        tag.href = (/^http(|s):\/\//.test(src) ? src : contexPath + src)
+        value.push(tag)
+      } else if (tagName === 'emoji') {
+        tag.text = null
+        tag.href = getAttr(attrs, 'src')
+        value.push(tag)
+      } else if (tagName === 'a') {
+        tag.text = null
+        tag.href = getAttr(attrs, 'href')
+        value.push(tag)
+      } else {
+        value.push(tag)
+      }
+    },
+    chars (text: string) {
+      text = strDiscode(text)
+      if (tag) {
+        if (tag.text === null) {
+          // 使用 value 接收文本
+          tag.value!.push({text})
+        } else {
+          // 使用 text 接收文本
+          tag.text = text
+        }
+      } else {
+        // 独立的文字
+        value.push({text})
+      }
+      tag = null
+    }
+  })
+  return value
+}
+
+function compile (text: string, contexPath: string) {
+  const value:Tag[] = []
+  // 解析标签
+  const values = parse(text, contexPath)
+  for (let val of values) {
+    if (val.text) {
+      text = val.text
+      let current = 0
+      text.replace(/__\$\$(node|var):(\d+)\$\$__/g, (m: string, ref: string, idStr: string, index: number) => {
+        if (current < index) {
+          value.push({
+            ...val,
+            text: text.substr(current, index - current) // 普通文本
+          })
+          current = index
+        }
+        let v
+        let id = parseInt(idStr)
+        if (ref === 'node' && nodes[id]) {
+          nodes[id].deleted = true // 将节点标记为删除
+          v = nodes[id].value
+        } else if (ref === 'var') {
+          v = vars[id]
+        }
+        if (v) {
+          // 翻译成功
+          value.push(...[].concat(v))
+        } else {
+          // 未找到相关变量，原样输出
+          value.push({
+            ...val,
+            text: m
+          })
+        }
+        current = index + m.length
+        return ''
+      })
+      if (current < text.length) {
+        value.push({
+          ...val,
+          text: text.substr(current, text.length - current) // 普通文本
+        })
+      }
+    } else {
+      value.push(val)
+    }
+  }
+  return value
+}
+
+let listData:number[] = []
+
+function dealList () {
+  if (listData.length > 0) {
+    const children: Tag[] = []
+    listData.forEach(id => {
+      children.push(...[].concat(vars[id]))
+    })
+    nodes.push({
+      id: nodeIndex++,
+      type: 'list',
+      value: [],
+      children
+    })
+    listData = []
+  }
+}
+
+// 块级元素解析
+// 代码块
 renderer.code = function (code: string, language: string) {
+  dealList()
   nodes.push({
+    id: nodeIndex++,
     type: 'code',
     value: code,
     class: language
@@ -37,43 +178,91 @@ renderer.code = function (code: string, language: string) {
   return ''
 }
 
+// 引用块
 renderer.blockquote = function (quote: string) {
+  dealList()
   nodes.push({
+    id: nodeIndex++,
     type: 'view',
     // @ts-ignore
-    value: getBlockValue(quote, this.emojis),
+    value: compile(quote),
     class: 'markdown-body-blockquote'
   })
   return ''
 }
 
-renderer.link = function (href: string, title: string, text: string) {
+// 普通段落
+renderer.paragraph = function (text: string) {
+  dealList()
   nodes.push({
-    type: 'link',
-    value: '',
-    title,
-    href,
-    text,
-    class: ''
+    id: nodeIndex,
+    type: 'view',
+    // @ts-ignore
+    value: compile(text, this.contexPath),
+    class: 'markdown-body-paragraph'
   })
-  return ''
+  return `__$$node:${nodeIndex++}$$__`
 }
 
-renderer.image = function (href: string, title: string, text: string) {
-  nodes.push({
-    type: 'image',
-    value: '',
-    title,
+// 列表
+renderer.list = function (body: string) {
+  const childrenIds = body.split(',').slice(0, -1)
+  if (childrenIds.length > 1) {
+    vars.push(childrenIds.map(id => vars[parseInt(id)]))
+    listData.push(varIndex)
+    return `:__$$var:${varIndex++}$$__`
+  } else {
+    listData.push(parseInt(childrenIds[0]))
+    return `:__$$var:${childrenIds[0]}$$__`
+  }
+}
+
+// 列表项
+renderer.listitem = function (text: string) {
+  let matches = text.match(/:__\$\$var:(\d+)\$\$__$/)
+  let children
+  if (matches) {
+    listData.pop()
+    text = text.substr(0, text.length - matches[0].length)
+    children = [].concat(vars[parseInt(matches[1])])
+  }
+
+  vars.push({
     // @ts-ignore
-    href: encodeURI(/^http(|s):\/\//.test(href) ? href : this.contexPath + href),
-    text,
-    class: ''
+    value: compile(text, this.contexPath),
+    children
+  })
+  return `${varIndex++},`
+}
+
+// 表格
+renderer.table = function (header: string, body: string) {
+  header = header.replace(/<td/g, '<td class="markdown-body-td"').replace(/<tr/g, '<tr class="markdown-body-tr"')
+  body = body.replace(/<td/g, '<td class="markdown-body-td"').replace(/<tr/g, '<tr class="markdown-body-tr"')
+  body = body.replace(/:(\w+):/g, (m: string, g1: string) => {
+    // @ts-ignore
+    return this.emojis[g1] ? `<img class="emoji" src="${this.emojis[g1]}" />` : m
+  })
+  body = body.replace(/__\$\$var:(\d+)\$\$__/g, (_: string, idStr: string) => {
+    return `<img class="image-in-table" src="${vars[parseInt(idStr)].href}"/>`
+  })
+  nodes.push({
+    id: nodeIndex++,
+    type: 'html',
+    value: `
+      <table class="markdown-body-table">
+        <thead class="markdown-body-thead">${header}</thead>
+        <tbody class="markdown-body-tbody">${body}</tbody>
+      </table>
+    `
   })
   return ''
 }
 
 renderer.html = function (html: string) {
   let res = ''
+  // @ts-ignore
+  const contexPath = this.contexPath
   htmlParser(html, {
     start (tagName: string, attrs: htmlParser.Handler.Attr[]) {
       res += '<' + tagName + ' class="markdown-body-' + tagName + '"'
@@ -86,6 +275,9 @@ renderer.html = function (html: string) {
           align = escaped
         } else if (name === 'style') {
           style = escaped
+        } else if (name === 'src') {
+          // 修正图片地址
+          res += ' ' + name + '="' + (/^http(|s):\/\//.test(escaped) ? escaped : contexPath + escaped) + '"'
         } else {
           res += ' ' + name + '="' + escaped + '"'
         }
@@ -101,7 +293,9 @@ renderer.html = function (html: string) {
       res += text
     }
   })
+  dealList()
   nodes.push({
+    id: nodeIndex++,
     type: 'html',
     value: res
   })
@@ -109,141 +303,62 @@ renderer.html = function (html: string) {
 }
 
 renderer.heading = function (text: string, level: number) {
+  dealList()
   nodes.push({
+    id: nodeIndex++,
     type: 'view',
     // @ts-ignore
-    value: getBlockValue(text, this.emojis),
+    value: compile(text, this.contexPath),
     class: 'markdown-body-h' + level
   })
   return ''
 }
 
 renderer.hr = function () {
+  dealList()
   nodes.push({
+    id: nodeIndex++,
     type: 'view',
-    value: [''],
+    value: [],
     class: 'markdown-body-hr'
   })
   return ''
 }
 
-renderer.list = function (body: string) {
-  const listItems = body.split('----listitem----')
-  const value: ListItem[] = []
-  listItems.forEach((li: string) => {
-    if (/^\s*$/.test(li)) {
-      return
-    }
-    value.push({
-      // @ts-ignore
-      itemValue: getBlockValue(li, this.emojis)
-    })
-  })
-  nodes.push({
-    type: 'list',
-    value: value
-  })
-  return ''
-}
-
-renderer.listitem = function (text: string) {
-  return text + '----listitem----'
-}
-
-renderer.paragraph = function (text: string) {
-  let type = 'view'
-  let value: string|Tag[] = ''
-  if (/<img/.test(text) && /src="/.test(text)) {
-    type = 'html'
-    value = text
-  } else {
+renderer.link = function (href: string, title: string, text: string) {
+  vars.push({
+    tagName: 'a',
+    title,
     // @ts-ignore
-    value = getBlockValue(text, this.emojis)
-  }
-  nodes.push({
-    type,
-    value,
-    class: 'markdown-body-paragraph'
+    value: compile(text, this.contexPath),
+    href
   })
-  return ''
+  return `__$$var:${varIndex++}$$__`
 }
 
-renderer.table = function (header: string, body: string) {
-  header = header.replace(/<td/g, '<td class="markdown-body-td"').replace(/<tr/g, '<tr class="markdown-body-tr"')
-  body = body.replace(/<td/g, '<td class="markdown-body-td"').replace(/<tr/g, '<tr class="markdown-body-tr"')
-  body = body.replace(/:(\w+):/g, (m: string, g1: string) => {
+renderer.image = function (href: string, title: string, text: string) {
+  vars.push({
+    tagName: 'img',
+    title,
+    text,
     // @ts-ignore
-    return this.emojis[g1] ? `<img class="emoji" src="${this.emojis[g1]}" />` : m
+    href: encodeURI(/^http(|s):\/\//.test(href) ? href : this.contexPath + href)
   })
-  nodes.push({
-    type: 'html',
-    value: `
-      <table class="markdown-body-table">
-        <thead class="markdown-body-thead">${header}</thead>
-        <tbody class="markdown-body-tbody">${body}</tbody>
-      </table>
-    `
-  })
-  return ''
-}
-
-function getBlockValue (blockString: string, emojis: {[key: string]: string}) {
-  const value: Tag[] = []
-  let tag: Tag|null = null
-  blockString = blockString.replace(/:(\w+):/g, (m: string, g1: string) => {
-    // @ts-ignore
-    return emojis[g1] ? `<emoji src="${emojis[g1]}" />` : m
-  })
-  htmlParser(blockString, {
-    start (tagName: string, attrs: htmlParser.Handler.Attr[]) {
-      tag = { tagName }
-      if (tagName === 'br') {
-        tag.text = '\n'
-        value.push(tag)
-        tag = null
-      } else if (tagName === 'img') {
-        tag.src = getAttr(attrs, 'src')
-        value.push(tag)
-        tag = null
-      } else if (tagName === 'emoji') {
-        tag.src = getAttr(attrs, 'src')
-        value.push(tag)
-        tag = null
-      } else if (tagName === 'a') {
-        tag.href = getAttr(attrs, 'href')
-      }
-    },
-    chars (text: string) {
-      tag = tag || {}
-      tag.text = strDiscode(text)
-      value.push(tag)
-      tag = null
-    }
-  })
-  return value
-}
-
-function getAttr (attrs: htmlParser.Handler.Attr[], attr: string) {
-  for (var i = 0; i < attrs.length; i++) {
-    if (attrs[i].name === attr) {
-      return attrs[i].escaped
-    }
-  }
-  return ''
+  return `__$$var:${varIndex++}$$__`
 }
 
 export default function (md: string, {emojis = {}, contexPath = ''}: {emojis: {}; contexPath: string}) {
-  nodes = []
+  rest()
   // @ts-ignore
   renderer.emojis = emojis
   // @ts-ignore
   renderer.contexPath = contexPath
   marked(md, {
     renderer,
-    headerIds: false,
-    breaks: true
+    headerIds: false
   })
+  dealList()
   const generatedNodes = nodes
   nodes = []
-  return generatedNodes
+  return generatedNodes.filter(node => !node.deleted)
 }

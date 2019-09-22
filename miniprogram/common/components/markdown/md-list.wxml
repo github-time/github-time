@@ -1,0 +1,7 @@
+<view wx:for='{{ model.children }}' wx:key='index' class="markdown-body-list-item">
+  <text class="cuIcon-title"></text>
+  <md-view class="{{item.class}}" model="{{item}}" bind:action="onAction"/>
+  <view wx:if="{{item.children}}" class="sub-item">
+    <md-list model='{{ item }}' bind:action="onAction"></md-list>
+  </view>
+</view>

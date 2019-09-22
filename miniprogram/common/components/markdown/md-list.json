@@ -1,8 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "md-view": "./md-view",
     "md-list": "./md-list",
-    "code-highlight": "../code-highlight/index"
+    "md-view": "./md-view"
   }
 }

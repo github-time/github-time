@@ -1,0 +1,126 @@
+@import '../code-highlight/index.wxss';
+
+.emoji {
+  width:1em;
+  height:1em;
+}
+
+.markdown-body-img {
+  box-sizing: content-box;
+  max-width: 100%;
+  border-style: none;
+  background-color: #fff;
+}
+
+.markdown-body-img[align=right] {
+  padding-left: 20px;
+}
+
+.markdown-body-img[align=left] {
+  padding-right: 20px;
+}
+
+.markdown-body-block-code {
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #2d2d2d;
+  color:#ccc;
+  white-space:pre;
+  overflow:scroll;
+}
+
+.markdown-body-a {
+  color: #0366d6;
+  text-decoration: none;
+  background-color: transparent;
+  margin: 0 2rpx;
+}
+
+/*
+.markdown-body-a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-body-a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body-a:active,
+.markdown-body-a:hover {
+  outline-width: 0;
+}
+*/
+
+.markdown-body-p {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.markdown-body-strong {
+  font-weight: 600;
+}
+
+.markdown-body-table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.markdown-body-td,
+.markdown-body-th {
+  padding: 0;
+}
+
+.markdown-body-blockquote {
+  margin: 0;
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+}
+
+.markdown-body-dl {
+  padding: 0;
+}
+
+.markdown-body-dl .markdown-body-dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.markdown-body-dl .markdown-body-dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.markdown-body-table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+
+.markdown-body-table .markdown-body-th {
+  font-weight: 600;
+}
+
+.markdown-body-table .markdown-body-th,
+.markdown-body-table .markdown-body-td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.markdown-body-table .markdown-body-tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.markdown-body-table .markdown-body-tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+.markdown-body-code {
+  padding: 0 8rpx;
+  background: #ddd;
+}
