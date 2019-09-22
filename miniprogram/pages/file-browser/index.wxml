@@ -29,7 +29,7 @@
   </view>
   <view class="header-right">
     <text wx:if="{{fileType === 'md'}}" class="cuIcon-{{mdPreview ? 'read' : 'brand'}}" bind:tap="switchMdMode">md</text>
-</view>
+  </view>
 </view>
 
 <mp-fill-view bind:tap="onTapViewer">
@@ -76,4 +76,3 @@
   </view>
 </view>
 <view style="top: {{marginTop}}px" class="sidebar-back" hidden="{{!showSidebar}}"  bindtap="hideFileTree"></view>
-

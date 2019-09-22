@@ -16,12 +16,12 @@ page {
   align-items: center;
   text-align: center;
   height: 24px;
-  /* border-bottom: 1px solid #ccc; */
   box-sizing: border-box;
   z-index: 99;
   background-color: #30474F;
   color: var(--color-white);
   font-size: var(--font-size-regular);
+  padding: 0 8rpx;
 }
 
 .sidebar-icon {
@@ -30,10 +30,18 @@ page {
 }
 
 .header-title{
-  flex: 5;
+  flex: 1;
   text-overflow:ellipsis;
   overflow:hidden;
   white-space:nowrap;
+  padding: 0 8rpx;
+}
+
+/* .header-left {
+} */
+
+.header-right {
+  text-align: right;
 }
 
 .container{
@@ -149,8 +157,4 @@ page {
 
 .tree-item-1-level{
   padding-left: 15rpx;
-}
-
-.back {
-  padding-left: 8rpx;
 }
