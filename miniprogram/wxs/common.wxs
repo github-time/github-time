@@ -12,6 +12,7 @@ module.exports = {
   },
   dateFormat: function (date, type) {
     var result = []
+    if (!date) return ''
     date = getDate(date)
     if (!type || type === 'datetime' || type === 'date') {
       var year = date.getFullYear()
