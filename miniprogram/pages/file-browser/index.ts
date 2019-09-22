@@ -6,6 +6,7 @@ import parseTree from '../../utils/parseTree'
 import github from '../../utils/githubApi'
 // @ts-ignore
 import { $wuxToptips } from '../../common/lib/wux/index'
+import fileTypeMap from './file-types'
 
 type HistoryItem = {
   ref: string,
@@ -13,49 +14,6 @@ type HistoryItem = {
 }
 
 const app = getApp<IMyApp>()
-
-const fileTypeMap = [
-  {
-    test: /(^|\/)dockerfile$/i,
-    type: 'docker'
-  },
-  {
-    test: /(^|\/)makefile$/i,
-    type: 'makefile'
-  },
-  {
-    test: /(^|\/)\.\w+rc$/i,
-    type: 'json'
-  },
-  {
-    test: /(^|\/)\.\w+config$/i,
-    type: 'properties'
-  },
-  {
-    test: /\.m$/i,
-    type: 'c'
-  },
-  {
-    test: /\.h$/i,
-    type: 'c'
-  },
-  {
-    test: /\.md$/i,
-    type: 'md'
-  },
-  {
-    test: /\.g4$/i,
-    type: 'ebnf'
-  },
-  {
-    test: /\.(png|jpeg|jpg|gif)$/i,
-    type: 'img'
-  },
-  {
-    test: /\.([^.]+)$/i,
-    type: '$1'
-  }
-]
 
 function getFileInfo (path: string) {
   for (let item of fileTypeMap) {
