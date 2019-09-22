@@ -36,6 +36,7 @@
 }
 
 .repo-name {
+  font-weight: 500;
   color: var(--color-text-primary);
   font-size: var(--font-size-large);
   line-height: 1.6em;
@@ -43,7 +44,7 @@
 
 .repo-time {
   font-size: var(--font-size-mini);
-  color: var(--color-text-placeholder);
+  color: #888;
 }
 
 .repo-description {

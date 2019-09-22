@@ -41,5 +41,5 @@ page {
   --border-color-lighter: #EBEEF5;
   --border-color-extra-light: #F2F6FC;
 
-  --background-color-base: #F5F7FA;
+  --background-color-base: #F0F2F5;
 }

@@ -59,15 +59,27 @@
     </wux-wing-blank>
 
     <wux-cell-group title="项目详情">
-      <wux-cell title="项目语言" extra="{{repoDetail.language}}"></wux-cell>
-      <wux-cell title="Watch" extra="{{repoDetail.watchers_count}}"></wux-cell>
-      <wux-cell title="创建时间" extra="{{common.dateFormat(repoDetail.created_at)}}"></wux-cell>
-      <wux-cell title="最后提交" extra="{{common.dateFormat(repoDetail.pushed_at)}}"></wux-cell>
-      <wux-cell title="最近更新" extra="{{common.dateFormat(repoDetail.updated_at)}}"></wux-cell>
+      <wux-cell extra="{{repoDetail.language}}">
+        <text class="cuIcon-read"> 项目语言</text>
+      </wux-cell>
+      <wux-cell extra="{{repoDetail.watchers_count}}">
+        <text class="cuIcon-attention"> Watch</text>
+      </wux-cell>
+      <wux-cell extra="{{common.dateFormat(repoDetail.created_at)}}">
+        <text class="cuIcon-creative"> 创建时间</text>
+      </wux-cell>
+      <wux-cell extra="{{common.dateFormat(repoDetail.pushed_at)}}">
+        <text class="cuIcon-upload"> 最后提交</text>
+      </wux-cell>
+      <wux-cell extra="{{common.dateFormat(repoDetail.updated_at)}}">
+        <text class="cuIcon-edit"> 最近更新</text>
+      </wux-cell>
     </wux-cell-group>
 
     <wux-cell-group title="作者信息">
-      <wux-cell title="用户名" extra="{{repoDetail.owner.login}}" is-link bind:tap="viewOwner"></wux-cell>
+      <wux-cell extra="{{repoDetail.owner.login}}" is-link bind:tap="viewOwner">
+        <text class="cuIcon-people"> 用户名</text>
+      </wux-cell>
     </wux-cell-group>
     <wux-white-space></wux-white-space>
 
