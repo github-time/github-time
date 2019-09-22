@@ -1,11 +1,10 @@
 //index.js
 import Page from '../../common/page/index'
 import github from '../../utils/githubApi'
-
 //获取应用实例
-// import { IMyApp } from '../../app'
+import { IMyApp } from '../../app'
 
-// const app = getApp<IMyApp>()
+const app = getApp<IMyApp>()
 const thanksRepos = [
   {
     name: 'github-trending-api',
@@ -64,5 +63,14 @@ Page({
         }
       })
     }
-  }
+  },
+  onItemClick (e: any) {
+    app.globalData.repoDetail = e.detail.item
+    app.globalData.ownerDetail = e.detail.item.owner
+    wx.navigateTo({
+      url: e.detail.type === 'owner'
+        ? '/pages/owner-detail/index'
+        : '/pages/repo-detail/index'
+    })
+  },
 })

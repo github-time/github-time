@@ -12,4 +12,5 @@
   page-size="{{10}}"
   fetch-data="{{getThanksRepos}}"
   auto-load
+  bind:itemclick="onItemClick"
   />
