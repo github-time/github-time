@@ -1,12 +1,12 @@
 <!--miniprogram/custom-tab-bar/index.wxml-->
 <scroll-view
+  wx:if="{{preview}}"
   style="height: {{height}}"
   class="markdown-scroll-view"
   scroll-x
   scroll-y
   >
-  <view class="markdown-container">
-    <view>{{rawText}}</view>
+  <view class="markdown-container {{preview ? 'markdown-container-preview' : 'markdown-container-code'}}">
     <view wx:for="{{markdownNodes}}" wx:key="{{index}}" class="markdown-body">
 
       <code-highlight wx:if="{{item.type === 'code'}}" code="{{item.value}}" language="{{item.class}}"></code-highlight>
@@ -56,3 +56,4 @@
     </view>
   </view>
 </scroll-view>
+<code-highlight wx:else code="{{content}}" language="md"/>

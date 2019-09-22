@@ -100,7 +100,8 @@ Page({
     treeData: [],
     history: [] as HistoryItem[],
     branches: [] as string[],
-    showHistoryBack: false
+    showHistoryBack: false,
+    mdPreview: true
   },
   onShareAppMessage () {
     return {
@@ -204,6 +205,16 @@ Page({
   },
   onViewFileClick (e: any) {
     this.viewFile(this.data.repoDetail.full_name, this.data.ref, e.detail.path)
+  },
+  switchMdMode () {
+    this.setData!({
+      mdPreview: !this.data.mdPreview
+    })
+    wx.showToast({
+      title: `切换到${this.data.mdPreview ? '预览' : '代码'}视图`,
+      icon: 'loading',
+      duration: 1000
+    })
   },
   showFileTree () {
     if (this.data.branches.length === 0) {

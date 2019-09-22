@@ -20,14 +20,18 @@ Component({
     contexPath: {
       type: String,
       value: {}
+    },
+    preview: {
+      type: Boolean,
+      value: true
     }
   },
   data: {
-    rawText: '',
     markdownNodes: []
   },
   observers: {
-    'content' (content: string) {
+    'content,preview' (content: string, preview: boolean) {
+      if (!preview) return // 非预览模式无需解析
       try {
         console.log('render with markdown ...')
         const markdownNodes = render(content, {
@@ -36,14 +40,12 @@ Component({
         })
         const longContent = markdownNodes.length > 150
         this.setData({
-          rawText: '',
           markdownNodes: longContent ? markdownNodes.slice(0, 50) : markdownNodes
         })
 
         if (longContent) {
           setTimeout(() => {
             this.setData({
-              rawText: '',
               markdownNodes: markdownNodes
             })
           }, 1000)
@@ -52,7 +54,7 @@ Component({
         console.log('render with markdown failed:', e)
         console.log('render raw data...')
         this.setData({
-          rawText: content,
+          preview: false, // 解析失败，降级到代码展示
           markdownNodes: []
         })
       }

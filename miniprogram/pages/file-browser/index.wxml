@@ -21,10 +21,15 @@
 </wux-search-bar>
 
 <view class="header">
-  <view wx:if="{{showHistoryBack}}" class="back" bind:tap="onBack"><text class="cuIcon-back">后退</text></view>
+  <view class="header-left">
+    <text wx:if="{{showHistoryBack}}" class="cuIcon-back" bind:tap="onBack">后退</text>
+  </view>
   <view class="header-title">
     <text>{{filePath}}</text>
   </view>
+  <view class="header-right">
+    <text wx:if="{{fileType === 'md'}}" class="cuIcon-{{mdPreview ? 'read' : 'brand'}}" bind:tap="switchMdMode">md</text>
+</view>
 </view>
 
 <mp-fill-view bind:tap="onTapViewer">
@@ -34,6 +39,7 @@
     contexPath="{{contexPath}}"
     emojis="{{emojis}}"
     bind:action="onMarkdownAction"
+    preview="{{mdPreview}}"
     ></mp-markdown>
   <view wx:elif="{{fileType === 'img'}}">
     <image
