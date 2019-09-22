@@ -251,7 +251,7 @@ async function getFileTree ({
   console.log(`getFileTree: fullRepoName=${fullRepoName}, ref=${ref}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`, maxsize: 256 * 1024}
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
