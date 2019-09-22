@@ -4,6 +4,8 @@ import htmlParser = require('../../lib/wxParse/htmlparser')
 // @ts-ignore
 import { strDiscode } from '../../lib/wxParse/wxDiscode'
 
+type EmojiMap = {[key: string]: string}
+
 type Tag = {
   tagName?: string
   text?: string|null
@@ -44,7 +46,7 @@ function getAttr (attrs: htmlParser.Handler.Attr[], attr: string) {
   return ''
 }
 
-function parse (text: string, contexPath: string) {
+function parse (text: string, contextPath: string, emojis: EmojiMap) {
   const value: Tag[] = []
   let tag: Tag|null = null
   // 处理表情符号
@@ -63,7 +65,7 @@ function parse (text: string, contexPath: string) {
       } else if (tagName === 'img') {
         tag.text = null
         const src = getAttr(attrs, 'src')
-        tag.href = (/^http(|s):\/\//.test(src) ? src : contexPath + src)
+        tag.href = (/^http(|s):\/\//.test(src) ? src : contextPath + src)
         value.push(tag)
       } else if (tagName === 'emoji') {
         tag.text = null
@@ -97,10 +99,10 @@ function parse (text: string, contexPath: string) {
   return value
 }
 
-function compile (text: string, contexPath: string) {
+function compile (text: string, contextPath: string, emojis: EmojiMap) {
   const value:Tag[] = []
   // 解析标签
-  const values = parse(text, contexPath)
+  const values = parse(text, contextPath, emojis)
   for (let val of values) {
     if (val.text) {
       text = val.text
@@ -185,7 +187,7 @@ renderer.blockquote = function (quote: string) {
     id: nodeIndex++,
     type: 'view',
     // @ts-ignore
-    value: compile(quote),
+    value: compile(quote, this.contextPath, this.emojis),
     class: 'markdown-body-blockquote'
   })
   return ''
@@ -198,7 +200,7 @@ renderer.paragraph = function (text: string) {
     id: nodeIndex,
     type: 'view',
     // @ts-ignore
-    value: compile(text, this.contexPath),
+    value: compile(text, this.contextPath, this.emojis),
     class: 'markdown-body-paragraph'
   })
   return `__$$node:${nodeIndex++}$$__`
@@ -229,7 +231,7 @@ renderer.listitem = function (text: string) {
 
   vars.push({
     // @ts-ignore
-    value: compile(text, this.contexPath),
+    value: compile(text, this.contextPath, this.emojis),
     children
   })
   return `${varIndex++},`
@@ -262,7 +264,7 @@ renderer.table = function (header: string, body: string) {
 renderer.html = function (html: string) {
   let res = ''
   // @ts-ignore
-  const contexPath = this.contexPath
+  const contextPath = this.contextPath
   htmlParser(html, {
     start (tagName: string, attrs: htmlParser.Handler.Attr[]) {
       res += '<' + tagName + ' class="markdown-body-' + tagName + '"'
@@ -277,7 +279,7 @@ renderer.html = function (html: string) {
           style = escaped
         } else if (name === 'src') {
           // 修正图片地址
-          res += ' ' + name + '="' + (/^http(|s):\/\//.test(escaped) ? escaped : contexPath + escaped) + '"'
+          res += ' ' + name + '="' + (/^http(|s):\/\//.test(escaped) ? escaped : contextPath + escaped) + '"'
         } else {
           res += ' ' + name + '="' + escaped + '"'
         }
@@ -308,7 +310,7 @@ renderer.heading = function (text: string, level: number) {
     id: nodeIndex++,
     type: 'view',
     // @ts-ignore
-    value: compile(text, this.contexPath),
+    value: compile(text, this.contextPath, this.emojis),
     class: 'markdown-body-h' + level
   })
   return ''
@@ -330,7 +332,7 @@ renderer.link = function (href: string, title: string, text: string) {
     tagName: 'a',
     title,
     // @ts-ignore
-    value: compile(text, this.contexPath),
+    value: compile(text, this.contextPath, this.emojis),
     href
   })
   return `__$$var:${varIndex++}$$__`
@@ -342,17 +344,17 @@ renderer.image = function (href: string, title: string, text: string) {
     title,
     text,
     // @ts-ignore
-    href: encodeURI(/^http(|s):\/\//.test(href) ? href : this.contexPath + href)
+    href: encodeURI(/^http(|s):\/\//.test(href) ? href : this.contextPath + href)
   })
   return `__$$var:${varIndex++}$$__`
 }
 
-export default function (md: string, {emojis = {}, contexPath = ''}: {emojis: {}; contexPath: string}) {
+export default function (md: string, {emojis = {}, contextPath = ''}: {emojis: {}; contextPath: string}) {
   rest()
   // @ts-ignore
   renderer.emojis = emojis
   // @ts-ignore
-  renderer.contexPath = contexPath
+  renderer.contextPath = contextPath
   marked(md, {
     renderer,
     headerIds: false
