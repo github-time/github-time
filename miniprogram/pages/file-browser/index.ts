@@ -82,7 +82,7 @@ Page({
     ref: '',
     filePath: '',
     fileContent: '',
-    contexPath: '',
+    contextPath: '',
     fileType: 'unknown',
     repoDetail: {
       id: undefined,
@@ -377,7 +377,7 @@ Page({
           showSidebar: false,
           ref,
           filePath,
-          contexPath: `https://github.com/${fullRepoName}/raw/master/${filePath.replace(/[^\/]+$/, '')}`,
+          contextPath: `https://github.com/${fullRepoName}/raw/master/${filePath.replace(/[^\/]+$/, '')}`,
           fileContent: content,
           fileType: fileInfo.type
         })

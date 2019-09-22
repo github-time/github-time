@@ -77,7 +77,7 @@
     <mp-markdown
       wx:else
       content="{{readmeContent}}"
-      contexPath="{{contexPath}}"
+      contextPath="{{contextPath}}"
       emojis="{{emojis}}"
       bind:action="onMarkdownAction"
     ></mp-markdown>

@@ -36,7 +36,7 @@
   <mp-markdown
     wx:if="{{fileType === 'md'}}"
     content="{{fileContent}}"
-    contexPath="{{contexPath}}"
+    contextPath="{{contextPath}}"
     emojis="{{emojis}}"
     bind:action="onMarkdownAction"
     preview="{{mdPreview}}"

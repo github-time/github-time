@@ -77,7 +77,7 @@ Page({
       }
     },
     tags: [] as string[],
-    contexPath: '',
+    contextPath: '',
     emojis: {}
   },
   onShareAppMessage () {
@@ -193,7 +193,7 @@ Page({
           readmeRef: result.data.ref,
           readmeFilePath: result.data.path,
           readmeContent: result.data.content,
-          contexPath: `https://github.com/${this.data.repoDetail.full_name}/raw/master/`,
+          contextPath: `https://github.com/${this.data.repoDetail.full_name}/raw/master/`,
         })
       } else if (result.status === 'error'){
         console.error('Get readme content failed: ', result.error)

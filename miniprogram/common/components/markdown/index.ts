@@ -17,7 +17,7 @@ Component({
       type: Object,
       value: {}
     },
-    contexPath: {
+    contextPath: {
       type: String,
       value: {}
     },
@@ -36,7 +36,7 @@ Component({
         console.log('render with markdown ...')
         const markdownNodes = render(content, {
           emojis: this.data.emojis,
-          contexPath: this.data.contexPath
+          contextPath: this.data.contextPath
         })
         const longContent = markdownNodes.length > 150
         this.setData({
