@@ -67,6 +67,7 @@ export default class CacheMagager {
   put (key: string, value: string, options: CacheOptions) {
     const maxsize = options.maxsize || this.maxCacheItemSize
     if (value.length > maxsize) {
+      console.log(`Data too big ${(value.length / 1024).toFixed(2)}K, limit=${(maxsize / 1024).toFixed(2)}K`, '')
       return
     }
     const storage = this.storage
