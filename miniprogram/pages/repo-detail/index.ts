@@ -84,7 +84,7 @@ Page({
     return {
       title: 'Github Time',
       desc: `分享仓库: ${this.data.repoDetail.full_name}`,
-      path: `/pages/repo-detail/index?r=${this.data.repoDetail.full_name}`
+      path: `/pages/repo-detail/index?r=${this.data.repoDetail.full_name}&s=true`
     }
   },
   onLoad(options: any) {

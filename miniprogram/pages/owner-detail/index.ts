@@ -41,7 +41,7 @@ Page({
     return {
       title: 'Github Time',
       desc: `分享开发者: ${this.data.ownerDetail.login}`,
-      path: `/pages/owner-detail/index?o=${this.data.ownerDetail.login}`
+      path: `/pages/owner-detail/index?o=${this.data.ownerDetail.login}&s=true`
     }
   },
   onLoad(options: any) {
