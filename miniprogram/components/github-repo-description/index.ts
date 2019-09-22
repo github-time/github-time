@@ -36,7 +36,14 @@ Component({
   properties: {
     content: {
       type: String,
-      value: ''
+      value: '',
+      observer (this: any, content: string) {
+        app.globalData.emojis.then((emojis) => {
+          this.setData({
+            parsedContent: parse(content, emojis),
+          })
+        })
+      }
     },
     emojis: {
       type: Object,
