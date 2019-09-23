@@ -118,6 +118,7 @@ Component({
       this.data.loadMoreBusy = true
       const result = await this.data.fetchData(this.data.query, this.data.pageSize, this.data.toQueryPageNo)
       if (result.status === 'done') {
+        this.triggerEvent('dataload', result)
         if (result.data.length < this.data.pageSize) {
           // 返回数据不足一页
           result.status = 'no-data'
