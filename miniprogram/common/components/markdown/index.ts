@@ -27,6 +27,8 @@ Component({
     }
   },
   data: {
+    baseTop: 0,
+    scrollTop: 0,
     markdownNodes: []
   },
   observers: {
@@ -63,7 +65,28 @@ Component({
   methods: {
     onAction (e) {
       console.log('md-action', e)
-      this.triggerEvent('action', e.detail)
+      if (e.detail.type === 'link-tap' && /^#.*/.test(e.detail.data.href)) {
+        // 拦截内部锚点跳转
+        const query = wx.createSelectorQuery().in(this)
+        query.select('.' + e.detail.data.href.substr(1)).boundingClientRect((item: any) => {
+          if (item) {
+            this.setData({
+              scrollTop: item.top - this.data.baseTop
+            })
+          }
+        }).exec()
+      } else {
+        this.triggerEvent('action', e.detail)
+      }
+    }
+  },
+  lifetimes: {
+    ready () {
+      const query = wx.createSelectorQuery().in(this)
+      // 单次查询基准滚动条 top
+      query.select('.markdown-scroll-view').boundingClientRect((rect) => {
+        if (rect) this.data.baseTop = rect.top
+      }).exec()
     }
   }
 })

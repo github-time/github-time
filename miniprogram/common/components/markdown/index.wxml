@@ -5,12 +5,15 @@
   class="markdown-scroll-view"
   scroll-x
   scroll-y
+  scroll-top="{{scrollTop}}"
   >
   <view class="markdown-container {{preview ? 'markdown-container-preview' : 'markdown-container-code'}}">
     <view wx:for="{{markdownNodes}}" wx:key="{{index}}" class="markdown-body">
       <code-highlight wx:if="{{item.type === 'code'}}" code="{{item.value}}" language="{{item.class}}"
       /><rich-text wx:if="{{item.type === 'html'}}" nodes="{{item.value}}"></rich-text
-      ><md-list wx:elif="{{item.type === 'list'}}" model="{{item}}" bind:action="onAction"
+      ><md-list wx:elif="{{item.type === 'list'}}"
+        model="{{item}}"
+        bind:action="onAction"
       /><view wx:else class="{{item.class}}"><md-view model="{{item}}" bind:action="onAction"/></view>
     </view>
   </view>

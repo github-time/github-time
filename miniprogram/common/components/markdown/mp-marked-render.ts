@@ -1,5 +1,6 @@
 
 import * as marked from 'marked'
+import md5 = require('blueimp-md5')
 import htmlParser = require('../../lib/wxParse/htmlparser')
 // @ts-ignore
 import { strDiscode } from '../../lib/wxParse/wxDiscode'
@@ -73,6 +74,10 @@ function tagToHtml (tag: Tag) {
   } else {
     return tag.text || ''
   }
+}
+
+function getHashAnchor (href: string) {
+  return `anchor-${md5(href).substr(0, 8)}`
 }
 
 function parse (text: string, contextPath: string, emojis: EmojiMap) {
@@ -330,14 +335,14 @@ renderer.html = function (html: string) {
   return ''
 }
 
-renderer.heading = function (text: string, level: number) {
+renderer.heading = function (text: string, level: number, raw: string, slugger: any) {
   dealList()
   nodes.push({
     id: nodeIndex++,
     type: 'view',
     // @ts-ignore
     value: compile(text, this.contextPath, this.emojis),
-    class: 'markdown-body-h' + level
+    class: `markdown-body-h${level} ${getHashAnchor(slugger.slug(raw))}`,
   })
   return ''
 }
@@ -354,6 +359,9 @@ renderer.hr = function () {
 }
 
 renderer.link = function (href: string, title: string, text: string) {
+  if (/^#.*/.test(href)) {
+    href = '#' + getHashAnchor(href.substr(1))
+  }
   vars.push({
     tagName: 'a',
     title,
@@ -386,7 +394,8 @@ export default function (md: string, {emojis = {}, contextPath = ''}: {emojis: {
     headerIds: false
   })
   dealList()
+  // console.log('markdown nodes:', nodes)
   const generatedNodes = nodes
-  nodes = []
+  rest()
   return generatedNodes.filter(node => !node.deleted)
 }
