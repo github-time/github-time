@@ -37,6 +37,12 @@ function rest () {
   nodes = []
 }
 
+function getFixedImagePath (path: string, contextPath: string) {
+  return /^http(|s):\/\//.test(path)
+    ? path.replace(/^(https:\/\/(?:www\.|)github.com\/[^/]+\/[^/]+\/)blob\//,'$1raw/')
+    : contextPath + path
+}
+
 function getAttr (attrs: htmlParser.Handler.Attr[], attr: string) {
   for (var i = 0; i < attrs.length; i++) {
     if (attrs[i].name === attr) {
@@ -44,6 +50,29 @@ function getAttr (attrs: htmlParser.Handler.Attr[], attr: string) {
     }
   }
   return ''
+}
+
+function tagToHtml (tag: Tag) {
+  if (!tag) return ''
+  if (tag.tagName) {
+    if (tag.tagName === 'img') {
+      return `<img src="${tag.href}" class="image-in-table"/>`
+    } else {
+      let html = ''
+      if (tag.value) {
+        for (let item of tag.value) {
+          html += tagToHtml(item)
+        }
+      }
+      if (tag.tagName === 'a') {
+        return `<a href="${tag.href}" class="markdown-body-a">${html}</a>`
+      } else {
+        return `<${tag.tagName} class="markdown-body-${tag.tagName}">${html}</${tag.tagName}>`
+      }
+    }
+  } else {
+    return tag.text || ''
+  }
 }
 
 function parse (text: string, contextPath: string, emojis: EmojiMap) {
@@ -64,8 +93,7 @@ function parse (text: string, contextPath: string, emojis: EmojiMap) {
         tag = null
       } else if (tagName === 'img') {
         tag.text = null
-        const src = getAttr(attrs, 'src')
-        tag.href = (/^http(|s):\/\//.test(src) ? src : contextPath + src)
+        tag.href = getFixedImagePath(getAttr(attrs, 'src'), contextPath)
         value.push(tag)
       } else if (tagName === 'emoji') {
         tag.text = null
@@ -245,9 +273,7 @@ renderer.table = function (header: string, body: string) {
     // @ts-ignore
     return this.emojis[g1] ? `<img class="emoji" src="${this.emojis[g1]}" />` : m
   })
-  body = body.replace(/__\$\$var:(\d+)\$\$__/g, (_: string, idStr: string) => {
-    return `<img class="image-in-table" src="${vars[parseInt(idStr)].href}"/>`
-  })
+  body = body.replace(/__\$\$var:(\d+)\$\$__/g, (_: string, idStr: string) => tagToHtml(vars[parseInt(idStr)]))
   nodes.push({
     id: nodeIndex++,
     type: 'html',
@@ -279,7 +305,7 @@ renderer.html = function (html: string) {
           style = escaped
         } else if (name === 'src') {
           // 修正图片地址
-          res += ' ' + name + '="' + (/^http(|s):\/\//.test(escaped) ? escaped : contextPath + escaped) + '"'
+          res += ' ' + name + '="' + getFixedImagePath(escaped, contextPath) + '"'
         } else {
           res += ' ' + name + '="' + escaped + '"'
         }
@@ -344,7 +370,7 @@ renderer.image = function (href: string, title: string, text: string) {
     title,
     text,
     // @ts-ignore
-    href: encodeURI(/^http(|s):\/\//.test(href) ? href : this.contextPath + href)
+    href: encodeURI(getFixedImagePath(href, this.contextPath))
   })
   return `__$$var:${varIndex++}$$__`
 }
