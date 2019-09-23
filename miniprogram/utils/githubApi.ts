@@ -85,7 +85,7 @@ async function searchRepositories ({
       }
     } else {
       return {
-        status: 'done' as ResultStatus,
+        status: 'error' as ResultStatus,
         error: new Error(`statusCode: ${res.statusCode}`),
         data: nullSearchResult()
       }
@@ -179,7 +179,7 @@ async function searchUsers ({
       }
     } else {
       return {
-        status: 'done' as ResultStatus,
+        status: 'error' as ResultStatus,
         error: new Error(`statusCode: ${res.statusCode}`),
         data: nullSearchResult()
       }
