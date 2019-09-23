@@ -1,10 +1,11 @@
 import DataStorage from './data-storage/DataStorage'
 
 type GroupData = {
-  n: number
-  i: number
-  e: number
-  k: { [key: string]: number }
+  n: number // 缓存组 id
+  c: number // 缓存创建时间
+  e: number // 过期时间
+  i: number // 缓存索引 id
+  k: { [key: string]: number } // 缓存索引
 }
 
 type CacheMagagerOptions = {
@@ -18,6 +19,10 @@ export type CacheOptions = {
   group?: string
   timeout?: number
   maxsize?: number
+}
+
+export type CacheInfo = {
+  cache_date: number
 }
 
 export default class CacheMagager {
@@ -53,8 +58,9 @@ export default class CacheMagager {
       try {
         const cacheData = JSON.parse(storage.get(`${groupData.e}.${groupData.n}.${groupData.k[key]}`) || 'null')
         if (cacheData) {
-          // 缓存命中
+          // 命中缓存数据
           console.log(`use cache: ${options.group}:${key}`)
+          cacheData.cache_date = groupData.c
           return cacheData
         }
       } catch (e) {
@@ -68,7 +74,7 @@ export default class CacheMagager {
     const maxsize = options.maxsize || this.maxCacheItemSize
     if (value.length > maxsize) {
       console.log(`Data too big ${(value.length / 1024).toFixed(2)}K, limit=${(maxsize / 1024).toFixed(2)}K`, '')
-      return
+      return null
     }
     const storage = this.storage
     const now = new Date().getTime()
@@ -79,6 +85,7 @@ export default class CacheMagager {
       this.groupIndex = (this.groupIndex + 1) % 10000
       groupData = {
         n: this.groupIndex,
+        c: now,
         e: now + (options.timeout || 1) * 1000 * 60, // 默认过期时间为 1 分钟
         k: {},
         i: 0
@@ -93,6 +100,7 @@ export default class CacheMagager {
     storage.set(`${groupData.e}.${groupData.n}.${groupData.i}`, value)
 
     this.gc()
+    return groupData
   }
 
   report () {
