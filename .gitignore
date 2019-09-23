@@ -18,14 +18,4 @@ package-lock.json
 /cloud-functions/**/*.js
 
 /miniprogram/**/*.js
-!/miniprogram/common/images/base64.js
 !/miniprogram/common/lib/**/*.js
-
-/miniprogram/common/lib/marked/index.js
-/miniprogram/common/lib/prism/index.js
-/miniprogram/common/lib/prism/index.js
-
-/miniprogram/common/lib/weui/**/*
-!/miniprogram/common/lib/weui/cell/
-!/miniprogram/common/lib/weui/cells/
-!/miniprogram/common/lib/weui/weui-wxss/
