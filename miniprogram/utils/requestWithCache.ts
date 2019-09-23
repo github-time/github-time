@@ -1,4 +1,4 @@
-import CacheMagager, { CacheOptions } from './CacheMagager'
+import CacheMagager, { CacheOptions, CacheInfo } from './CacheMagager'
 import LocalDataStorage from './data-storage/LocalDataStorage'
 
 const PREFIX = 'rc'
@@ -42,15 +42,22 @@ export default function (req: wx.RequestOption, opts: CacheOptions): Result {
         header: req.header,
         success(res) {
           console.log(`wx.request success:`, res)
+          let cacheInfo = {} as CacheInfo
           if (res.statusCode === 200) {
             // 请求成功，缓存数据
-            cacheMagager.put(key, JSON.stringify(res), {
+            const groupInfo = cacheMagager.put(key, JSON.stringify(res), {
               group: opts.group,
               timeout: opts.timeout,
               maxsize: opts.maxsize
             })
+            if (groupInfo) {
+              cacheInfo.cache_date = groupInfo.c
+            }
           }
-          resolve(res)
+          resolve({
+            ...cacheInfo,
+            ...res
+          })
         },
         fail (res) {
           if (n++ < retry) {

@@ -1,4 +1,4 @@
-import CacheMagager, { CacheOptions } from './CacheMagager'
+import CacheMagager, { CacheOptions, CacheInfo } from './CacheMagager'
 import LocalDataStorage from './data-storage/LocalDataStorage'
 
 const PREFIX = 'cc'
@@ -50,15 +50,22 @@ export default function (params: ICloud.CallFunctionParam, opts: CacheOptions): 
         data: params.data,
         success: function (res: any) {
           console.log(`wx.cloud.callFunction success:`, res)
+          let cacheInfo = {} as CacheInfo
           if (res.errMsg === 'cloud.callFunction:ok') {
             // 请求成功，缓存数据
-            cacheMagager.put(key, JSON.stringify(res), {
+            const groupInfo = cacheMagager.put(key, JSON.stringify(res), {
               group: opts.group,
               timeout: opts.timeout,
               maxsize: opts.maxsize
             })
+            if (groupInfo) {
+              cacheInfo.cache_date = groupInfo.c
+            }
           }
-          resolve(res)
+          resolve({
+            ...cacheInfo,
+            ...res
+          })
         },
         fail (e: any) {
           if (e.errCode === -404011 && n++ < retry) {
