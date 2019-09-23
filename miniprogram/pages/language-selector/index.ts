@@ -1,3 +1,4 @@
+import Page from '../../common/page/index'
 import { IMyApp } from '../../app'
 
 //获取应用实例
