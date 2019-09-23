@@ -19,6 +19,7 @@ export type CacheOptions = {
   group?: string
   timeout?: number
   maxsize?: number
+  discard?: boolean
 }
 
 export type CacheInfo = {
