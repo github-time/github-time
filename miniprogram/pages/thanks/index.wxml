@@ -1,5 +1,5 @@
 <!--miniprogram/pages/thanks/index.wxml-->
-<navigation-bar bgColor="bg-gradual-green" isBack="{{true}}">
+<navigation-bar bgColor="bg-gradual-green">
   <view slot="backText">返回</view>
   <view slot="content">感谢</view>
 </navigation-bar>

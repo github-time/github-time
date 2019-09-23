@@ -1,4 +1,4 @@
-<navigation-bar bgColor="bg-gradual-green" isBack>
+<navigation-bar bgColor="bg-gradual-green">
   <view slot="backText">返回</view>
   <view slot="content">选择编程语言</view>
 </navigation-bar>

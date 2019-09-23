@@ -69,7 +69,6 @@ const doFileSearch = debounce((vm: any, query: string) => {
 
 Page({
   data: {
-    fromShare: true,
     showSidebar: false,
     lastTap: 0,
     marginTop: 0,
@@ -110,10 +109,6 @@ Page({
     }
   },
   async onLoad (options: any) {
-    this.setData!({
-      fromShare: !!options.s
-    })
-
     // 加载表情图标地址
     app.globalData.emojis.then((emojis) => {
       this.setData!({ emojis })

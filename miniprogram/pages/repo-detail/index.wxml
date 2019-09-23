@@ -1,10 +1,9 @@
 <!--miniprogram/pages/repo-detail/index.wxml-->
 <wxs module="common" src="../../wxs/common.wxs" />
 
-<navigation-bar bgColor="bg-gradual-green" isBack="{{!fromShare}}" showHome="{{fromShare}}">
+<navigation-bar bgColor="bg-gradual-green">
   <view slot="backText">返回</view>
   <view slot="content">项目详情</view>
-  <view wx:if="{{fromShare}}" slot="homeText">返回首页</view>
 </navigation-bar>
 
 <wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">

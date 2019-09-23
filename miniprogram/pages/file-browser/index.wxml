@@ -1,8 +1,7 @@
 <!--index.wxml-->
-<navigation-bar bgColor="bg-gradual-green" isBack="{{!fromShare}}" showHome="{{fromShare}}">
+<navigation-bar bgColor="bg-gradual-green">
   <view slot="backText">返回</view>
   <view slot="content">代码浏览器</view>
-  <view wx:if="{{fromShare}}" slot="homeText">返回首页</view>
 </navigation-bar>
 <wux-toptips id="wux-toptips" />
 

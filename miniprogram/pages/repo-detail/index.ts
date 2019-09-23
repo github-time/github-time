@@ -15,7 +15,6 @@ const app = getApp<IMyApp>()
 
 Page({
   data: {
-    fromShare: true,
     current: 'summary',
     tabs: [
       {
@@ -88,10 +87,6 @@ Page({
     }
   },
   onLoad(options: any) {
-    this.setData!({
-      fromShare: !!options.s
-    })
-
     app.globalData.emojis.then((emojis) => {
       this.setData!({ emojis })
     })

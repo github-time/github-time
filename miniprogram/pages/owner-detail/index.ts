@@ -8,7 +8,6 @@ const app = getApp<IMyApp>()
 
 Page({
   data: {
-    fromShare: true,
     ownerDetail: {
       id: undefined as undefined|number,
       login: 'vuejs'
@@ -45,10 +44,6 @@ Page({
     }
   },
   onLoad(options: any) {
-    this.setData!({
-      fromShare: !!options.s
-    })
-
     if (options.o) {
       // 外部指定开发者
       this.data.ownerDetail.login = options.o
