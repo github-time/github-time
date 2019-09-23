@@ -4,6 +4,7 @@
 <import src="./templates/repo.wxml" />
 <import src="./templates/footprint.wxml" />
 <scroll-view
+  scroll-top="{{scrollTop}}"
   hidden="{{hidden}}"
   scroll-y
   class="data-list-scroll"

@@ -62,6 +62,7 @@ Component({
     }
   },
   data: {
+    scrollTop: 0,
     toQueryPageNo: 1,
     list: [],
     status: 'init',
@@ -104,6 +105,7 @@ Component({
       if (this.data.reloadBusy || !this.data.query) return
       this.data.reloadBusy = true
       this.setData({
+        scrollTop: 0,
         status: 'loading',
         toQueryPageNo: 1,
         list: [],
