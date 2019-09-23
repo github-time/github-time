@@ -20,6 +20,7 @@ Page({
         owner: query.owner,
         pageSize,
         pageNo,
+        cleanCache: query.cleanCache
       })
       // await new Promise((resolve) => {setTimeout(resolve, 2000)})
       return result
@@ -67,14 +68,18 @@ Page({
       cache_date: e.detail.cache_date
     })
   },
-  async loadUserStaring () {
+  onCacheSettingsClick () {
+    this.loadUserStaring(true)
+  },
+  async loadUserStaring (cleanCache?: boolean) {
     const githubConfig = this.data.githubConfig = app.settings.get('githubConfig', {})
     const owner = githubConfig.user
     if (owner) {
       this.setData!({
         githubConfig,
         query: {
-          owner
+          owner,
+          cleanCache
         }
       })
     } else {

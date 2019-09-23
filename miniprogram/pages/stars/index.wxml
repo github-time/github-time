@@ -26,7 +26,7 @@
 
 <view class="info">
   <text class="info-meta cuIcon-rank"> 数据更新于: {{common.dateFormat(cache_date)}}</text>
-  <text class="info-settings cuIcon-settings"> 设置</text>
+  <text class="info-settings cuIcon-refresh" bind:tap="onCacheSettingsClick"> 刷新缓存</text>
 </view>
 
 <mp-fill-view>
