@@ -24,6 +24,8 @@ type CallResult = {
 type Result = Promise<CallResult>
 const callMap: { [key: string]: Result } = {}
 
+export const cache = cacheMagager
+
 export default function (params: ICloud.CallFunctionParam, opts: CacheOptions): Result {
   const callKey = JSON.stringify(params)
   const requesting = callMap[callKey]
@@ -32,6 +34,9 @@ export default function (params: ICloud.CallFunctionParam, opts: CacheOptions): 
   const promise = callMap[callKey] = new Promise<CallResult>((resolve) => {
     const retry = 1
     const key = opts.key || (params.name + JSON.stringify(params.data))
+    if (opts.discard && opts.group) {
+      cacheMagager.clear(opts.group)
+    }
     const cacheData = cacheMagager.get(key, { group: opts.group })
     if (cacheData) {
       // 缓存命中

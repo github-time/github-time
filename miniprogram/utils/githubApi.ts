@@ -23,8 +23,9 @@ function nullSearchResult () {
 async function searchTopics ({
   keyword,
   pageSize,
-  pageNo = 1
-}: {keyword: string, pageSize: number, pageNo?: number}): Result<github.topics.SearchResult> {
+  pageNo = 1,
+  cleanCache = false
+}: {keyword: string, pageSize: number, pageNo?: number, cleanCache?: boolean}): Result<github.topics.SearchResult> {
   const url = `${githubApiUrl}/search/topics?q=${keyword}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchTopics`)
   return requestWithCache(
@@ -34,7 +35,7 @@ async function searchTopics ({
         Accept: 'application/vnd.github.mercy-preview+json'
       }
     },
-    { timeout: 120, group: 'SearchData#topics'}
+    { timeout: 120, group: 'SearchData#topics', discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -72,13 +73,14 @@ async function searchRepositories ({
   pageSize,
   pageNo = 1,
   sort = 'stars',
-  order = 'desc'
-}: {query: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.repos.SearchResult> {
+  order = 'desc',
+  cleanCache = false
+}: {query: string, pageSize: number, pageNo?: number, sort?: string, order?: string, cleanCache?: boolean}): Result<github.repos.SearchResult> {
   const url = `${githubApiUrl}/search/repositories?q=${query}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchRepositories: keyword=${query}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: 'SearchData#repos' }
+    { timeout: 30, group: 'SearchData#repos', discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -96,12 +98,12 @@ async function searchRepositories ({
   })
 }
 
-async function getRepositoryDetail (fullRepoName: string): Result<github.repos.RepoDetail> {
+async function getRepositoryDetail (fullRepoName: string, cleanCache?: boolean): Result<github.repos.RepoDetail> {
   const url = `${githubApiUrl}/repos/${fullRepoName}`
   console.log(`getRepositoryDetail: fullRepoName=${fullRepoName}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -119,12 +121,12 @@ async function getRepositoryDetail (fullRepoName: string): Result<github.repos.R
   })
 }
 
-async function getRepositoryBranches (fullRepoName: string): Result<github.repos.RepoBranche[]> {
+async function getRepositoryBranches (fullRepoName: string, cleanCache?: boolean): Result<github.repos.RepoBranche[]> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/branches`
   console.log(`getRepositoryBranches: fullRepoName=${fullRepoName}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -142,12 +144,12 @@ async function getRepositoryBranches (fullRepoName: string): Result<github.repos
   })
 }
 
-async function getUserDetail (owner: string): Result<github.users.UserDetail> {
+async function getUserDetail (owner: string, cleanCache?: boolean): Result<github.users.UserDetail> {
   const url = `${githubApiUrl}/users/${owner}`
   console.log(`getUserDetail: login=${owner}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `UserData#${owner}`}
+    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -170,13 +172,14 @@ async function searchUsers ({
   pageSize,
   pageNo = 1,
   sort = 'stars',
-  order = 'desc'
-}: {keyword: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.users.SearchResult> {
+  order = 'desc',
+  cleanCache = false
+}: {keyword: string, pageSize: number, pageNo?: number, sort?: string, order?: string, cleanCache?: boolean}): Result<github.users.SearchResult> {
   const url = `${githubApiUrl}/search/users?q=${keyword}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchUsers: keyword=${keyword}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: 'SearchData#users'}
+    { timeout: 30, group: 'SearchData#users', discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -199,13 +202,14 @@ async function getUserRepositories ({
   pageSize,
   pageNo = 1,
   sort = 'stars',
-  order = 'desc'
-}: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.repos.SearchResultItem[]> {
+  order = 'desc',
+  cleanCache = false
+}: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string, cleanCache?: boolean}): Result<github.repos.SearchResultItem[]> {
   const url = `${githubApiUrl}/users/${owner}/repos?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchRepositories: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `UserData#${owner}`}
+    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -228,13 +232,14 @@ async function getUserStaring ({
   pageSize,
   pageNo = 1,
   sort = 'created',
-  order = 'desc'
-}: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string}): Result<github.repos.SearchResultItem[]> {
+  order = 'desc',
+  cleanCache = false
+}: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string, cleanCache?: boolean}): Result<github.repos.SearchResultItem[]> {
   const url = `${githubApiUrl}/users/${owner}/starred?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`getUserStaring: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `UserData#${owner}`}
+    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -254,13 +259,14 @@ async function getUserStaring ({
 
 async function getFileTree ({
   fullRepoName,
-  ref = 'master'
-}: { fullRepoName:string, ref?: string }): Result<github.repos.TreeItem[]> {
+  ref = 'master',
+  cleanCache = false
+}: { fullRepoName:string, ref?: string, cleanCache?: boolean }): Result<github.repos.TreeItem[]> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/git/trees/${ref}?recursive=1`
   console.log(`getFileTree: fullRepoName=${fullRepoName}, ref=${ref}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `RepoData#${fullRepoName}`, maxsize: 256 * 1024}
+    { timeout: 30, group: `RepoData#${fullRepoName}`, maxsize: 256 * 1024, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -280,13 +286,14 @@ async function getFileTree ({
 
 async function getReadmeContent ({
   fullRepoName,
-  ref = 'master'
-}: {fullRepoName:string, ref?: string }): Result<string> {
+  ref = 'master',
+  cleanCache = false
+}: {fullRepoName:string, ref?: string, cleanCache?: boolean }): Result<string> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/readme?ref=${ref}`
   console.log(`getReadmeContent: fullRepoName=${fullRepoName}, ref=${ref}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       // TODO: 支持缓存 key 替换
@@ -306,13 +313,14 @@ async function getReadmeContent ({
 }
 
 async function getReadme ({
-  fullRepoName
-}: {fullRepoName:string, ref?: string }): Result<{content: string, path: string, ref: string}> {
+  fullRepoName,
+  cleanCache = false
+}: {fullRepoName:string, ref?: string, cleanCache?: boolean }): Result<{content: string, path: string, ref: string}> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/readme`
   console.log(`getReadme: fullRepoName=${fullRepoName}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then((res) => {
     let path = 'README.md'
     let ref = 'master'
@@ -350,13 +358,14 @@ async function getReadme ({
 async function getFileContent ({
   fullRepoName,
   filePath,
-  ref = 'master'
-}: {fullRepoName:string, filePath: string, ref?: string }): Result<string> {
+  ref = 'master',
+  cleanCache = false
+}: {fullRepoName:string, filePath: string, ref?: string, cleanCache?: boolean }): Result<string> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/contents/${filePath}?ref=${ref}`
   console.log(`getFileContent: fullRepoName=${fullRepoName}, filePath=${filePath}, ref=${ref}`)
   return requestWithCache(
     { url },
-    { timeout: 30, group: `RepoData#${fullRepoName}`}
+    { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -376,12 +385,12 @@ async function getFileContent ({
 
 type EmojiMap = {[key: string]: string}
 
-async function getGithubEmojis (): Result<EmojiMap> {
+async function getGithubEmojis (cleanCache: boolean = false): Result<EmojiMap> {
   const url = `${githubApiUrl}/emojis`
   console.log(`getGithubEmojis...`)
   return requestWithCache(
     { url },
-    { timeout: 60 * 24 * 7, group: `GithubEmojis`, maxsize: 512 * 1024 }
+    { timeout: 60 * 24 * 7, group: `GithubEmojis`, maxsize: 512 * 1024, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
@@ -401,8 +410,9 @@ async function getGithubEmojis (): Result<EmojiMap> {
 
 async function getGithubReposTrending ({
   language = '',
-  since = 'daily'
-}: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Result<github.trending.Repository[]> {
+  since = 'daily',
+  cleanCache = false
+}: {language?:string, since?:'daily'|'weekly'|'monthly', cleanCache?: boolean} = {}): Result<github.trending.Repository[]> {
   const url = `https://github-trending-api.now.sh/repositories?language=${language}&since=${since}`
   console.log(`getGithubRepoTrending: language=${language} since=${since}`)
   return callCloudFunctionWithCache(
@@ -412,7 +422,7 @@ async function getGithubReposTrending ({
         url
       }
     },
-    { timeout: 60, group: 'TrendingData#repos' }
+    { timeout: 60, group: 'TrendingData#repos', discard: cleanCache }
   ).then((res) => {
     if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
       return {
@@ -432,8 +442,9 @@ async function getGithubReposTrending ({
 
 async function getGithubUsersTrending ({
   language = '',
-  since = 'daily'
-}: {language?:string, since?:'daily'|'weekly'|'monthly'} = {}): Result<github.trending.Developer[]> {
+  since = 'daily',
+  cleanCache = false
+}: {language?:string, since?:'daily'|'weekly'|'monthly', cleanCache?: boolean} = {}): Result<github.trending.Developer[]> {
   const url = `https://github-trending-api.now.sh/developers?language=${language}&since=${since}`
   console.log(`getGithubUserTrending: language=${language} since=${since}`)
   return callCloudFunctionWithCache(
@@ -443,7 +454,7 @@ async function getGithubUsersTrending ({
         url
       }
     },
-    { timeout: 60, group: `TrendingData#users`}
+    { timeout: 60, group: 'TrendingData#users', discard: cleanCache }
   ).then((res) => {
     if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
       return {

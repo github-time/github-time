@@ -19,6 +19,9 @@ console.log(`${PREFIX} totalSize: ${(report.totalSize / 1024 / 1024).toFixed(2)}
 type Result = Promise<wx.RequestSuccessCallbackResult>
 
 const requestMap: { [key: string]: Result } = {}
+
+export const cache = cacheMagager
+
 export default function (req: wx.RequestOption, opts: CacheOptions): Result {
   const requestKey = JSON.stringify(req)
   const requesting = requestMap[requestKey]
@@ -27,6 +30,9 @@ export default function (req: wx.RequestOption, opts: CacheOptions): Result {
   const promise = requestMap[requestKey] = new Promise<wx.RequestSuccessCallbackResult>((resolve) => {
     const retry = 1
     const key = opts.key || req.url
+    if (opts.discard && opts.group) {
+      cacheMagager.clear(opts.group)
+    }
     const cacheData = cacheMagager.get(key, { group: opts.group })
     if (cacheData) {
       // 缓存命中
