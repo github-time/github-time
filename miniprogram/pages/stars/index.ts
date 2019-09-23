@@ -8,6 +8,7 @@ const app = getApp<IMyApp>()
 
 Page({
   data: {
+    cache_date: undefined,
     githubConfig: {} as any,
     currentTab: 'recommend',
     owner: '',
@@ -18,7 +19,7 @@ Page({
       const result = await github.getUserStaring({
         owner: query.owner,
         pageSize,
-        pageNo
+        pageNo,
       })
       // await new Promise((resolve) => {setTimeout(resolve, 2000)})
       return result
@@ -59,6 +60,11 @@ Page({
   onGotoSettings () {
     wx.navigateTo({
       url: '/pages/settings/index'
+    })
+  },
+  onDataLoad (e: any) {
+    this.setData!({
+      cache_date: e.detail.cache_date
     })
   },
   async loadUserStaring () {

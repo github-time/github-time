@@ -1,4 +1,6 @@
 <!--index.wxml-->
+<wxs module="common" src="../../wxs/common.wxs" />
+
 <navigation-bar bgColor="bg-gradual-green">
   <view slot="content">Github Time</view>
 </navigation-bar>
@@ -22,6 +24,11 @@
   bindsubmit="onFilter"
   ></mp-repo-filter>
 
+<view class="info">
+  <text class="info-meta cuIcon-rank"> 数据更新于: {{common.dateFormat(cache_date)}}</text>
+  <text class="info-settings cuIcon-settings"> 设置</text>
+</view>
+
 <mp-fill-view>
   <mp-data-list wx:if="{{githubConfig.user}}"
     item-template="repo"
@@ -33,6 +40,7 @@
     auto-load-more
     auto-load
     bind:itemclick="onStarRepoClick"
+    bind:dataload="onDataLoad"
     />
   <view class="text-center" wx:else>
     <view class="text-gray text-center text-lg margin">请先设置 Github 账户信息</view>
