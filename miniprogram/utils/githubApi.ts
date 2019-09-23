@@ -9,6 +9,7 @@ type Result<T> = Promise<{
   status: ResultStatus
   error?: Error
   data: T
+  cache_date?: number
 }>
 
 function nullSearchResult () {
@@ -38,7 +39,8 @@ async function searchTopics ({
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.topics.SearchResult
+        data: res.data as github.topics.SearchResult,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -81,7 +83,8 @@ async function searchRepositories ({
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.repos.SearchResult
+        data: res.data as github.repos.SearchResult,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -103,7 +106,8 @@ async function getRepositoryDetail (fullRepoName: string): Result<github.repos.R
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.repos.RepoDetail
+        data: res.data as github.repos.RepoDetail,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -125,7 +129,8 @@ async function getRepositoryBranches (fullRepoName: string): Result<github.repos
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.repos.RepoBranche[]
+        data: res.data as github.repos.RepoBranche[],
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -147,7 +152,8 @@ async function getUserDetail (owner: string): Result<github.users.UserDetail> {
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.users.UserDetail
+        data: res.data as github.users.UserDetail,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -175,7 +181,8 @@ async function searchUsers ({
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.users.SearchResult
+        data: res.data as github.users.SearchResult,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -203,7 +210,8 @@ async function getUserRepositories ({
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.repos.SearchResultItem[]
+        data: res.data as github.repos.SearchResultItem[],
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -231,7 +239,8 @@ async function getUserStaring ({
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as github.repos.SearchResultItem[]
+        data: res.data as github.repos.SearchResultItem[],
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -256,7 +265,8 @@ async function getFileTree ({
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: (res.data as {tree: any}).tree
+        data: (res.data as {tree: any}).tree,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -282,7 +292,8 @@ async function getReadmeContent ({
       // TODO: 支持缓存 key 替换
       return {
         status: 'done' as ResultStatus,
-        data: Base64.decode((res.data as github.repos.Contents).content)
+        data: Base64.decode((res.data as github.repos.Contents).content),
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -319,7 +330,8 @@ async function getReadme ({
           content: Base64.decode(contentInfo.content),
           path,
           ref
-        }
+        },
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -349,7 +361,8 @@ async function getFileContent ({
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: Base64.decode((res.data as github.repos.Contents).content)
+        data: Base64.decode((res.data as github.repos.Contents).content),
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -373,7 +386,8 @@ async function getGithubEmojis (): Result<EmojiMap> {
     if (res.statusCode === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: res.data as EmojiMap
+        data: res.data as EmojiMap,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -403,7 +417,8 @@ async function getGithubReposTrending ({
     if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: (res.result as any).data
+        data: (res.result as any).data,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
@@ -433,7 +448,8 @@ async function getGithubUsersTrending ({
     if (res.errMsg === 'cloud.callFunction:ok' && (res.result as any).status === 200) {
       return {
         status: 'done' as ResultStatus,
-        data: (res.result as any).data
+        data: (res.result as any).data,
+        cache_date: (res as any).cache_date
       }
     } else {
       return {
