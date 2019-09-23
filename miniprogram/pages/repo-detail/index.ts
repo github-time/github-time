@@ -4,12 +4,12 @@ import Page from '../../common/page/index'
 import { IMyApp } from '../../app'
 import github from '../../utils/githubApi'
 
-import remuData from '../../mock/remu-export-data'
+// import remuData from '../../mock/remu-export-data'
 
-const tagMap: {[key: string]: string} = {}
-remuData.tags.forEach(item => {
-  tagMap[item.id] = item.name
-})
+// const tagMap: {[key: string]: string} = {}
+// remuData.tags.forEach(item => {
+//   tagMap[item.id] = item.name
+// })
 
 const app = getApp<IMyApp>()
 
@@ -242,13 +242,14 @@ Page({
   },
 
   loadTags (repoId: number) {
-    const tagIds = (remuData.repoWithTags as any)[repoId]
-    let tags = []
-    if (tagIds) {
-      tags = tagIds.map((item: string) => tagMap[item])
-    }
-    this.setData!({
-      tags
-    })
+    console.log('loadTags', repoId)
+    // const tagIds = (remuData.repoWithTags as any)[repoId]
+    // let tags = []
+    // if (tagIds) {
+    //   tags = tagIds.map((item: string) => tagMap[item])
+    // }
+    // this.setData!({
+    //   tags
+    // })
   }
 })
