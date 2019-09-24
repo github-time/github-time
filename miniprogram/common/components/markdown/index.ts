@@ -63,6 +63,9 @@ Component({
     }
   },
   methods: {
+    onScroll (e: any) {
+      this.data.scrollTop = e.detail.scrollTop
+    },
     onAction (e) {
       console.log('md-action', e)
       if (e.detail.type === 'link-tap' && /^#.*/.test(e.detail.data.href)) {
@@ -71,7 +74,7 @@ Component({
         query.select('.' + e.detail.data.href.substr(1)).boundingClientRect((item: any) => {
           if (item) {
             this.setData({
-              scrollTop: item.top - this.data.baseTop
+              scrollTop: item.top - this.data.baseTop + this.data.scrollTop
             })
           }
         }).exec()

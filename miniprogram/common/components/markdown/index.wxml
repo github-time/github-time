@@ -6,6 +6,7 @@
   scroll-x
   scroll-y
   scroll-top="{{scrollTop}}"
+  bindscroll="onScroll"
   >
   <view class="markdown-container {{preview ? 'markdown-container-preview' : 'markdown-container-code'}}">
     <view wx:for="{{markdownNodes}}" wx:key="{{index}}" class="markdown-body">
