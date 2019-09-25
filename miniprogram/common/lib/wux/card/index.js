@@ -17,7 +17,7 @@ baseComponent({
             value: false,
         },
         title: {
-            type: String,
+            type: [Boolean, String],
             value: '',
         },
         thumb: {
