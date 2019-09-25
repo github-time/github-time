@@ -1,8 +1,9 @@
 <view class="wux-class {{ classes.wrap }}">
-    <view class="{{ classes.hd }}" wx:if="{{ thumb || title || extra }}">
-        <view class="{{ classes.content }}" wx:if="{{ thumb || title }}">
+    <view class="{{ classes.hd }}" wx:if="{{ title !== false }}">
+        <view class="{{ classes.content }}" wx:if="{{ title !== false }}">
             <image class="{{ classes.thumb }}" src="{{ thumb }}" mode="aspectFit" style="{{ extStyle }}" wx:if="{{ thumb }}" />
-            <text>{{ title }}</text>
+            <text wx:if="{{ title }}">{{ title }}</text>
+            <slot name="title" wx:else></slot>
         </view>
         <view class="{{ classes.extra }}" wx:if="{{ extra }}">{{ extra }}</view>
         <slot name="extra" wx:else></slot>
