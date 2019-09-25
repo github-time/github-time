@@ -7,7 +7,9 @@ const githubApiUrl = 'https://api.github.com'
 type ResultStatus = 'done'|'error'
 type Result<T> = Promise<{
   status: ResultStatus
-  error?: Error
+  error?: {
+    code: number|string
+  }
   data: T
   cache_date?: number
 }>
@@ -46,7 +48,9 @@ async function searchTopics ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: nullSearchResult()
       }
     }
@@ -91,7 +95,9 @@ async function searchRepositories ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: nullSearchResult()
       }
     }
@@ -114,7 +120,9 @@ async function getRepositoryDetail (fullRepoName: string, cleanCache?: boolean):
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: {} as any
       }
     }
@@ -137,7 +145,9 @@ async function getRepositoryBranches (fullRepoName: string, cleanCache?: boolean
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: {} as any
       }
     }
@@ -160,7 +170,9 @@ async function getUserDetail (owner: string, cleanCache?: boolean): Result<githu
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: {} as any
       }
     }
@@ -190,7 +202,9 @@ async function searchUsers ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: nullSearchResult()
       }
     }
@@ -220,7 +234,9 @@ async function getUserRepositories ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: []
       }
     }
@@ -250,7 +266,9 @@ async function getUserStaring ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: []
       }
     }
@@ -277,7 +295,9 @@ async function getFileTree ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: []
       }
     }
@@ -305,7 +325,9 @@ async function getReadmeContent ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: ''
       }
     }
@@ -344,7 +366,9 @@ async function getReadme ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: {
           content: '',
           path,
@@ -376,7 +400,9 @@ async function getFileContent ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: ''
       }
     }
@@ -401,7 +427,9 @@ async function getGithubEmojis (cleanCache: boolean = false): Result<EmojiMap> {
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`statusCode: ${res.statusCode}`),
+        error: {
+          code: res.statusCode
+        },
         data: {}
       }
     }
@@ -433,7 +461,9 @@ async function getGithubReposTrending ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`errMsg: ${res.errMsg}`),
+        error: {
+          code: res.errMsg
+        },
         data: []
       }
     }
@@ -465,7 +495,9 @@ async function getGithubUsersTrending ({
     } else {
       return {
         status: 'error' as ResultStatus,
-        error: new Error(`errMsg: ${res.errMsg}`),
+        error: {
+          code: res.errMsg
+        },
         data: []
       }
     }

@@ -84,6 +84,15 @@
 
   </view>
   <view hidden="{{current!=='readme'}}">
+    <view wx:if="{{noReadme}}" class="padding text-center text-gray">
+      <view>该项目尚未添加描述</view>
+      <view>
+        直接去
+        <text class="text-blue text-lg" bind:tap="viewCode">看看代码</text>
+        吧
+      </view>
+    </view>
+    <block wx:else>
     <mp-load-more wx:if="{{!readmeContent}}" loading></mp-load-more>
     <mp-markdown
       wx:else
@@ -92,6 +101,7 @@
       emojis="{{emojis}}"
       bind:action="onMarkdownAction"
     ></mp-markdown>
+    </block>
   </view>
   <view hidden="{{current!=='issues'}}">
     <mp-todo-coming-soon />

@@ -65,6 +65,7 @@ Page({
       name: 'discuss',
       text: "评论",
     }],
+    noReadme: false,
     readmeContent: '',
     readmeRef: 'master',
     readmeFilePath: 'README.md',
@@ -167,7 +168,7 @@ Page({
     setTimeout(() => {
       wx.hideToast()
       app.globalData.repoDetail = this.data.repoDetail as any
-      app.globalData.ownerDetail = this.data.repoDetail.owner as any
+      app.globalData.ownerDetail = app.globalData.repoDetail!.owner
       wx.navigateTo({
         url: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&b=${this.data.readmeRef}&p=${this.data.readmeFilePath}`
       })
@@ -192,6 +193,11 @@ Page({
         })
       } else if (result.status === 'error'){
         console.error('Get readme content failed: ', result.error)
+        if (result.error && result.error.code === 404) {
+          this.setData!({
+            noReadme: true
+          })
+        }
       }
       wx.hideLoading()
     }
@@ -199,18 +205,28 @@ Page({
 
   onAction (e: any) {
     if (e.detail.action.type === 'viewCode') {
-      app.globalData.repoDetail = this.data.repoDetail as any
-      app.globalData.ownerDetail = this.data.repoDetail.owner as any
-      wx.navigateTo({
-        url: '/pages/file-browser/index'
-      })
+      this.viewCode()
     } else if (e.detail.action.type === 'viewOwner') {
       this.viewOwner()
     }
   },
+  viewParent () {
+    app.globalData.repoDetail = (this.data.repoDetail as any).parent
+    app.globalData.ownerDetail = app.globalData.repoDetail!.owner
+    wx.navigateTo({
+      url: '/pages/repo-detail/index'
+    })
+  },
+  viewCode () {
+    app.globalData.repoDetail = this.data.repoDetail as any
+    app.globalData.ownerDetail = app.globalData.repoDetail!.owner
+    wx.navigateTo({
+      url: '/pages/file-browser/index'
+    })
+  },
   viewOwner () {
     app.globalData.repoDetail = this.data.repoDetail as any
-    app.globalData.ownerDetail = this.data.repoDetail.owner as any
+    app.globalData.ownerDetail = app.globalData.repoDetail!.owner
     wx.navigateTo({
       url: '/pages/owner-detail/index'
     })
