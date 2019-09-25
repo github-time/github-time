@@ -7,17 +7,16 @@ import { IMyApp } from '../../app'
 const app = getApp<IMyApp>()
 const thanksRepos = [
   {
-    name: 'github-trending-api',
-    full_name: 'huchenme/github-trending-api',
+    name: 'ColorUI',
+    full_name: '',
     owner: {
-      login: 'huchenme'
+      login: 'weilanwl'
     },
-    description: ':octocat: The missing APIs for GitHub trending projects and developers 📈',
-    language: 'TypeScript'
+    description: '鲜亮的高饱和色彩，专注视觉的小程序组件库',
+    language: 'Vue'
   },
   {
     name: 'wux-weapp',
-    full_name: 'wux-weapp/wux-weapp',
     owner: {
       login: 'wux-weapp'
     },
@@ -25,15 +24,34 @@ const thanksRepos = [
     language: 'JavaScript'
   },
   {
-    name: 'ColorUI',
-    full_name: 'weilanwl/ColorUI',
+    name: 'github-trending-api',
     owner: {
-      login: 'weilanwl'
+      login: 'huchenme'
     },
-    description: '鲜亮的高饱和色彩，专注视觉的小程序组件库',
-    language: 'Vue'
+    description: ':octocat: The missing APIs for GitHub trending projects and developers 📈',
+    language: 'TypeScript'
+  },
+  {
+    name: 'marked',
+    owner: {
+      login: 'markedjs'
+    },
+    description: 'A markdown parser and compiler. Built for speed.',
+    language: 'JavaScript'
+  },
+  {
+    name: 'prism',
+    owner: {
+      login: 'PrismJS'
+    },
+    description: 'Lightweight, robust, elegant syntax highlighting.',
+    language: 'JavaScript'
   }
-]
+].map((item) => {
+  item.full_name = `${item.owner.login}/${item.name}`
+  return item
+}) as github.repos.SearchResultItem[]
+
 Page({
   data: {
     query: {
