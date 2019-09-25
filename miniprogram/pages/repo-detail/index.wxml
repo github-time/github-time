@@ -16,7 +16,17 @@
   <view hidden="{{current!=='summary'}}">
     <wux-wing-blank size="default">
       <wux-white-space></wux-white-space>
-      <wux-card full title="{{repoDetail.full_name}}" actions="{{ actions }}" bind:action="onAction">
+      <wux-card full actions="{{ actions }}" bind:action="onAction">
+        <view slot="title">
+          <view>
+            <text class="text-gray cuIcon-{{repoDetail.fork ? 'fork' : 'medal'}}"></text>
+            <text> {{repoDetail.full_name}}</text>
+          </view>
+          <view wx:if="{{repoDetail.fork}}" class="text-xs text-gray">
+            Forked from
+            <text class="cuIcon-medal">{{repoDetail.parent.full_name}}</text>
+          </view>
+        </view>
         <view slot="extra">
           <wux-button
             clear
@@ -58,6 +68,9 @@
     </wux-wing-blank>
 
     <wux-cell-group title="项目详情">
+      <wux-cell wx:if="{{repoDetail.fork}}" extra="{{repoDetail.parent.full_name}}" is-link bind:tap="viewParent">
+        <text class="cuIcon-medal"> 原始仓库</text>
+      </wux-cell>
       <wux-cell extra="{{repoDetail.language}}">
         <text class="cuIcon-read"> 项目语言</text>
       </wux-cell>
@@ -93,14 +106,14 @@
       </view>
     </view>
     <block wx:else>
-    <mp-load-more wx:if="{{!readmeContent}}" loading></mp-load-more>
-    <mp-markdown
-      wx:else
-      content="{{readmeContent}}"
-      contextPath="{{contextPath}}"
-      emojis="{{emojis}}"
-      bind:action="onMarkdownAction"
-    ></mp-markdown>
+      <mp-load-more wx:if="{{!readmeContent}}" loading></mp-load-more>
+      <mp-markdown
+        wx:else
+        content="{{readmeContent}}"
+        contextPath="{{contextPath}}"
+        emojis="{{emojis}}"
+        bind:action="onMarkdownAction"
+      ></mp-markdown>
     </block>
   </view>
   <view hidden="{{current!=='issues'}}">
