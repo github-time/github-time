@@ -24,7 +24,7 @@
       open-type="share">
       <text  class="sidebar-icon cuIcon-share"></text>
     </wux-button>
-    <wux-card bordered="{{false}}" style="clear:both">
+    <wux-card bordered="{{false}}" style="clear:both" title="{{false}}">
       <view class="owner-info" slot="body">
         <image class="owner-avatar" src="{{ownerDetail.avatar_url}}" mode="cover"></image>
         <view>
