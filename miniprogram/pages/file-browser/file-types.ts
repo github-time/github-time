@@ -40,6 +40,10 @@ export default [
     type: 'img'
   },
   {
+    test: /\.(doc|docx|xls|xlsx|ppt|pptx|pdf)$/i,
+    type: 'document'
+  },
+  {
     test: /\.([^.]+)$/i,
     type: '$1'
   }

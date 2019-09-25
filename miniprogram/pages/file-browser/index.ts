@@ -7,25 +7,37 @@ import github from '../../utils/githubApi'
 // @ts-ignore
 import { $wuxToptips } from '../../common/lib/wux/index'
 import fileTypeMap from './file-types'
+import openDocument from '../../utils/openDocument'
+
+const MAX_OPEN_FILE_SIZE = 3 * 1024 * 1024 // 限制最大为2M
 
 type HistoryItem = {
   ref: string,
   path: string
 }
 
+type FileMeta = {
+  size: number,
+  sha: string
+}
+
 const app = getApp<IMyApp>()
 
 function getFileInfo (path: string) {
+  const index = path.lastIndexOf('/')
+  const name = index === -1 ? path : path.substr(index + 1)
   for (let item of fileTypeMap) {
     const matches = path.match(item.test)
     if (matches) {
       return {
+        name,
         path,
         type: item.type.replace('$1', matches[1])
       }
     }
   }
   return {
+    name,
     path,
     type: 'unknown'
   }
@@ -37,6 +49,7 @@ function debounce (this: any, func: Function, wait: number) {
     const context = this
     const args = arguments
     clearTimeout(timer)
+    // @ts-ignore
     timer = setTimeout(() => {
       func.apply(context,args)
     }, wait)
@@ -45,7 +58,8 @@ function debounce (this: any, func: Function, wait: number) {
 
 const doFileSearch = debounce((vm: any, query: string) => {
   let maxCount = 25
-  const result = [] as string[] || vm.data.pathList.filter((item: string) => {
+  const pathList = Object.keys(vm.data.fileMap)
+  const result = [] as string[] || pathList.filter((item: string) => {
     if (maxCount > 0) {
       if (minimatch(item, query, {matchBase: true})) {
         maxCount--
@@ -55,7 +69,7 @@ const doFileSearch = debounce((vm: any, query: string) => {
     return false
   })
   if (maxCount > 0) {
-    vm.data.pathList.forEach((item: string) => {
+    pathList.forEach((item: string) => {
         if (maxCount > 0 && minimatch(item, `*${query}*`, {matchBase: true}) && result.indexOf(item) === -1) {
         result.push(item)
         maxCount--
@@ -75,6 +89,9 @@ Page({
     emojis: {},
     keyword: '',
     ref: '',
+    fileTooLarge: false,
+    fileSize: '',
+    fileGitHash: '',
     filePath: '',
     fileContent: '',
     contextPath: '',
@@ -93,7 +110,7 @@ Page({
       default_branch: ''
     },
     treeData: [],
-    pathList: [] as string [],
+    fileMap: {} as { [key: string]: FileMeta },
     fileSearchResult: [] as string[],
     showFileSearchResult: false,
     history: [] as HistoryItem[],
@@ -185,6 +202,13 @@ Page({
       // 未指定文件路径，显示文件目录树
       this.showFileTree()
     }
+  },
+  downloadAndViewDocument () {
+    const url = `https://github.com/${this.data.repoDetail.full_name}/raw/${this.data.ref}/${this.data.filePath}`
+    openDocument(
+      url,
+      this.data.fileGitHash
+    )
   },
   onBranchPickerChange (e: any) {
     const ref = this.data.branches[e.detail.value]
@@ -359,8 +383,15 @@ Page({
     const result = await github.getFileTree({ fullRepoName, ref })
     if (result.status === 'done') {
       try {
+        const fileMap = {} as {[key: string]: FileMeta}
+        result.data.filter(item => item.type === 'blob').forEach(item => {
+          fileMap[item.path] = {
+            size: item.size!,
+            sha: item.sha
+          }
+        })
         this.setData!({
-          pathList: result.data.filter(item => item.type === 'blob').map(item => item.path),
+          fileMap,
           treeData: parseTree(result.data!).tree
         });
       } catch (e) {
@@ -374,20 +405,48 @@ Page({
 
   async viewFile (fullRepoName: string, ref: string, filePath: string, isBack: boolean = false) {
     console.log(`viewFile: ref=${ref} ${fullRepoName}/${filePath}`)
+    const fileMeta = this.data.fileMap[filePath]
+    console.log('fileMeta:', fileMeta)
+    if (!fileMeta) {
+      // 获取文件信息
+    }
+    const showSidebar = false
+    let pushHistory = !isBack
+    if (fileMeta.size > MAX_OPEN_FILE_SIZE) {
+      this.setData!({
+        showSidebar,
+        filePath,
+        fileSize: (fileMeta.size / 1024 / 1024).toFixed(2) + 'M',
+        fileTooLarge: true
+      })
+    } else {
     wx.showLoading({
       title: '正在加载'
     })
-    let pushHistory = !isBack
+      const fileTooLarge = false
     const fileInfo = getFileInfo(filePath)
     if (fileInfo.type === 'img') {
       this.setData!({
-        showSidebar: false,
+          showSidebar,
+          fileTooLarge,
         ref,
         filePath,
         fileContent: '',
         fileType: fileInfo.type
       })
       setTimeout(wx.hideLoading, 1500)
+      } else if (fileInfo.type === 'document') {
+        this.setData!({
+          showSidebar,
+          fileTooLarge,
+          ref,
+          fileGitHash: fileMeta.sha,
+          filePath,
+          fileSize: (fileMeta.size / 1024 / 1024).toFixed(2) + 'M',
+          fileContent: fileInfo.name,
+          fileType: fileInfo.type
+        })
+        wx.hideLoading()
     } else {
       const result= await github.getFileContent({
         fullRepoName,
@@ -397,7 +456,8 @@ Page({
       if (result.status === 'done') {
         const content = result.data
         this.setData!({
-          showSidebar: false,
+            showSidebar,
+            fileTooLarge,
           ref,
           filePath,
           contextPath: `https://github.com/${fullRepoName}/raw/master/${filePath.replace(/[^\/]+$/, '')}`,
@@ -415,6 +475,7 @@ Page({
         pushHistory = false
       }
       wx.hideLoading()
+    }
     }
     if (pushHistory) {
       this.data.history.push({

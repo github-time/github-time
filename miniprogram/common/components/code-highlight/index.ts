@@ -10,6 +10,7 @@ function debounce (this: any, func: Function, wait: number) {
     const context = this
     const args = arguments
     clearTimeout(timer)
+    // @ts-ignore
     timer = setTimeout(() => {
       func.apply(context,args)
     }, wait)

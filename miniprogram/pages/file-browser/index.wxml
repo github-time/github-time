@@ -51,8 +51,11 @@
 </view>
 
 <mp-fill-view bind:tap="onTapViewer">
+  <view wx:if="{{fileTooLarge}}" class="padding text-center text-gray" >
+    <text class="cuIcon-bad"></text> 抱歉，文件 [{{filePath}}](<text class="text-red">{{fileSize}}</text>) 过大，无法显示
+  </view>
   <mp-markdown
-    wx:if="{{fileType === 'md'}}"
+    wx:elif="{{fileType === 'md'}}"
     content="{{fileContent}}"
     contextPath="{{contextPath}}"
     emojis="{{emojis}}"
@@ -65,6 +68,12 @@
       data-url="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"
       mode="widthFix"
       bind:tap="viewImage"/>
+  </view>
+  <view wx:elif="{{fileType === 'document'}}" class="text-center padding">
+    <button bind:tap="downloadAndViewDocument">
+      <view>{{fileContent}}</view>
+      <view class="text-sm text-gray">点击下载查看({{fileSize}})</view>
+    </button>
   </view>
   <mp-code-highlight wx:else code="{{fileContent}}" language="{{fileType}}"></mp-code-highlight>
 </mp-fill-view>
