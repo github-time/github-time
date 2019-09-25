@@ -72,6 +72,8 @@ Page({
     repoDetail: {
       id: undefined as undefined|number,
       full_name: 'vuejs/vue',
+      fork: false,
+      parent: undefined,
       owner: {
         login: 'vuejs'
       }
@@ -119,9 +121,7 @@ Page({
       }
     })
 
-    if (repoDetail.id !== undefined) {
-      this.loadTags(repoDetail.id)
-    } else {
+    if (repoDetail.id === undefined || (repoDetail.fork && !repoDetail.parent)) {
       ;(async () => {
         const result = await github.getRepositoryDetail(fullRepoName)
         if (result.status === 'done') {
@@ -134,6 +134,8 @@ Page({
           console.error('Load repository detail failed: ', result.error)
         }
       })()
+    } else {
+      this.loadTags(repoDetail.id)
     }
   },
   onTabsChange(e: any) {
