@@ -13,7 +13,8 @@
   </image>
 
   <view class="repo-header">
-    <text class="text-cut repo-name">{{item.name}}</text>
+    <text class="text-gray cuIcon-{{item.fork ? 'fork' : 'medal'}}"> </text>
+    <text class="text-cut repo-name"> {{item.name}}</text>
   </view>
 
   <view class="repo-time text-cut">
