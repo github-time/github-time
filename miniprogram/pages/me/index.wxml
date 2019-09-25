@@ -7,7 +7,7 @@
   <wux-white-space></wux-white-space>
   <wux-wing-blank size="large">
     <view class="bg-white light top-radius shadow-warp margin-top">
-      <wux-card bordered="{{false}}">
+      <wux-card bordered="{{false}}" title="{{false}}">
         <view class="userinfo" slot="body">
           <view wx:if="{{!hasUserInfo && canIUse}}" class="userinfo-avatar">
             <view class="cuIcon-people text-gray text-center userinfo-avatar-icon"></view>
