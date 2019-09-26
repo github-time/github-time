@@ -5,6 +5,7 @@ import github from '../../utils/githubApi'
 import { IMyApp } from '../../app'
 
 const app = getApp<IMyApp>()
+const DEFAULT_QUERY = 'stars:>50000'
 
 Page({
   data: {
@@ -13,11 +14,11 @@ Page({
     showFilterView: false,
     filters: {},
     query: {
-      query: 'stars:>50000'
+      query: DEFAULT_QUERY
     },
     async searchRepos (query: any, pageSize: number, pageNo: number) {
       const result = await github.searchRepositories({
-        query: query.query,
+        query: query.query || DEFAULT_QUERY,
         pageSize,
         pageNo
       })

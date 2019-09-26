@@ -13,7 +13,8 @@
   placeholder="请输入搜索关键字"
   bind:change="onSearchChange"
   bind:confirm="onSearchChange"
-  bind:focus="onSearchFocus">
+  bind:focus="onSearchFocus"
+  bind:clear="onKeywordClear">
   <text slot="left" class="sidebar-icon cuIcon-list" bindtap="showFileTree"></text>
   <wux-button
     size="small"

@@ -233,6 +233,11 @@ Page({
       showFileSearchResult: true
     })
   },
+  onKeywordClear () {
+    this.setData!({
+      keyword: ''
+    })
+  },
   onSearchChange (e: any) {
     const query = e.detail.value
     this.setData!({
@@ -289,6 +294,13 @@ Page({
   hideFileTree () {
     this.setData!({
       showSidebar: false
+    })
+  },
+  onRepoTitleClick () {
+    app.globalData.repoDetail = this.data.repoDetail as any
+    app.globalData.ownerDetail = app.globalData.repoDetail!.owner
+    wx.navigateTo({
+      url: '/pages/repo-detail/index'
     })
   },
   onMarkdownAction (e: any) {
