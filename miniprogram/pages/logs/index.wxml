@@ -8,10 +8,25 @@
   <view class="cu-item text-cyan">
     <view class="bg-cyan content shadow">
       <view class="cu-capsule radius">
-        <view class="cu-tag bg-white text-cyan">v0.4.0</view>
-        <view class="cu-tag line-white">2019/09/25</view>
+        <view class="cu-tag bg-white text-cyan">v0.4.2</view>
+        <view class="cu-tag line-white">2019/09/26</view>
       </view>
       <view class="margin-top-sm text-content"> 公测版本发布</view>
+      <view class="text-xs">
+        <view class="cuIcon-add"> 代码浏览器支持打开小型文档(3M以内)</view>
+        <view class="cuIcon-add"> 添加原仓库展示</view>
+        <view class="cuIcon-magic"> 界面美化</view>
+        <view class="cuIcon-repair"> 修复bug</view>
+      </view>
+    </view>
+  </view>
+  <view class="cu-item text-green">
+    <view class="bg-green content shadow">
+      <view class="cu-capsule radius">
+        <view class="cu-tag bg-white text-green">v0.4.0</view>
+        <view class="cu-tag line-white">2019/09/25</view>
+      </view>
+      <view class="margin-top-sm text-content"> 内测版本发布</view>
       <view class="text-xs">
         <view class="cuIcon-add"> 代码浏览器支持仓库及代码跳转</view>
         <view class="cuIcon-add"> 代码浏览器支持浏览历史</view>
