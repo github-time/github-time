@@ -15,6 +15,7 @@
   bind:confirm="onSearchChange"
   bind:focus="onSearchFocus"
   bind:clear="onKeywordClear">
+  >
   <text slot="left" class="sidebar-icon cuIcon-list" bindtap="showFileTree"></text>
   <wux-button
     size="small"
@@ -80,7 +81,7 @@
 </mp-fill-view>
 
 <view style="top: {{marginTop}}px" class="sidebar {{showSidebar ?  'show-sidebar' : ''}}">
-  <view class="sidebar-title"><text>{{repoDetail.full_name}}</text></view>
+  <view class="sidebar-title" bind:tap="onRepoTitleClick"><text class="text-blue">{{repoDetail.full_name}}</text></view>
   <view class="sidebar-head">
     <view>
       <view class="mata-container">
