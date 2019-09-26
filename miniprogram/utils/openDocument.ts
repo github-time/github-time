@@ -51,7 +51,22 @@ function doOpenDocument (
 }
 
 async function serverDownload (url: string, gitHash: string): Promise<{status: string, data: any}> {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
+    const fileId = `${baseFileId}/${gitHash}`
+    const result = await wx.cloud.getTempFileURL({
+      fileList: [`cloud://${baseFileId}/${gitHash}`]
+    })
+    if (result.fileList[0].tempFileURL) {
+      // 服务已下载该文件
+      console.log('Server file found.')
+      resolve({
+        status: 'done',
+        data: fileId
+      })
+      return
+    }
+
+    console.log('Do server download ...')
     wx.cloud.callFunction({
       // 云函数名称
       name: 'downloader',
@@ -60,19 +75,46 @@ async function serverDownload (url: string, gitHash: string): Promise<{status: s
         url,
         gitHash
       },
-      success (res: any) {
+      async success (res: any) {
         if (res.result.status === 200) {
-          setTimeout(() => {
+          resolve({
+            status: 'done',
+            data: fileId
+          })
+        } else if (res.result.status === 202) {
+          wx.showLoading({
+            title: '正在检查文件...'
+          })
+          let retry = 4
+          let data = ''
+          while (true) {
+            const result = await wx.cloud.getTempFileURL({
+              fileList: [`cloud://${baseFileId}/${gitHash}`]
+            })
+            console.log('check cloud file: ', result)
+            if (result.fileList[0].tempFileURL) {
+              data = fileId
+              break
+            }
+            if (retry-- <= 0) break
+            await new Promise(resolve => setTimeout(resolve, 5000)) // 等待 5 秒
+          }
+          if (data) {
             resolve({
               status: 'done',
-              data: `${baseFileId}/${gitHash}`
+              data
             })
-          }, res.result.wait)
+          } else {
+            resolve({
+              status: 'error',
+              data: `server upload failed.`
+            })
+          }
         } else {
           resolve({
             status: 'error',
             data: `${res.result.status}`
-        })
+          })
         }
       },
       fail (e: any) {
