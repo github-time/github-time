@@ -12,6 +12,8 @@ const SINCE_MAP = {
   monthly: '月'
 }
 
+type SinceKeys = keyof typeof SINCE_MAP
+
 Page({
   data: {
     current: 'repos',
@@ -56,11 +58,11 @@ Page({
       }
     ],
     reposQuery: {
-      since: 'daily' as 'daily' | 'weekly' | 'monthly',
+      since: 'daily' as SinceKeys,
       language: ''
     },
     usersQuery: {
-      since: 'daily' as 'daily' | 'weekly' | 'monthly',
+      since: 'daily' as SinceKeys,
       language: ''
     },
     enableLoadTrendingUsers: false,
@@ -119,7 +121,17 @@ Page({
   },
 
   onLoad() {
-
+    wx.getClipboardData({
+      success (res) {
+        const data = res.data || ''
+        const matches = data.match(/^https:\/\/github\.com\/([^/]+\/[^/]+).*/)
+        if (matches) {
+          wx.navigateTo({
+            url: `/pages/repo-detail/index?r=${matches[1]}`
+          })
+        }
+      }
+    })
   },
   onShow(this: any) {
     const tabBar = this.getTabBar()
@@ -190,6 +202,7 @@ Page({
     if (e.detail.value.type === 'since') {
       if (this.data.current === 'repos') {
         this.setData!({
+          repoSinceDisplay: SINCE_MAP[e.detail.value.value as SinceKeys],
           reposQuery: {
             since: e.detail.value.value,
             language: this.data.reposQuery.language
@@ -197,6 +210,7 @@ Page({
         })
       } else if (this.data.current === 'developers') {
         this.setData!({
+          userSinceDisplay: SINCE_MAP[e.detail.value.value as SinceKeys],
           usersQuery: {
             since: e.detail.value.value,
             language: this.data.usersQuery.language
