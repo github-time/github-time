@@ -303,6 +303,16 @@ Page({
       url: '/pages/repo-detail/index'
     })
   },
+  onRepoUrlCopyClick () {
+    wx.setClipboardData({
+      data: `https://github.com/${this.data.repoDetail.full_name}`,
+      success () {
+        wx.showToast({
+          title: '仓库链接已复制'
+        })
+      }
+    })
+  },
   onMarkdownAction (e: any) {
     switch (e.detail.type) {
       case 'link-tap':
@@ -337,9 +347,19 @@ Page({
           // 外部链接
           $wuxToptips().info({
             hidden: false,
-            text: '外部链接，暂不支持跳转',
+            text: `外部链接，暂不支持跳转\n${href}`,
             duration: 1000,
             success() {},
+          })
+
+          wx.setClipboardData({
+            data: href,
+            success () {
+              wx.showToast({
+                title: `链接已复制`,
+                duration: 2000
+              })
+            }
           })
           console.log('outer link:', href)
         } else {

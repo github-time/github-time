@@ -81,7 +81,10 @@
 </mp-fill-view>
 
 <view style="top: {{marginTop}}px" class="sidebar {{showSidebar ?  'show-sidebar' : ''}}">
-  <view class="sidebar-title" bind:tap="onRepoTitleClick"><text class="text-blue">{{repoDetail.full_name}}</text></view>
+  <view class="sidebar-title">
+    <text class="text-blue" bind:tap="onRepoTitleClick">{{repoDetail.full_name}}</text>
+    <text class="cuIcon-copy text-gary padding-left-xs" bind:tap="onRepoUrlCopyClick"></text>
+  </view>
   <view class="sidebar-head">
     <view>
       <view class="mata-container">
