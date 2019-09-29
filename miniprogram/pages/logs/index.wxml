@@ -8,8 +8,8 @@
   <view class="cu-item text-cyan">
     <view class="bg-cyan content shadow">
       <view class="cu-capsule radius">
-        <view class="cu-tag bg-white text-cyan">v0.4.2</view>
-        <view class="cu-tag line-white">2019/09/26</view>
+        <view class="cu-tag bg-white text-cyan">v0.5.0</view>
+        <view class="cu-tag line-white">2019/09/27</view>
       </view>
       <view class="margin-top-sm text-content"> 公测版本发布</view>
       <view class="text-xs">
