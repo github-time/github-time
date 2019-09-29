@@ -20,11 +20,13 @@ const footprints: Footprint[] = (() => {
   }
 })()
 
+const MAX_SIZE = 100
+
 export default {
   push (footprint: Footprint) {
     if (footprints.length === 0 || footprint.url !== footprints[0].url) {
       footprints.unshift(footprint)
-      if (footprints.length > 100) footprints.length = 100
+      if (footprints.length > MAX_SIZE) footprints.length = MAX_SIZE
       wx.setStorageSync('footprints', JSON.stringify(footprints))
     }
   },
