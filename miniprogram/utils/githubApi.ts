@@ -14,6 +14,11 @@ type Result<T> = Promise<{
   cache_date?: number
 }>
 
+type Token = {
+  user: string,
+  token: string
+}
+
 function nullSearchResult () {
   return {
     total_count: 0,
@@ -22,6 +27,35 @@ function nullSearchResult () {
   }
 }
 
+async function checkToken (token: Token, cleanCache = false): Result<github.users.UserDetail> {
+  const url = `${githubApiUrl}/user`
+  console.log(`checkToken`)
+  return requestWithCache(
+    {
+      url,
+      header: {
+        ...auth(token)
+      }
+    },
+    { timeout: 120, group: 'CheckToken', discard: cleanCache, key: token.token }
+  ).then((res) => {
+    if (res.statusCode === 200) {
+      return {
+        status: 'done' as ResultStatus,
+        data: res.data as github.users.UserDetail,
+        cache_date: (res as any).cache_date
+      }
+    } else {
+      return {
+        status: 'error' as ResultStatus,
+        error: {
+          code: res.statusCode
+        },
+        data: {} as github.users.UserDetail
+      }
+    }
+  })
+}
 async function searchTopics ({
   keyword,
   pageSize,

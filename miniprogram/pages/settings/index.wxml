@@ -8,14 +8,26 @@
   <view class="margin-top padding-sm text-gray">Github 配置</view>
 	<view class="cu-form-group">
 		<view class="title">Github User</view>
-		<wux-input controlled class="text-right" placeholder="Github 用户名" value="{{githubConfig.user}}" bind:change="onGithubUserChange"></wux-input>
+		<wux-input
+			controlled
+			class="text-right"
+			placeholder="Github 用户名"
+			value="{{githubConfig.user}}"
+			bind:change="onGithubUserChange"
+		/>
 	</view>
 	<view class="text-xs padding-sm text-gray">
 		仅提供用户名时，采用无验证模式，仅使用用户公开数据，使用方便。但是不支持各种用户操作，如 star、follow 等。
 	</view>
 	<view class="cu-form-group">
 		<view class="title">Github Token</view>
-		<wux-input controlled class="text-right" disabled placeholder="正在开发中..." value="{{githubConfig.token}}" bind:change="onGithuTokenChange"></wux-input>
+		<wux-input
+			controlled
+			class="text-right"
+			placeholder="Github 令牌"
+			value="{{githubConfig.token}}"
+			bind:change="onGithubTokenChange"
+		/>
 	</view>
 	<view class="text-xs padding-sm text-gray">
 		提供 Token 时，可使用用户授权的数据，支持更多功能，如 star、follow 等。
