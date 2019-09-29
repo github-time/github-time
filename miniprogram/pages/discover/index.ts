@@ -22,7 +22,6 @@ Page({
         pageSize,
         pageNo
       })
-      await new Promise((resolve) => { setTimeout(resolve, 1000)})
       return {
         status: result.status,
         data: result.data.items
