@@ -27,6 +27,15 @@ function nullSearchResult () {
   }
 }
 
+function auth (token?: Token) {
+  if (token && token.token) {
+    return {
+      Authorization: `token ${token.token}`
+    }
+  }
+  return {}
+}
+
 async function checkToken (token: Token, cleanCache = false): Result<github.users.UserDetail> {
   const url = `${githubApiUrl}/user`
   console.log(`checkToken`)
@@ -443,6 +452,128 @@ async function getFileContent ({
   })
 }
 
+async function star (fullRepoName: string, token: Token): Result<boolean> {
+  const url = `${githubApiUrl}/user/starred/${fullRepoName}`
+  console.log(`star: fullRepoName=${fullRepoName}`)
+  return new Promise((resolve) => {
+    wx.request({
+      method: 'PUT',
+      url,
+      header: {
+        ...auth(token)
+      },
+      success(res) {
+        console.log(`wx.request success:`, res)
+        if (res.statusCode === 204) {
+          // 请求成功，缓存数据
+          resolve({
+            status: 'done',
+            data: true
+          })
+        } else {
+          resolve({
+            status: 'error',
+            error: {
+              code: res.statusCode
+            },
+            data: false
+          })
+        }
+      },
+      fail (res) {
+        resolve({
+          status: 'error',
+          error: {
+            code: res.errMsg
+          },
+          data: false
+        })
+      }
+    })
+  })
+}
+
+async function unstar (fullRepoName: string, token: Token): Result<boolean>  {
+  const url = `${githubApiUrl}/user/starred/${fullRepoName}`
+  console.log(`star: fullRepoName=${fullRepoName}`)
+  return new Promise((resolve) => {
+    wx.request({
+      method: 'DELETE',
+      url,
+      header: {
+        ...auth(token)
+      },
+      success(res) {
+        console.log(`wx.request success:`, res)
+        if (res.statusCode === 204) {
+          // 请求成功，缓存数据
+          resolve({
+            status: 'done',
+            data: true
+          })
+        } else {
+          resolve({
+            status: 'error',
+            error: {
+              code: res.statusCode
+            },
+            data: false
+          })
+        }
+      },
+      fail (res) {
+        resolve({
+          status: 'error',
+          error: {
+            code: res.errMsg
+          },
+          data: false
+        })
+      }
+    })
+  })
+}
+
+async function isStarred (fullRepoName: string, token: Token): Result<boolean>  {
+  const url = `${githubApiUrl}/user/starred/${fullRepoName}`
+  console.log(`star: fullRepoName=${fullRepoName}`)
+  return new Promise((resolve) => {
+    wx.request({
+      url,
+      header: {
+        ...auth(token)
+      },
+      success(res) {
+        console.log(`wx.request success:`, res)
+        if (res.statusCode === 204) {
+          // 请求成功，缓存数据
+          resolve({
+            status: 'done',
+            data: true
+          })
+        } else {
+          resolve({
+            status: 'error',
+            error: {
+              code: res.statusCode
+            },
+            data: false
+          })
+        }
+      },
+      fail (res) {
+        resolve({
+          status: 'error',
+          error: {
+            code: res.errMsg
+          },
+          data: false
+        })
+      }
+    })
+  })
+}
+
 type EmojiMap = {[key: string]: string}
 
 async function getGithubEmojis (cleanCache: boolean = false): Result<EmojiMap> {
@@ -539,6 +670,7 @@ async function getGithubUsersTrending ({
 }
 
 export default {
+  checkToken,
   getAllTopics,
   searchTopics,
   searchRepositories,
@@ -553,6 +685,9 @@ export default {
   getUserStaring,
   getUserRepositories,
   getGithubEmojis,
+  star,
+  unstar,
+  isStarred,
   getGithubReposTrending,
   getGithubUsersTrending
 }

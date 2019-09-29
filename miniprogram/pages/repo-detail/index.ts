@@ -80,7 +80,12 @@ Page({
     },
     tags: [] as string[],
     contextPath: '',
-    emojis: {}
+    emojis: {},
+    githubConfig: {
+      user: '',
+      token: ''
+    },
+    isStarred: false,
   },
   onShareAppMessage () {
     return {
@@ -137,6 +142,18 @@ Page({
     } else {
       this.loadTags(repoDetail.id)
     }
+
+    const token = this.data.githubConfig = app.settings.get('githubConfig', {})
+
+    if (token && token.token) {
+      (async () => {
+        const result = await github.isStarred(this.data.repoDetail.full_name, token)
+        this.setData!({
+          githubConfig: token,
+          isStarred: result.data
+        })
+      })()
+    }
   },
   onTabsChange(e: any) {
     const { key } = e.detail
@@ -146,6 +163,30 @@ Page({
         index,
     })
     this.loadReadmeContent()
+  },
+  async onStaring () {
+    const token = this.data.githubConfig
+    if (token && token.token) {
+      wx.showLoading({
+        title: '请稍候...'
+      })
+      let isStarred = this.data.isStarred
+      if (this.data.isStarred) {
+        let result = await github.unstar(this.data.repoDetail.full_name, token)
+        if (result.status === 'done') isStarred = false
+      } else {
+        let result = await github.star(this.data.repoDetail.full_name, token)
+        if (result.status === 'done') isStarred = true
+      }
+      this.setData!({
+        isStarred
+      })
+      wx.hideLoading()
+    } else {
+      wx.showToast({
+        title: '操作失败:未设置账户令牌'
+      })
+    }
   },
 
   // onSwiperChange(e: any) {
