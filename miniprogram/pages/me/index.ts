@@ -45,9 +45,10 @@ Page({
       const result = await github.getUserRepositories({
         owner: query.owner,
         pageSize,
-        pageNo
+        pageNo,
+        token: query.token
       })
-      // await new Promise((resolve) => {setTimeout(resolve, 2000)})
+      // await sleep(2000)
       return result
     },
     footprintQuery: {},
@@ -219,7 +220,10 @@ Page({
         title: '正在加载'
       })
       this.setData!({
-        query: { owner },
+        query: {
+          owner,
+          token: githubConfig
+        },
         githubConfig
       })
       wx.hideLoading()

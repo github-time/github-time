@@ -65,6 +65,7 @@ async function checkToken (token: Token, cleanCache = false): Result<github.user
     }
   })
 }
+
 async function searchTopics ({
   keyword,
   pageSize,
@@ -260,13 +261,35 @@ async function getUserRepositories ({
   pageNo = 1,
   sort = 'stars',
   order = 'desc',
+  token,
   cleanCache = false
-}: {owner: string, pageSize: number, pageNo?: number, sort?: string, order?: string, cleanCache?: boolean}): Result<github.repos.SearchResultItem[]> {
-  const url = `${githubApiUrl}/users/${owner}/repos?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
+}: {
+  owner: string,
+  pageSize: number,
+  pageNo?: number,
+  sort?: string,
+  order?: string,
+  token?: Token,
+  cleanCache?: boolean
+}): Result<github.repos.SearchResultItem[]> {
+  let url
+  let key = ''
+  const query = `repos?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
+  if (token && token.token && owner === token.user) {
+    key = `${token.token}:${query}`
+    url = `${githubApiUrl}/user/${query}`
+  } else {
+    url = `${githubApiUrl}/users/${owner}/${query}`
+  }
   console.log(`searchRepositories: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
-    { url },
-    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache }
+    {
+      url,
+      header: {
+        ...auth(token)
+      }
+    },
+    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache, key }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
