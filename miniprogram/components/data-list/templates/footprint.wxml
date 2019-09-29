@@ -1,13 +1,16 @@
 <!--index.wxml-->
 <template name="footprint">
-  <view wx:if="{{item.type==='file'}}">
-    <text class="cuIcon-text"> {{item.meta.title}}</text>
+  <view wx:if="{{item.type==='file'}}" >
+    <text class="cuIcon-text padding-right-xs"></text>
+    <text class="break-word">{{item.meta.title}}</text>
   </view>
   <view wx:elif="{{item.type==='repo'}}">
-    <text class="cuIcon-medal"> {{item.meta.title}}</text>
+    <text class="cuIcon-medal padding-right-xs"></text>
+    <text class="break-word">{{item.meta.title}}</text>
   </view>
   <view wx:elif="{{item.type==='owner'}}">
-    <text class="cuIcon-people"> {{item.meta.title}}</text>
+    <text class="cuIcon-people padding-right-xs"></text>
+    <text class="break-word">{{item.meta.title}}</text>
   </view>
   <view class="text-xs text-right text-gray">{{item.timestamp}}</view>
 </template>
