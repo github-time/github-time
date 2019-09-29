@@ -18,6 +18,8 @@ export default {
   get,
   set,
   isGithubUserChanged (context: any) {
-    return context.data.githubConfig.user !== get('githubConfig', {}).user
+    const githubConfig = get('githubConfig', {})
+    return context.data.githubConfig.user !== githubConfig.user ||
+      context.data.githubConfig.token !== githubConfig.token
   }
 }
