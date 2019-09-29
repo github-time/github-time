@@ -71,7 +71,7 @@ Page({
         since: query.since,
         language: query.language
       })
-      // await new Promise((resolve) => {setTimeout(resolve, 2000)})
+      // await sleep(2000)
       const data = result.data.map((item) => {
         return {
           name: item.name,
@@ -97,7 +97,7 @@ Page({
         since: query.since,
         language: query.language
       })
-      // await new Promise((resolve) => {setTimeout(resolve, 2000)})
+      // await sleep(2000)
       const data = result.data.map((user) => {
         return {
           name: user.repo.name,

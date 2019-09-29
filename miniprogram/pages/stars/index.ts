@@ -22,7 +22,7 @@ Page({
         pageNo,
         cleanCache: query.cleanCache
       })
-      // await new Promise((resolve) => {setTimeout(resolve, 2000)})
+      // await sleep(2000)
       return result
     }
   },

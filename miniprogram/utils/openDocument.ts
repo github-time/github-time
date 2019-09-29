@@ -1,3 +1,4 @@
+import { sleep } from '../utils/common'
 const baseFileId = 'github-time-mp.6769-github-time-mp-1300157824/downloader-cache'
 const cacheKey = 'fileCacheIndex'
 
@@ -97,7 +98,7 @@ async function serverDownload (url: string, gitHash: string): Promise<{status: s
               break
             }
             if (retry-- <= 0) break
-            await new Promise(resolve => setTimeout(resolve, 5000)) // 等待 5 秒
+            await sleep(5000) // 等待 5 秒
           }
           if (data) {
             resolve({
