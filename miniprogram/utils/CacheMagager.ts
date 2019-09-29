@@ -1,4 +1,5 @@
 import DataStorage from './data-storage/DataStorage'
+import md5 = require('blueimp-md5')
 
 type GroupData = {
   n: number // 缓存组 id
@@ -53,6 +54,7 @@ export default class CacheMagager {
   }
 
   get (key: string, options: CacheOptions) {
+    key = md5(key)
     const storage = this.storage
     const groupData = this.getGroupData(options)
     if (groupData) {
@@ -72,6 +74,7 @@ export default class CacheMagager {
   }
 
   put (key: string, value: string, options: CacheOptions) {
+    key = md5(key)
     const maxsize = options.maxsize || this.maxCacheItemSize
     if (value.length > maxsize) {
       console.log(`Data too big ${(value.length / 1024).toFixed(2)}K, limit=${(maxsize / 1024).toFixed(2)}K`, '')
