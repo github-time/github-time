@@ -70,15 +70,17 @@ async function searchTopics ({
   keyword,
   pageSize,
   pageNo = 1,
+  token,
   cleanCache = false
-}: {keyword: string, pageSize: number, pageNo?: number, cleanCache?: boolean}): Result<github.topics.SearchResult> {
+}: {keyword: string, pageSize: number, pageNo?: number, token?: Token, cleanCache?: boolean}): Result<github.topics.SearchResult> {
   const url = `${githubApiUrl}/search/topics?q=${keyword}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchTopics`)
   return requestWithCache(
     {
       url,
       header: {
-        Accept: 'application/vnd.github.mercy-preview+json'
+        Accept: 'application/vnd.github.mercy-preview+json',
+        ...auth(token)
       }
     },
     { timeout: 120, group: 'SearchData#topics', discard: cleanCache }
@@ -122,12 +124,26 @@ async function searchRepositories ({
   pageNo = 1,
   sort = 'stars',
   order = 'desc',
+  token,
   cleanCache = false
-}: {query: string, pageSize: number, pageNo?: number, sort?: string, order?: string, cleanCache?: boolean}): Result<github.repos.SearchResult> {
+}: {
+  query: string,
+  pageSize: number,
+  pageNo?: number,
+  sort?: string,
+  order?: string,
+  token?: Token,
+  cleanCache?: boolean
+}): Result<github.repos.SearchResult> {
   const url = `${githubApiUrl}/search/repositories?q=${query}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchRepositories: keyword=${query}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
-    { url },
+    {
+      url,
+      header: {
+        ...auth(token)
+      }
+    },
     { timeout: 30, group: 'SearchData#repos', discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
@@ -148,11 +164,16 @@ async function searchRepositories ({
   })
 }
 
-async function getRepositoryDetail (fullRepoName: string, cleanCache?: boolean): Result<github.repos.RepoDetail> {
+async function getRepositoryDetail (fullRepoName: string, token?: Token, cleanCache?: boolean): Result<github.repos.RepoDetail> {
   const url = `${githubApiUrl}/repos/${fullRepoName}`
   console.log(`getRepositoryDetail: fullRepoName=${fullRepoName}`)
   return requestWithCache(
-    { url },
+    {
+      url,
+      header: {
+        ...auth(token)
+      }
+    },
     { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
@@ -173,11 +194,16 @@ async function getRepositoryDetail (fullRepoName: string, cleanCache?: boolean):
   })
 }
 
-async function getRepositoryBranches (fullRepoName: string, cleanCache?: boolean): Result<github.repos.RepoBranche[]> {
+async function getRepositoryBranches (fullRepoName: string, token?: Token, cleanCache?: boolean): Result<github.repos.RepoBranche[]> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/branches`
   console.log(`getRepositoryBranches: fullRepoName=${fullRepoName}`)
   return requestWithCache(
-    { url },
+    {
+      url,
+      header: {
+        ...auth(token)
+      }
+    },
     { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then((res) => {
     if (res.statusCode === 200) {
@@ -198,12 +224,24 @@ async function getRepositoryBranches (fullRepoName: string, cleanCache?: boolean
   })
 }
 
-async function getUserDetail (owner: string, cleanCache?: boolean): Result<github.users.UserDetail> {
-  const url = `${githubApiUrl}/users/${owner}`
+async function getUserDetail (owner: string, token?: Token, cleanCache?: boolean): Result<github.users.UserDetail> {
+  let url
+  let key = ''
+  if (token && owner === token.user) {
+    key = `${token.token}:user`
+    url = `${githubApiUrl}/user`
+  } else {
+    url = `${githubApiUrl}/users/${owner}`
+  }
   console.log(`getUserDetail: login=${owner}`)
   return requestWithCache(
-    { url },
-    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache }
+    {
+      url,
+      header: {
+        ...auth(token)
+      }
+    },
+    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache, key }
   ).then((res) => {
     if (res.statusCode === 200) {
       return {
