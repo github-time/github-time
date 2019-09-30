@@ -1,7 +1,7 @@
 //index.js
 import Page from '../../common/page/index'
-import github from '../../utils/githubApi'
-import footprint from '../../utils/footprint'
+import github from '../../utils/helper/githubApi'
+import footprints from '../../utils/data-manager/footprints'
 
 //获取应用实例
 import { IMyApp } from '../../app'
@@ -27,7 +27,7 @@ Page({
         icon: 'activity'
       },
       {
-        key: 'footprint',
+        key: 'footprints',
         title: '足迹',
         icon: 'footprint'
       },
@@ -55,7 +55,7 @@ Page({
     async getFootprints (query: any, pageSize: number, pageNo: number) {
       return {
         status: 'done',
-        data: footprint.getFootprint({
+        data: footprints.getFootprint({
           type: query.type,
           pageSize,
           pageNo

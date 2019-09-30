@@ -2,7 +2,7 @@
 import Page from '../../common/page/index'
 //获取应用实例
 import { IMyApp } from '../../app'
-import github from '../../utils/githubApi'
+import github from '../../utils/helper/githubApi'
 
 // import remuData from '../../mock/remu-export-data'
 
@@ -117,7 +117,7 @@ Page({
     const repoDetail = this.data.repoDetail
     const fullRepoName = repoDetail.full_name
 
-    app.footprint.push({
+    app.footprints.push({
       type: 'repo',
       url: `/pages/repo-detail/index?r=${fullRepoName}`,
       timestamp: new Date().getTime(),

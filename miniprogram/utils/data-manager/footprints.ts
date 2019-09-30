@@ -1,4 +1,4 @@
-import DateReadable from './DateReadable'
+import DateReadable from '../data-readable/DateReadable'
 
 const makeDateReadable = DateReadable()
 

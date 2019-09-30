@@ -1,4 +1,4 @@
-import { sleep } from '../utils/common'
+import { sleep } from '../common'
 const baseFileId = 'github-time-mp.6769-github-time-mp-1300157824/downloader-cache'
 const cacheKey = 'fileCacheIndex'
 

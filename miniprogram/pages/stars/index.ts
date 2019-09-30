@@ -1,6 +1,6 @@
 //index.js
 import Page from '../../common/page/index'
-import github from '../../utils/githubApi'
+import github from '../../utils/helper/githubApi'
 
 //获取应用实例
 import { IMyApp } from '../../app'

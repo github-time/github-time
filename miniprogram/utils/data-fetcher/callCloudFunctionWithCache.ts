@@ -1,5 +1,5 @@
 import CacheMagager, { CacheOptions, CacheInfo } from './CacheMagager'
-import LocalDataStorage from './data-storage/LocalDataStorage'
+import LocalDataStorage from '../data-storage/LocalDataStorage'
 
 const PREFIX = 'cc'
 
@@ -17,7 +17,7 @@ for (let key in report.groups) {
 }
 console.log(`${PREFIX} totalSize: ${(report.totalSize / 1024 / 1024).toFixed(2)} M`)
 
-type CallResult = {
+export type CallResult = {
   errMsg: string
   result: any
 }

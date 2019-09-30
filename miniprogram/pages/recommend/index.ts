@@ -1,6 +1,6 @@
 //index.js
 import Page from '../../common/page/index'
-import github from '../../utils/githubApi'
+import github from '../../utils/helper/githubApi'
 import { IMyApp } from '../../app'
 
 //获取应用实例
@@ -121,17 +121,17 @@ Page({
   },
 
   onLoad() {
-    wx.getClipboardData({
-      success (res) {
-        const data = res.data || ''
-        const matches = data.match(/^https:\/\/github\.com\/([^/]+\/[^/]+).*/)
-        if (matches) {
-          wx.navigateTo({
-            url: `/pages/repo-detail/index?r=${matches[1]}`
-          })
-        }
-      }
-    })
+    // wx.getClipboardData({
+    //   success (res) {
+    //     const data = res.data || ''
+    //     const matches = data.match(/^https:\/\/github\.com\/([^/]+\/[^/]+).*/)
+    //     if (matches) {
+    //       wx.navigateTo({
+    //         url: `/pages/repo-detail/index?r=${matches[1]}`
+    //       })
+    //     }
+    //   }
+    // })
   },
   onShow(this: any) {
     const tabBar = this.getTabBar()

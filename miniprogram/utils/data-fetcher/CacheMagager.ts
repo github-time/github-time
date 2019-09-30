@@ -1,4 +1,4 @@
-import DataStorage from './data-storage/DataStorage'
+import DataStorage from '../data-storage/DataStorage'
 import md5 = require('blueimp-md5')
 
 type GroupData = {

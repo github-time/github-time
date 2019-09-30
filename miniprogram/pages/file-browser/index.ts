@@ -2,12 +2,12 @@
 import * as minimatch from 'minimatch'
 import Page from '../../common/page/index'
 import { IMyApp } from '../../app'
-import parseTree from '../../utils/parseTree'
-import github from '../../utils/githubApi'
+import parseTree from '../../utils/data-parser/parseTree'
+import github from '../../utils/helper/githubApi'
 // @ts-ignore
 import { $wuxToptips } from '../../common/lib/wux/index'
 import fileTypeMap from './file-types'
-import openDocument from '../../utils/openDocument'
+import openDocument from '../../utils/helper/openDocument'
 
 const MAX_OPEN_FILE_SIZE = 3 * 1024 * 1024 // 限制最大为2M
 
@@ -518,7 +518,7 @@ Page({
         showHistoryBack: this.data.history.length > 1
       })
     }
-    app.footprint.push({
+    app.footprints.push({
       type: 'file',
       url: `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`,
       timestamp: new Date().getTime(),

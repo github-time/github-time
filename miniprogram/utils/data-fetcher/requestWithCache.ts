@@ -1,5 +1,5 @@
 import CacheMagager, { CacheOptions, CacheInfo } from './CacheMagager'
-import LocalDataStorage from './data-storage/LocalDataStorage'
+import LocalDataStorage from '../data-storage/LocalDataStorage'
 
 const PREFIX = 'rc'
 
@@ -22,42 +22,47 @@ const requestMap: { [key: string]: Result } = {}
 
 export const cache = cacheMagager
 
-export default function (req: wx.RequestOption, opts: CacheOptions): Result {
+export default function (req: wx.RequestOption, opts: CacheOptions|false, { successCode = 200, retry = 1, retryWait = 1000} = {}): Result {
   const requestKey = JSON.stringify(req)
   const requesting = requestMap[requestKey]
   if (requesting) return requesting
 
   const promise = requestMap[requestKey] = new Promise<wx.RequestSuccessCallbackResult>((resolve) => {
-    const retry = 1
-    const key = opts.key || req.url
-    if (opts.discard && opts.group) {
-      cacheMagager.clear(opts.group)
+    let key: string
+    if (opts !== false) {
+      key = opts.key || req.url
+      if (opts.discard && opts.group) {
+        cacheMagager.clear(opts.group)
+      }
+      const cacheData = cacheMagager.get(key, { group: opts.group })
+      if (cacheData) {
+        // 缓存命中
+        resolve(cacheData)
+        return
+      }
     }
-    const cacheData = cacheMagager.get(key, { group: opts.group })
-    if (cacheData) {
-      // 缓存命中
-      resolve(cacheData)
-      return
-    }
+
     let n = 0
     const doRequest = () => {
       // 发送请求
-      console.log(`wx.request: ${req.url}`)
+      console.log(`wx.request(${req.method || 'GET'}): ${req.url}`)
       wx.request({
         url: req.url,
         header: req.header,
         success(res) {
-          console.log(`wx.request success:`, res)
+          console.log(`wx.request(${req.method || 'GET'}) success:`, res)
           let cacheInfo = {} as CacheInfo
-          if (res.statusCode === 200) {
+          if (res.statusCode === successCode) {
             // 请求成功，缓存数据
-            const groupInfo = cacheMagager.put(key, JSON.stringify(res), {
-              group: opts.group,
-              timeout: opts.timeout,
-              maxsize: opts.maxsize
-            })
-            if (groupInfo) {
-              cacheInfo.cache_date = groupInfo.c
+            if (opts !== false) {
+              const groupInfo = cacheMagager.put(key, JSON.stringify(res), {
+                group: opts.group,
+                timeout: opts.timeout,
+                maxsize: opts.maxsize
+              })
+              if (groupInfo) {
+                cacheInfo.cache_date = groupInfo.c
+              }
             }
           }
           resolve({
@@ -68,7 +73,7 @@ export default function (req: wx.RequestOption, opts: CacheOptions): Result {
         fail (res) {
           if (n++ < retry) {
             console.log(`wx.request failed retry ${n}`)
-            setTimeout(doRequest, 1000)
+            setTimeout(doRequest, retryWait)
             // 请求超时
           } else {
             console.log(`wx.request failed:`, res)
