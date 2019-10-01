@@ -301,7 +301,7 @@ async function getFileTree ({
   return requestWithCache(
     { url },
     { timeout: 30, group: `RepoData#${fullRepoName}`, maxsize: 256 * 1024, discard: cleanCache }
-  ).then(resultFactory({ nullData: [] }))
+  ).then(resultFactory({ nullData: [], successData: res => res.data.tree }))
 }
 
 async function getReadmeContent ({
