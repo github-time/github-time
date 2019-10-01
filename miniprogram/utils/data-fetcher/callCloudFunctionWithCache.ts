@@ -26,22 +26,24 @@ const callMap: { [key: string]: Result } = {}
 
 export const cache = cacheMagager
 
-export default function (params: ICloud.CallFunctionParam, opts: CacheOptions): Result {
+export default function (params: ICloud.CallFunctionParam, opts: CacheOptions|false, { retry = 1, retryWait = 1000} = {}): Result {
   const callKey = JSON.stringify(params)
   const requesting = callMap[callKey]
   if (requesting) return requesting
 
   const promise = callMap[callKey] = new Promise<CallResult>((resolve) => {
-    const retry = 1
-    const key = opts.key || (params.name + JSON.stringify(params.data))
-    if (opts.discard && opts.group) {
-      cacheMagager.clear(opts.group)
-    }
-    const cacheData = cacheMagager.get(key, { group: opts.group })
-    if (cacheData) {
-      // 缓存命中
-      resolve(cacheData)
-      return
+    let key: string
+    if ( opts!==false) {
+      key = opts.key || (params.name + JSON.stringify(params.data))
+      if (opts.discard && opts.group) {
+        cacheMagager.clear(opts.group)
+      }
+      const cacheData = cacheMagager.get(key, { group: opts.group })
+      if (cacheData) {
+        // 缓存命中
+        resolve(cacheData)
+        return
+      }
     }
 
     let n = 0
@@ -56,7 +58,7 @@ export default function (params: ICloud.CallFunctionParam, opts: CacheOptions): 
         success: function (res: any) {
           console.log(`wx.cloud.callFunction success:`, res)
           let cacheInfo = {} as CacheInfo
-          if (res.errMsg === 'cloud.callFunction:ok') {
+          if (res.errMsg === 'cloud.callFunction:ok' && opts !== false) {
             // 请求成功，缓存数据
             const groupInfo = cacheMagager.put(key, JSON.stringify(res), {
               group: opts.group,
@@ -75,7 +77,7 @@ export default function (params: ICloud.CallFunctionParam, opts: CacheOptions): 
         fail (e: any) {
           if (e.errCode === -404011 && n++ < retry) {
             console.log(`Call cloud function timeout retry ${n}`)
-            setTimeout(doCall, 1000)
+            setTimeout(doCall, retryWait)
             // 请求超时
           } else {
             console.error('Call cloud function failed:', e)

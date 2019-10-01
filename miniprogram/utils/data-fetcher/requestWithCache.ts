@@ -52,17 +52,15 @@ export default function (req: wx.RequestOption, opts: CacheOptions|false, { succ
         success(res) {
           console.log(`wx.request(${req.method || 'GET'}) success:`, res)
           let cacheInfo = {} as CacheInfo
-          if (res.statusCode === successCode) {
+          if (res.statusCode === successCode && opts !== false) {
             // 请求成功，缓存数据
-            if (opts !== false) {
-              const groupInfo = cacheMagager.put(key, JSON.stringify(res), {
-                group: opts.group,
-                timeout: opts.timeout,
-                maxsize: opts.maxsize
-              })
-              if (groupInfo) {
-                cacheInfo.cache_date = groupInfo.c
-              }
+            const groupInfo = cacheMagager.put(key, JSON.stringify(res), {
+              group: opts.group,
+              timeout: opts.timeout,
+              maxsize: opts.maxsize
+            })
+            if (groupInfo) {
+              cacheInfo.cache_date = groupInfo.c
             }
           }
           resolve({
