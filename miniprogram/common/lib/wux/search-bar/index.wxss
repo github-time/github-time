@@ -4,7 +4,8 @@
   display: -ms-flexbox;
   display: flex;
   box-sizing: border-box;
-  background-color: #efeff4
+  background-color: #efeff4;
+  align-items: center;
 }
 .wux-search-bar:before {
   content: " ";
