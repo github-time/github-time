@@ -216,9 +216,6 @@ Page({
     const githubConfig = this.data.githubConfig =  app.settings.get('githubConfig', {})
     const owner = githubConfig.user
     if (owner) {
-      wx.showLoading({
-        title: '正在加载'
-      })
       this.setData!({
         query: {
           owner,
@@ -226,7 +223,6 @@ Page({
         },
         githubConfig
       })
-      wx.hideLoading()
     } else {
       this.setData!({
         githubConfig

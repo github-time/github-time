@@ -1,7 +1,7 @@
 //index.js
 import Page from '../../common/page/index'
 import github from '../../utils/helper/githubApi'
-import { sleep } from '../../utils/common'
+import { sleep, wrapLoading } from '../../utils/common'
 //获取应用实例
 import { IMyApp } from '../../app'
 const app = getApp<IMyApp>()
@@ -19,33 +19,31 @@ Page({
     })
   },
   async onSave () {
-
     if (this.data.githubConfig.token) {
       // 验证 Token
-      wx.showLoading({
-        title: '正在验证令牌...'
-      })
-      const result = await github.checkToken(this.data.githubConfig)
+      wrapLoading('正在验证令牌...', async () => {
+        const result = await github.checkToken(this.data.githubConfig)
 
-      if (result.status === 'done' && result.data.login) {
-        // 更新用户名
-        this.data.githubConfig.user = result.data.login
-        this.setData!({
-          githubConfig: this.data.githubConfig
-        })
-        wx.showToast({
-          title: '令牌验证成功!',
-          icon: 'success',
-          duration: 1000
-        })
-      } else {
-        wx.showToast({
-          title: '令牌验证失败!',
-          icon: 'none',
-          duration: 1000
-        })
-      }
-      await sleep(1000)
+        if (result.status === 'done' && result.data.login) {
+          // 更新用户名
+          this.data.githubConfig.user = result.data.login
+          this.setData!({
+            githubConfig: this.data.githubConfig
+          })
+          wx.showToast({
+            title: '令牌验证成功!',
+            icon: 'success',
+            duration: 1000
+          })
+        } else {
+          wx.showToast({
+            title: '令牌验证失败!',
+            icon: 'none',
+            duration: 1000
+          })
+        }
+        await sleep(1000)
+      })
     }
 
     app.settings.set('githubConfig', this.data.githubConfig)

@@ -3,6 +3,7 @@ import Page from '../../common/page/index'
 //获取应用实例
 import { IMyApp } from '../../app'
 import github from '../../utils/helper/githubApi'
+import { wrapLoading } from '../../utils/common'
 
 // import remuData from '../../mock/remu-export-data'
 
@@ -167,21 +168,19 @@ Page({
   async onStaring () {
     const token = this.data.githubConfig
     if (token && token.token) {
-      wx.showLoading({
-        title: '请稍候...'
+      wrapLoading('请稍候...', async () => {
+        let isStarred = this.data.isStarred
+        if (this.data.isStarred) {
+          let result = await github.unstar(this.data.repoDetail.full_name, token)
+          if (result.status === 'done') isStarred = false
+        } else {
+          let result = await github.star(this.data.repoDetail.full_name, token)
+          if (result.status === 'done') isStarred = true
+        }
+        this.setData!({
+          isStarred
+        })
       })
-      let isStarred = this.data.isStarred
-      if (this.data.isStarred) {
-        let result = await github.unstar(this.data.repoDetail.full_name, token)
-        if (result.status === 'done') isStarred = false
-      } else {
-        let result = await github.star(this.data.repoDetail.full_name, token)
-        if (result.status === 'done') isStarred = true
-      }
-      this.setData!({
-        isStarred
-      })
-      wx.hideLoading()
     } else {
       wx.showToast({
         title: '操作失败:未设置账户令牌'
@@ -220,29 +219,27 @@ Page({
 
   async loadReadmeContent () {
     if (!this.data.readmeLoaded && this.data.current === 'readme') {
-      this.data.readmeLoaded = true;
-      wx.showLoading({
-        title: '正在加载'
-      })
-      const result = await github.getReadme({
-        fullRepoName: this.data.repoDetail.full_name
-      })
-      if (result.status === 'done') {
-        this.setData!({
-          readmeRef: result.data.ref,
-          readmeFilePath: result.data.path,
-          readmeContent: result.data.content,
-          contextPath: `https://github.com/${this.data.repoDetail.full_name}/raw/master/`,
+      this.data.readmeLoaded = true
+      wrapLoading('正在加载', async () => {
+        const result = await github.getReadme({
+          fullRepoName: this.data.repoDetail.full_name
         })
-      } else if (result.status === 'error'){
-        console.error('Get readme content failed: ', result.error)
-        if (result.error && result.error.code === 404) {
+        if (result.status === 'done') {
           this.setData!({
-            noReadme: true
+            readmeRef: result.data.ref,
+            readmeFilePath: result.data.path,
+            readmeContent: result.data.content,
+            contextPath: `https://github.com/${this.data.repoDetail.full_name}/raw/master/`,
           })
+        } else if (result.status === 'error'){
+          console.error('Get readme content failed: ', result.error)
+          if (result.error && result.error.code === 404) {
+            this.setData!({
+              noReadme: true
+            })
+          }
         }
-      }
-      wx.hideLoading()
+      })
     }
   },
 

@@ -8,6 +8,7 @@ import github from '../../utils/helper/githubApi'
 import { $wuxToptips } from '../../common/lib/wux/index'
 import fileTypeMap from './file-types'
 import openDocument from '../../utils/helper/openDocument'
+import { sleep, wrapLoading } from '../../utils/common'
 
 const MAX_OPEN_FILE_SIZE = 3 * 1024 * 1024 // 限制最大为2M
 
@@ -409,30 +410,28 @@ Page({
   },
 
   async loadFileTree (fullRepoName: string, ref: string) {
-    wx.showLoading({
-      title: '正在加载'
-    })
-    const result = await github.getFileTree({ fullRepoName, ref })
-    if (result.status === 'done') {
-      try {
-        const fileMap = {} as {[key: string]: FileMeta}
-        result.data.filter(item => item.type === 'blob').forEach(item => {
-          fileMap[item.path] = {
-            size: item.size!,
-            sha: item.sha
-          }
-        })
-        this.setData!({
-          fileMap,
-          treeData: parseTree(result.data!).tree
-        });
-      } catch (e) {
-        console.error('Parse file tree failed: ', e)
+    await wrapLoading('正在加载', async () => {
+      const result = await github.getFileTree({ fullRepoName, ref })
+      if (result.status === 'done') {
+        try {
+          const fileMap = {} as {[key: string]: FileMeta}
+          result.data.filter(item => item.type === 'blob').forEach(item => {
+            fileMap[item.path] = {
+              size: item.size!,
+              sha: item.sha
+            }
+          })
+          this.setData!({
+            fileMap,
+            treeData: parseTree(result.data!).tree
+          });
+        } catch (e) {
+          console.error('Parse file tree failed: ', e)
+        }
+      } else if (result.status === 'error'){
+        console.error('Get file tree failed: ', result.error)
       }
-    } else if (result.status === 'error'){
-      console.error('Get file tree failed: ', result.error)
-    }
-    wx.hideLoading()
+    })
   },
 
   async viewFile (fullRepoName: string, ref: string, filePath: string, isBack: boolean = false) {
@@ -444,70 +443,49 @@ Page({
     const fileMeta = this.data.fileMap[filePath] || {}
     console.log('fileMeta:', fileMeta)
     const showSidebar = false
+    const fileTooLarge = fileMeta.size > MAX_OPEN_FILE_SIZE
+    const fileSize = (fileMeta.size / 1024 / 1024).toFixed(2) + 'M'
+    const contextPath = `https://github.com/${fullRepoName}/raw/master/${filePath.replace(/[^\/]+$/, '')}`
     let pushHistory = !isBack
-    if (fileMeta.size > MAX_OPEN_FILE_SIZE) {
-      this.setData!({
-        showSidebar,
-        filePath,
-        fileSize: (fileMeta.size / 1024 / 1024).toFixed(2) + 'M',
-        fileTooLarge: true
-      })
-    } else {
-      wx.showLoading({
-        title: '正在加载'
-      })
-      const fileTooLarge = false
-      if (fileInfo.type === 'img') {
-        this.setData!({
-          showSidebar,
-          fileTooLarge,
-          ref,
-          filePath,
-          fileContent: '',
-          fileType: fileInfo.type
-        })
-        setTimeout(wx.hideLoading, 1500)
-      } else if (fileInfo.type === 'document') {
-        this.setData!({
-          showSidebar,
-          fileTooLarge,
-          ref,
-          fileGitHash: fileMeta.sha,
-          filePath,
-          fileSize: (fileMeta.size / 1024 / 1024).toFixed(2) + 'M',
-          fileContent: fileInfo.name,
-          fileType: fileInfo.type
-        })
-        wx.hideLoading()
-      } else {
-        const result= await github.getFileContent({
-          fullRepoName,
-          filePath,
-          ref
-        })
-        if (result.status === 'done') {
-          const content = result.data
-          this.setData!({
-            showSidebar,
-            fileTooLarge,
-            ref,
+    let fileContent = ''
+
+    if (!fileTooLarge) {
+      wrapLoading('正在加载', async () => {
+        if (fileInfo.type === 'img') {
+          await sleep(1000) // 等待1s
+        } else if (fileInfo.type === 'document') {
+          fileContent = fileInfo.name
+        } else {
+          const result= await github.getFileContent({
+            fullRepoName,
             filePath,
-            contextPath: `https://github.com/${fullRepoName}/raw/master/${filePath.replace(/[^\/]+$/, '')}`,
-            fileContent: content,
-            fileType: fileInfo.type
+            ref
           })
-        } else if (result.status === 'error') {
-          $wuxToptips().error({
-            hidden: false,
-            text: '获取文件内容失败...',
-            duration: 3000,
-            success() {},
-          })
-          console.error('Get file content failed: ', result.error)
-          pushHistory = false
+          if (result.status === 'done') {
+            fileContent = result.data
+          } else if (result.status === 'error') {
+            $wuxToptips().error({
+              hidden: false,
+              text: '获取文件内容失败...',
+              duration: 3000
+            })
+            console.error('Get file content failed: ', result.error)
+            pushHistory = false
+          }
         }
-        wx.hideLoading()
-      }
+
+        this.setData!({
+          showSidebar,
+          fileTooLarge,
+          ref,
+          contextPath,
+          filePath,
+          fileSize,
+          fileContent,
+          fileType: fileInfo.type,
+          fileGitHash: fileMeta.sha
+        })
+      })
     }
     if (pushHistory) {
       this.data.history.push({
