@@ -42,6 +42,10 @@ page .button-group-item.active {
   height: 100%;
 }
 
+.bg-none {
+	background-color: transparent;
+}
+
 /* .scrollPage {
   height: 100vh;
 }
