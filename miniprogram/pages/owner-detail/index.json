@@ -5,7 +5,6 @@
     "mp-todo-coming-soon": "/components/todo-coming-soon/index",
     "wux-tabs": "/common/lib/wux/tabs/index",
     "wux-tab": "/common/lib/wux/tab/index",
-    "wux-button": "/common/lib/wux/button/index",
     "wux-white-space": "/common/lib/wux/white-space/index",
     "wux-cell": "/common/lib/wux/cell/index",
     "wux-cell-group": "/common/lib/wux/cell-group/index",

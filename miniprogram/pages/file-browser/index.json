@@ -1,7 +1,6 @@
 {
   "usingComponents": {
     "wux-search-bar": "/common/lib/wux/search-bar/index",
-    "wux-button": "/common/lib/wux/button/index",
     "wux-toptips": "/common/lib/wux/toptips/index",
     "mp-fill-view": "/common/components/fill-view/index",
     "mp-markdown": "/common/components/markdown/index",

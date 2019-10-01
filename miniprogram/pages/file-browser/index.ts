@@ -527,7 +527,7 @@ Page({
       }
     })
   },
-  viewImage (e: any) {
+  previewImage (e: any) {
     const imgUrl = e.currentTarget.dataset.url
     wx.previewImage({
       urls: [imgUrl],

@@ -16,15 +16,18 @@
   bind:focus="onSearchFocus"
   bind:clear="onKeywordClear">
   >
-  <text slot="left" class="sidebar-icon cuIcon-list" bindtap="showFileTree"></text>
-  <wux-button
-    size="small"
-    clear
-    type="balanced"
+  <button
+    slot="left"
+    class="cu-btn bg-none text-xxl padding-0 padding-right-xs"
+    bindtap="showFileTree">
+    <text class="cuIcon-list"></text>
+  </button>
+  <button
     slot="right"
+    class="cu-btn bg-none text-xxl text-green padding-0 padding-left-xs"
     open-type="share">
-    <text  class="sidebar-icon cuIcon-share"></text>
-  </wux-button>
+    <text class="cuIcon-share"></text>
+  </button>
 </wux-search-bar>
 
 <view class="file-search-result" hidden="{{!showFileSearchResult || fileSearchResult.length === 0}}">
@@ -69,7 +72,7 @@
       src="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"
       data-url="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"
       mode="widthFix"
-      bind:tap="viewImage"/>
+      bind:tap="previewImage"/>
   </view>
   <view wx:elif="{{fileType === 'document'}}" class="text-center padding">
     <button bind:tap="downloadAndViewDocument">

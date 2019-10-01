@@ -30,14 +30,14 @@
         <view slot="extra">
           <view slot="right">
             <button
-              class="cu-btn bg-white text-green padding-xs text-lg"
+              class="cu-btn bg-none text-green padding-xs text-lg"
               open-type="share"
             >
               <text class="cuIcon-share"></text>
             </button>
             <button
               wx:if="{{githubConfig.token}}"
-              class="cu-btn bg-white padding-xs text-lg text-{{isStarred ? 'red' : 'green'}}"
+              class="cu-btn bg-none padding-xs text-lg text-{{isStarred ? 'red' : 'green'}}"
               bind:tap="onStaring"
             >
               <text class="cuIcon-{{isStarred ? 'favorfill' : 'favor'}}"></text>
