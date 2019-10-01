@@ -1,4 +1,4 @@
-<wux-tabbar wux-class="wux-tabbar" controlled current="{{ current }}" bind:change="onChange">
+<wux-tabbar wx:if="{{!loading}}" wux-class="wux-tabbar" controlled current="{{ current }}" bind:change="onChange">
   <wux-tabbar-item wx:for="{{ list }}" wx:key="index" key="{{item.key}}">
     <text slot="icon-on" class="cuIcon-{{item.icon}}"></text>
     <text slot="icon-off" class="cuIcon-{{item.icon}}"></text>

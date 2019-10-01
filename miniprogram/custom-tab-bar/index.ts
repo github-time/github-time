@@ -3,6 +3,7 @@ Component({
     addGlobalClass: true
   },
   data: {
+    loading: true,
     current: '',
     list: [
       {
@@ -31,7 +32,6 @@ Component({
       }
     ]
   },
-
   methods: {
     onChange(event) {
       const item = this.data.list.find((item: any) => item.key === event.detail.key)
@@ -43,6 +43,13 @@ Component({
       const page = getCurrentPages().pop() as Page.PageInstance;
       this.setData({
         current: this.data.list.find((item: any) => item.url === `/${page.route}`).key
+      })
+    }
+  },
+  lifetimes: {
+    ready () {
+      this.setData({
+        loading: false
       })
     }
   }
