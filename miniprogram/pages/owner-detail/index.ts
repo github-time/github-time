@@ -30,7 +30,8 @@ Page({
       const result = await github.getUserRepositories({
         owner: query.owner,
         pageSize,
-        pageNo
+        pageNo,
+        token: query.token
       })
       // await sleep(2000)
       return result
@@ -113,10 +114,15 @@ Page({
   },
   async loadUserRepos () {
     const owner = this.data.ownerDetail.login
+    const token = app.settings.get('githubConfig', {})
+    if (owner !== token.user || !token.token) {
+      token.token = ''
+    }
     if (owner) {
       this.setData!({
         query: {
-          owner
+          owner,
+          token
         }
       })
     }
