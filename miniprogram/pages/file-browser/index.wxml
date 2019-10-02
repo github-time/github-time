@@ -22,12 +22,18 @@
     bindtap="showFileTree">
     <text class="cuIcon-list"></text>
   </button>
-  <button
-    slot="right"
-    class="cu-btn bg-none text-xxl text-green padding-0 padding-left-xs"
-    open-type="share">
-    <text class="cuIcon-share"></text>
-  </button>
+  <view slot="right">
+    <button
+      class="cu-btn bg-none text-xxl text-green padding-0 padding-left-xs"
+      open-type="share">
+      <text class="cuIcon-share"></text>
+    </button>
+    <button
+      class="cu-btn bg-none text-xxl text-green padding-0 padding-left-xs"
+      bind:tap="onBookmark">
+      <text class="cuIcon-{{isBookmarded?'favorfill':'favor'}} text-{{isBookmarded?'red':'green'}}"></text>
+    </button>
+  </view>
 </wux-search-bar>
 
 <view class="file-search-result" hidden="{{!showFileSearchResult || fileSearchResult.length === 0}}">

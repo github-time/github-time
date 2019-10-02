@@ -9,6 +9,7 @@ import { $wuxToptips } from '../../common/lib/wux/index'
 import fileTypeMap from './file-types'
 import openDocument from '../../utils/helper/openDocument'
 import { sleep, wrapLoading, getLinkInfo, parseRepoDetail } from '../../utils/common'
+import bookmarks from '../../utils/data-manager/bookmarks'
 
 const MAX_OPEN_FILE_SIZE = 3 * 1024 * 1024 // 限制最大为2M
 
@@ -126,7 +127,8 @@ Page({
     history: [] as HistoryItem[],
     branches: [] as string[],
     showHistoryBack: false,
-    mdPreview: true
+    mdPreview: true,
+    isBookmarded: false
   },
   onShareAppMessage () {
     const current = this.data.history[this.data.history.length - 1]
@@ -422,6 +424,27 @@ Page({
     }
   },
 
+  onBookmark () {
+    const fullRepoName = this.data.repoDetail.full_name
+    const ref = this.data.ref
+    const filePath = this.data.filePath
+    const url = `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`
+    if (this.data.isBookmarded) {
+      bookmarks.remove(url)
+    } else {
+      bookmarks.add({
+        type: 'file',
+        url,
+        meta: {
+          title: `${fullRepoName}/@${ref}/${filePath}`
+        }
+      })
+    }
+    this.setData!({
+      isBookmarded: !this.data.isBookmarded
+    })
+  },
+
   async loadRepositoryDetail (fullRepoName: string) {
     const result = await github.getRepositoryDetail(fullRepoName)
     if (result.status === 'done') {
@@ -531,13 +554,16 @@ Page({
         showHistoryBack: this.data.history.length > 1
       })
     }
+    const url = `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`
     app.footprints.push({
       type: 'file',
-      url: `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`,
-      timestamp: new Date().getTime(),
+      url,
       meta: {
         title: `${fullRepoName}/@${ref}/${filePath}`
       }
+    })
+    this.setData!({
+      isBookmarded: bookmarks.get(url)
     })
   },
   previewImage (e: any) {

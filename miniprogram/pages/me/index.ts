@@ -5,6 +5,7 @@ import footprints from '../../utils/data-manager/footprints'
 
 //获取应用实例
 import { IMyApp } from '../../app'
+import bookmarks from '../../utils/data-manager/bookmarks'
 const app = getApp<IMyApp>()
 
 Page({
@@ -18,7 +19,7 @@ Page({
     tabs: [
       {
         key: 'repos',
-        title: '我的仓库',
+        title: '仓库',
         icon: 'medal'
       },
       {
@@ -27,17 +28,24 @@ Page({
         icon: 'activity'
       },
       {
+        key: 'bookmark',
+        title: '收藏',
+        icon: 'favor'
+      },
+      {
         key: 'footprints',
         title: '足迹',
         icon: 'footprint'
       },
       // {
       //   key: 'issues',
-      //   title: 'Issues'
+      //   title: '问题',
+      //   icon: 'question'
       // },
       // {
       //   key: 'message',
-      //   title: '留言'
+      //   title: '留言',
+      //   icon: 'message'
       // }
     ],
     query: {},
@@ -55,7 +63,18 @@ Page({
     async getFootprints (query: any, pageSize: number, pageNo: number) {
       return {
         status: 'done',
-        data: footprints.getFootprint({
+        data: footprints.getFootprints({
+          type: query.type,
+          pageSize,
+          pageNo
+        })
+      }
+    },
+    bookmarkQuery: {},
+    async getBookmarks (query: any, pageSize: number, pageNo: number) {
+      return {
+        status: 'done',
+        data: bookmarks.getBookmarks({
           type: query.type,
           pageSize,
           pageNo
@@ -115,7 +134,8 @@ Page({
       this.loadUserRepos()
     }
     this.setData({
-      footprintQuery: {}
+      footprintQuery: {},
+      bookmarkQuery: {}
     })
   },
 

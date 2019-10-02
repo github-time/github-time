@@ -62,6 +62,19 @@
           <mp-data-list
             item-template="footprint"
             key="id"
+            query="{{bookmarkQuery}}"
+            page-size="{{10}}"
+            fetch-data="{{getBookmarks}}"
+            show-load-more
+            auto-load
+            bind:itemclick="onFootprintClick"
+            >
+          </mp-data-list>
+        </swiper-item>
+        <swiper-item>
+          <mp-data-list
+            item-template="footprint"
+            key="id"
             query="{{footprintQuery}}"
             page-size="{{10}}"
             fetch-data="{{getFootprints}}"
@@ -71,12 +84,6 @@
             >
           </mp-data-list>
         </swiper-item>
-        <!-- <swiper-item>
-          <mp-todo-coming-soon />
-        </swiper-item>
-        <swiper-item>
-          <mp-todo-coming-soon />
-        </swiper-item> -->
       </swiper>
     </block>
 
