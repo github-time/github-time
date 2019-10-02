@@ -123,7 +123,6 @@ Page({
     app.footprints.push({
       type: 'repo',
       url: `/pages/repo-detail/index?r=${fullRepoName}`,
-      timestamp: new Date().getTime(),
       meta: {
         title: fullRepoName
       }

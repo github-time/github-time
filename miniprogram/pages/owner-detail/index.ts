@@ -66,7 +66,6 @@ Page({
     app.footprints.push({
       type: 'owner',
       url: `/pages/owner-detail/index?o=${owner}`,
-      timestamp: new Date().getTime(),
       meta: {
         title: owner
       }

@@ -5,7 +5,7 @@ const makeDateReadable = DateReadable()
 type Footprint = {
   type: 'repo'|'owner'|'file',
   url: string
-  timestamp: number,
+  timestamp?: number,
   meta: {
     title: string,
     [key: string]: string
@@ -25,13 +25,14 @@ const MAX_SIZE = 100
 export default {
   push (footprint: Footprint) {
     if (footprints.length === 0 || footprint.url !== footprints[0].url) {
+      footprint.timestamp = new Date().getTime()
       footprints.unshift(footprint)
       if (footprints.length > MAX_SIZE) footprints.length = MAX_SIZE
       wx.setStorageSync('footprints', JSON.stringify(footprints))
     }
   },
 
-  getFootprint ({type, pageSize, pageNo}: {type: string, pageSize: number, pageNo: number}) {
+  getFootprints ({type, pageSize, pageNo}: {type: string, pageSize: number, pageNo: number}) {
     const pos = pageSize * (pageNo - 1)
     const now = new Date().getTime()
     return footprints
@@ -39,7 +40,7 @@ export default {
       .slice(pos, pos + pageSize)
       .map((item) => {
         item = {...item}
-        item.timestamp = makeDateReadable(now - item.timestamp, item.timestamp) as any
+        item.timestamp = makeDateReadable(now - item.timestamp!, item.timestamp) as any
         return item
       })
   }
