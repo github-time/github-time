@@ -119,9 +119,11 @@ Page({
     })
   },
 
-  viewMoreStars () {
-    wx.switchTab({
-      url: '/pages/stars/index'
+  viewMoreUserRepos () {
+    const githubConfig = this.data.githubConfig =  app.settings.get('githubConfig', {})
+    app.globalData.ownerDetail = { login: githubConfig.user } as any
+    wx.navigateTo({
+      url: '/pages/owner-detail/index'
     })
   },
   getUserInfo (e: any) {
@@ -151,7 +153,7 @@ Page({
       })
     }
   },
-  onStarRepoClick (e: any) {
+  onUserRepoClick (e: any) {
     app.globalData.repoDetail = e.detail.item
     app.globalData.ownerDetail = e.detail.item.owner
     wx.navigateTo({

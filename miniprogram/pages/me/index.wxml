@@ -50,9 +50,9 @@
             page-size="{{5}}"
             fetch-data="{{getUserRepos}}"
             auto-load
-            bind:itemclick="onStarRepoClick"
+            bind:itemclick="onUserRepoClick"
             >
-            <view slot="load-more" class="text-center" bind:tap="viewMoreStars">查看更多</view>
+            <view slot="load-more" class="text-center" bind:tap="viewMoreUserRepos">查看更多</view>
           </mp-data-list>
         </swiper-item>
         <swiper-item>
