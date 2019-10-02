@@ -90,6 +90,10 @@ Component({
     scrollTop: {
       type: Number,
       value: 0
+    },
+    selected: {
+      type: Array,
+      value: []
     }
   },
   data: {
@@ -150,6 +154,22 @@ Component({
     onScroll (e: any) {
       if (this.data.codeRows.length > 0) renderNecessary(this)
       this.triggerEvent('scroll', e.detail)
+    },
+    onRowClick (e: any) {
+      if (e.mark.isLineNo) {
+        const lineNo = e.currentTarget.dataset.lineNo
+        const selected = this.data.selected
+        const index = selected.indexOf(lineNo)
+        if (index === -1) {
+          selected.push(lineNo)
+        } else {
+          selected.splice(index, 1)
+        }
+        this.setData!({
+          selected
+        })
+        this.triggerEvent('selectChange', { selected })
+      }
     }
   }
 })

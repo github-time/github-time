@@ -1,4 +1,10 @@
 <!--miniprogram/custom-tab-bar/index.wxml-->
+<wxs module="utils">
+module.exports = {
+  indexOf: function (arr, find) { return ~arr.indexOf(find) }
+}
+</wxs>
+
 <view class="info-bar">
   <view>render by prism.js</view>
   <view class="meta">
@@ -16,13 +22,20 @@
   >
   <view class="code-container">
     <view>{{rawText}}</view>
-    <view wx:for="{{codeRows}}" wx:key="{{index}}" class="code-row">
+    <view
+      wx:for="{{codeRows}}"
+      wx:for-index="lineIndex"
+      wx:key="{{lineIndex}}"
+      class="code-row {{utils.indexOf(selected, lineIndex)?'selected':''}}"
+      data-line-no="{{lineIndex}}"
+      bind:tap="onRowClick">
       <text wx:for="{{item}}"
-            wx:key="{{index}}"
-            class="{{(index === 0 ? 'line-num' : '') + ' code-text ' + (item.class ? item.class : '')}}"
-            selectable="{{true}}"
-            space="ensp"
-            decode="true"
+        wx:key="{{index}}"
+        mark:isLineNo="{{index===0}}"
+        class="{{(index === 0 ? 'line-num' : '') + ' code-text ' + (item.class ? item.class : '')}}"
+        selectable="{{true}}"
+        space="ensp"
+        decode="true"
         >{{item.text}}</text>
     </view>
   </view>

@@ -151,3 +151,12 @@
   display:inline-block;
   font-size: 28rpx;
 }
+
+.code-row.selected .line-num {
+	color: white;
+	background: red;
+	border-radius: 6rpx 6rpx;
+	line-height: 40rpx;
+	margin-top: 4rpx;
+	margin-bottom: 4rpx;
+}
