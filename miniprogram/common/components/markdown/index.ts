@@ -24,11 +24,14 @@ Component({
     preview: {
       type: Boolean,
       value: true
+    },
+    scrollTop: {
+      type: Number,
+      value: 0
     }
   },
   data: {
     baseTop: 0,
-    scrollTop: 0,
     markdownNodes: []
   },
   observers: {
@@ -65,6 +68,7 @@ Component({
   methods: {
     onScroll (e: any) {
       this.data.scrollTop = e.detail.scrollTop
+      this.triggerEvent('scroll', e.detail)
     },
     onAction (e) {
       console.log('md-action', e)

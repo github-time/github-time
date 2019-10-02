@@ -5,6 +5,7 @@
   <view slot="backText">返回</view>
   <view slot="content">项目详情</view>
 </navigation-bar>
+<wux-toptips id="wux-toptips" />
 
 <wux-tabs wux-class="bordered" controlled current="{{ current }}" bindchange="onTabsChange">
   <wux-tab wx:for="{{tabs}}" wx:key="{{item.key}}" key="{{item.key}}">
@@ -104,7 +105,7 @@
     <wux-white-space></wux-white-space>
 
   </view>
-  <view hidden="{{current!=='readme'}}">
+  <view hidden="{{current!=='readme'}}" style="height: 100%">
     <view wx:if="{{noReadme}}" class="padding text-center text-gray">
       <view>该项目尚未添加描述</view>
       <view>

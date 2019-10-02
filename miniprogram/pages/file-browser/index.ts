@@ -8,13 +8,14 @@ import github from '../../utils/helper/githubApi'
 import { $wuxToptips } from '../../common/lib/wux/index'
 import fileTypeMap from './file-types'
 import openDocument from '../../utils/helper/openDocument'
-import { sleep, wrapLoading } from '../../utils/common'
+import { sleep, wrapLoading, getLinkInfo, parseRepoDetail } from '../../utils/common'
 
 const MAX_OPEN_FILE_SIZE = 3 * 1024 * 1024 // 限制最大为2M
 
 type HistoryItem = {
   ref: string,
-  path: string
+  path: string,
+  scrollTop: number
 }
 
 type FileMeta = {
@@ -148,9 +149,10 @@ Page({
       })
     } else if (app.globalData.repoDetail) {
       // 外部未指定，使用全局参数
+      const repoDetail = parseRepoDetail(app.globalData.repoDetail)
       this.setData!({
-        repoDetail: app.globalData.repoDetail,
-        ref: app.globalData.repoDetail.default_branch
+        repoDetail,
+        ref: repoDetail.default_branch
       })
       delete app.globalData.repoDetail
       delete app.globalData.ownerDetail
@@ -196,13 +198,7 @@ Page({
     }
 
     const filePath = options.p || ''
-    if (filePath) {
-      // 指定了文件路径，直接显示文件内容
-      this.viewFile(fullRepoName, ref, filePath)
-    } else {
-      // 未指定文件路径，显示文件目录树
-      this.showFileTree()
-    }
+    this.viewFile(fullRepoName, ref, filePath)
   },
   downloadAndViewDocument () {
     const url = `https://github.com/${this.data.repoDetail.full_name}/raw/${this.data.ref}/${this.data.filePath}`
@@ -318,65 +314,62 @@ Page({
     switch (e.detail.type) {
       case 'link-tap':
         const href = e.detail.data.href
-        let matches = href.match(/^https:\/\/github.com\/([\w-]+)\/([\w-]+)/)
-        if (matches) {
-          // Github 内部链接
-          const fullRepoName = `${matches[1]}/${matches[2]}`
-          const login = matches[1]
-          let filePath = 'README.md'
-          matches = href.match(/^https:\/\/github.com\/[\w-]+\/[\w-]+\/blob\/([\w-]+)\/(.*)/)
-          if (matches) {
-            // 带文件路径
-            // const branch = matches[1]
-            filePath = matches[2].replace(/^\//, '')
-          }
-          console.log('github link:', href)
-          if (fullRepoName === this.data.repoDetail.full_name) {
-            // 本仓库链接,直接打开
-            this.viewFile(fullRepoName, this.data.ref, filePath)
-          } else {
-            // 其他仓库链接,跳转新页
-            app.globalData.repoDetail = {
-              full_name: fullRepoName,
-              owner: { login }
-            } as any
-            wx.navigateTo({
-              url: `/pages/file-browser/index?r=${fullRepoName}&p=${filePath}`
-            })
-          }
-        } else if (href.match(/^http(|s):\/\//)) {
-          // 外部链接
-          $wuxToptips().info({
-            hidden: false,
-            text: `外部链接，暂不支持跳转\n${href}`,
-            duration: 1000,
-            success() {},
-          })
-
-          wx.setClipboardData({
-            data: href,
-            success () {
-              wx.showToast({
-                title: `链接已复制`,
-                duration: 2000
-              })
+        const context = `https://github.com/${this.data.repoDetail.full_name}/blob/${this.data.ref}/${this.data.filePath}`
+        const linkInfo = getLinkInfo(href, context)
+        switch (linkInfo.type) {
+          case 'github':
+            const fullRepoName = linkInfo.full_name
+            const filePath = linkInfo.filePath
+            const ref = linkInfo.ref
+            if (fullRepoName === this.data.repoDetail.full_name) {
+              // 本仓库链接,直接打开
+              this.viewFile(fullRepoName, this.data.ref, filePath)
+            } else {
+              const repoDetail = parseRepoDetail({ full_name: fullRepoName })
+              if (filePath) {
+                // 指定了文件路径，跳转到代码浏览器
+                app.globalData.repoDetail = repoDetail
+                wx.navigateTo({
+                  url: `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`
+                })
+              } else {
+                // 仓库链接，跳转到仓库详情
+                app.globalData.repoDetail = repoDetail
+                app.globalData.ownerDetail = (app.globalData.repoDetail as any).owner
+                wx.navigateTo({
+                  url: `/pages/repo-detail/index?r=${fullRepoName}`
+                })
+              }
             }
-          })
-          console.log('outer link:', href)
-        } else {
-          // 内部链接
-          const fullRepoName = this.data.repoDetail.full_name
-          let filePath
-          if (href.match(/^\//)) {
-            // 绝对路径
-            filePath = href.replace(/^\/+/, '')
-          } else {
-            filePath = this.data.filePath.replace(/[^\/]+$/, '') + href
-          }
-          console.log('repo link:', href)
-          this.viewFile(fullRepoName, this.data.ref, filePath)
+            break
+
+          case 'normal':
+            $wuxToptips().info({
+              hidden: false,
+              text: `外部链接，暂不支持跳转\n${href}`,
+              duration: 1000
+            })
+
+            wx.setClipboardData({
+              data: href,
+              success () {
+                wx.showToast({
+                  title: `链接已复制`,
+                  duration: 2000
+                })
+              }
+            })
+            console.log('outer link:', href)
+            break
+
+          default:
+            $wuxToptips().info({
+              hidden: false,
+              text: `链接类型未知...\n${href}`,
+              duration: 1000
+            })
+            break
         }
-        break
     }
   },
 
@@ -385,11 +378,18 @@ Page({
       this.data.history.pop()
       const fullRepoName = this.data.repoDetail.full_name
       const history = this.data.history[this.data.history.length - 1]
-      this.viewFile(fullRepoName, history.ref, history.path, true)
+      this.viewFile(fullRepoName, history.ref, history.path, true, history.scrollTop)
       this.loadFileTree(fullRepoName, history.ref)
       this.setData!({
         showHistoryBack: this.data.history.length > 1
       })
+    }
+  },
+
+  onScrollTopChange (e: any) {
+    const current = this.data.history[this.data.history.length - 1]
+    if (current) {
+      current.scrollTop = e.detail.scrollTop
     }
   },
 
@@ -434,7 +434,11 @@ Page({
     })
   },
 
-  async viewFile (fullRepoName: string, ref: string, filePath: string, isBack: boolean = false) {
+  async viewFile (fullRepoName: string, ref: string, filePath: string, isBack: boolean = false, scrollTop?: number) {
+    if (!filePath) {
+      this.showFileTree()
+      return
+    }
     console.log(`viewFile: ref=${ref} ${fullRepoName}/${filePath}`)
     const fileInfo = getFileInfo(filePath)
     if (fileInfo.type === 'document' && this.data.treeData.length === 0) {
@@ -448,7 +452,6 @@ Page({
     const contextPath = `https://github.com/${fullRepoName}/raw/master/${filePath.replace(/[^\/]+$/, '')}`
     let pushHistory = !isBack
     let fileContent = ''
-
     if (!fileTooLarge) {
       wrapLoading('正在加载', async () => {
         if (fileInfo.type === 'img') {
@@ -483,14 +486,16 @@ Page({
           fileSize,
           fileContent,
           fileType: fileInfo.type,
-          fileGitHash: fileMeta.sha
+          fileGitHash: fileMeta.sha,
+          fileScrollTop: isBack ? scrollTop : 0
         })
       })
     }
     if (pushHistory) {
       this.data.history.push({
         ref: this.data.ref,
-        path: filePath
+        path: filePath,
+        scrollTop: 0
       })
       this.setData!({
         showHistoryBack: this.data.history.length > 1

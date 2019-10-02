@@ -64,9 +64,11 @@
     content="{{fileContent}}"
     contextPath="{{contextPath}}"
     emojis="{{emojis}}"
+    scrollTop="{{fileScrollTop}}"
     bind:action="onMarkdownAction"
+    bind:scroll="onScrollTopChange"
     preview="{{mdPreview}}"
-    ></mp-markdown>
+  />
   <view wx:elif="{{fileType === 'img'}}">
     <image
       src="https://github.com/{{repoDetail.full_name}}/raw/{{repoDetail.default_branch}}/{{filePath}}"
@@ -80,7 +82,12 @@
       <view class="text-sm text-gray">点击下载查看({{fileSize}})</view>
     </button>
   </view>
-  <mp-code-highlight wx:else code="{{fileContent}}" language="{{fileType}}"></mp-code-highlight>
+  <mp-code-highlight
+    wx:else code="{{fileContent}}"
+    language="{{fileType}}"
+    scrollTop="{{fileScrollTop}}"
+    bind:scroll="onScrollTopChange"
+  />
 </mp-fill-view>
 
 <view style="top: {{marginTop}}px" class="sidebar {{showSidebar ?  'show-sidebar' : ''}}">

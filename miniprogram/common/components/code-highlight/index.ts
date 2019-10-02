@@ -86,6 +86,10 @@ Component({
     height: {
       type: String,
       value: '100%'
+    },
+    scrollTop: {
+      type: Number,
+      value: 0
     }
   },
   data: {
@@ -143,8 +147,9 @@ Component({
     }
   },
   methods: {
-    onScroll () {
+    onScroll (e: any) {
       if (this.data.codeRows.length > 0) renderNecessary(this)
+      this.triggerEvent('scroll', e.detail)
     }
   }
 })

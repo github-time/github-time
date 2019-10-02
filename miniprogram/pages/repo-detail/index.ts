@@ -3,7 +3,9 @@ import Page from '../../common/page/index'
 //获取应用实例
 import { IMyApp } from '../../app'
 import github from '../../utils/helper/githubApi'
-import { wrapLoading } from '../../utils/common'
+// @ts-ignore
+import { $wuxToptips } from '../../common/lib/wux/index'
+import { wrapLoading, getLinkInfo, parseRepoDetail } from '../../utils/common'
 
 // import remuData from '../../mock/remu-export-data'
 
@@ -201,20 +203,63 @@ Page({
   //   }
   // },
 
-  onMarkdownAction () {
-    wx.showToast({
-      icon: 'loading',
-      title: '使用代码浏览器打开...',
-      duration: 500
-    })
-    setTimeout(() => {
-      wx.hideToast()
-      app.globalData.repoDetail = this.data.repoDetail as any
-      app.globalData.ownerDetail = app.globalData.repoDetail!.owner
-      wx.navigateTo({
-        url: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&b=${this.data.readmeRef}&p=${this.data.readmeFilePath}`
-      })
-    }, 500)
+  onMarkdownAction (e: any) {
+    switch (e.detail.type) {
+      case 'link-tap':
+        const href = e.detail.data.href
+        const context = `https://github.com/${this.data.repoDetail.full_name}/blob/master/`
+        const linkInfo = getLinkInfo(href, context)
+        switch (linkInfo.type) {
+          case 'github':
+            const fullRepoName = linkInfo.full_name
+            const filePath = linkInfo.filePath
+            const ref = linkInfo.ref
+            const repoDetail = parseRepoDetail({ full_name: fullRepoName })
+            if (filePath) {
+              // 指定了文件路径，跳转到代码浏览器
+              app.globalData.repoDetail = repoDetail
+              wx.navigateTo({
+                url: `/pages/file-browser/index?r=${fullRepoName}&b=${ref}&p=${filePath}`
+              })
+            } else {
+              // 仓库链接，跳转到仓库详情
+              app.globalData.repoDetail = repoDetail
+              app.globalData.ownerDetail = (app.globalData.repoDetail as any).owner
+              wx.navigateTo({
+                url: `/pages/repo-detail/index?r=${fullRepoName}`
+              })
+            }
+
+            break
+
+          case 'normal':
+            $wuxToptips().info({
+              hidden: false,
+              text: `外部链接，暂不支持跳转\n${href}`,
+              duration: 1000
+            })
+
+            wx.setClipboardData({
+              data: href,
+              success () {
+                wx.showToast({
+                  title: `链接已复制`,
+                  duration: 2000
+                })
+              }
+            })
+            console.log('outer link:', href)
+            break
+
+          default:
+            $wuxToptips().info({
+              hidden: false,
+              text: `链接类型未知...\n${href}`,
+              duration: 1000
+            })
+            break
+        }
+    }
   },
 
   async loadReadmeContent () {

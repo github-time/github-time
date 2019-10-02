@@ -11,6 +11,7 @@
   class="code-scroll-view"
   scroll-x
   scroll-y
+  scrollTop="{{scrollTop}}"
   bindscroll="onScroll"
   >
   <view class="code-container">

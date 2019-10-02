@@ -5,6 +5,7 @@
     "mp-markdown": "/common/components/markdown/index",
     "mp-fill-view": "/common/components/fill-view/index",
     "mp-todo-coming-soon": "/components/todo-coming-soon/index",
+    "wux-toptips": "/common/lib/wux/toptips/index",
     "wux-tabs": "/common/lib/wux/tabs/index",
     "wux-tab": "/common/lib/wux/tab/index",
     "wux-cell-group": "/common/lib/wux/cell-group/index",
