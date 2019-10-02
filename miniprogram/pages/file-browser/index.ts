@@ -12,10 +12,17 @@ import { sleep, wrapLoading, getLinkInfo, parseRepoDetail } from '../../utils/co
 
 const MAX_OPEN_FILE_SIZE = 3 * 1024 * 1024 // 限制最大为2M
 
+type FileState = {
+  isBack: boolean
+  scrollTop: number
+  selected: number[]
+}
+
 type HistoryItem = {
   ref: string,
   path: string,
-  scrollTop: number
+  scrollTop: number,
+  selected: number[]
 }
 
 type FileMeta = {
@@ -96,6 +103,7 @@ Page({
     fileGitHash: '',
     filePath: '',
     fileContent: '',
+    fileSelected: [],
     contextPath: '',
     fileType: 'unknown',
     repoDetail: {
@@ -121,13 +129,17 @@ Page({
     mdPreview: true
   },
   onShareAppMessage () {
+    const current = this.data.history[this.data.history.length - 1]
+    const scrollTop = current && current.scrollTop || 0
+    const selected = current && current.selected || []
     return {
       title: 'Github Time',
       desc: `分享代码: ${this.data.repoDetail.full_name} ${this.data.filePath}`,
-      path: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&b=${this.data.ref}&p=${this.data.filePath}&s=true`
+      path: `/pages/file-browser/index?r=${this.data.repoDetail.full_name}&b=${this.data.ref}&p=${this.data.filePath}&y=${scrollTop}&m=${selected.join(',')}&s=true`
     }
   },
   async onLoad (options: any) {
+    // r 仓库 p 路径 s 分享标识 m 选中行 y 滚动
     // 加载表情图标地址
     app.globalData.emojis.then((emojis) => {
       this.setData!({ emojis })
@@ -198,7 +210,13 @@ Page({
     }
 
     const filePath = options.p || ''
-    this.viewFile(fullRepoName, ref, filePath)
+    const selected = options.m ? options.m.split(',').map((n: string) => parseInt(n)) : []
+    const scrollTop = options.y ? parseInt(options.y) : 0
+    this.viewFile(fullRepoName, ref, filePath, {
+      isBack: false,
+      selected,
+      scrollTop
+    })
   },
   downloadAndViewDocument () {
     const url = `https://github.com/${this.data.repoDetail.full_name}/raw/${this.data.ref}/${this.data.filePath}`
@@ -378,7 +396,11 @@ Page({
       this.data.history.pop()
       const fullRepoName = this.data.repoDetail.full_name
       const history = this.data.history[this.data.history.length - 1]
-      this.viewFile(fullRepoName, history.ref, history.path, true, history.scrollTop)
+      this.viewFile(fullRepoName, history.ref, history.path, {
+        isBack: true,
+        scrollTop: history.scrollTop,
+        selected: history.selected
+      })
       this.loadFileTree(fullRepoName, history.ref)
       this.setData!({
         showHistoryBack: this.data.history.length > 1
@@ -390,6 +412,13 @@ Page({
     const current = this.data.history[this.data.history.length - 1]
     if (current) {
       current.scrollTop = e.detail.scrollTop
+    }
+  },
+
+  onCodeSelectChange (e: any) {
+    const current = this.data.history[this.data.history.length - 1]
+    if (current) {
+      current.selected = e.detail.selected
     }
   },
 
@@ -434,7 +463,7 @@ Page({
     })
   },
 
-  async viewFile (fullRepoName: string, ref: string, filePath: string, isBack: boolean = false, scrollTop?: number) {
+  async viewFile (fullRepoName: string, ref: string, filePath: string, { isBack = false, scrollTop = 0, selected = []}: FileState = {} as FileState) {
     if (!filePath) {
       this.showFileTree()
       return
@@ -476,7 +505,6 @@ Page({
             pushHistory = false
           }
         }
-
         this.setData!({
           showSidebar,
           fileTooLarge,
@@ -487,7 +515,8 @@ Page({
           fileContent,
           fileType: fileInfo.type,
           fileGitHash: fileMeta.sha,
-          fileScrollTop: isBack ? scrollTop : 0
+          fileScrollTop: scrollTop,
+          fileSelected: selected
         })
       })
     }
@@ -495,7 +524,8 @@ Page({
       this.data.history.push({
         ref: this.data.ref,
         path: filePath,
-        scrollTop: 0
+        scrollTop,
+        selected
       })
       this.setData!({
         showHistoryBack: this.data.history.length > 1

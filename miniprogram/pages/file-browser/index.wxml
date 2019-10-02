@@ -86,7 +86,9 @@
     wx:else code="{{fileContent}}"
     language="{{fileType}}"
     scrollTop="{{fileScrollTop}}"
+    selected="{{fileSelected}}"
     bind:scroll="onScrollTopChange"
+    bind:selectChange="onCodeSelectChange"
   />
 </mp-fill-view>
 
