@@ -49,6 +49,7 @@ export default function (req: wx.RequestOption, opts: CacheOptions|false, { succ
       wx.request({
         url: req.url,
         header: req.header,
+        method: req.method,
         success(res) {
           console.log(`wx.request(${req.method || 'GET'}) success:`, res)
           let cacheInfo = {} as CacheInfo
