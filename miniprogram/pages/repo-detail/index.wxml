@@ -18,10 +18,10 @@
     <wux-wing-blank size="default">
       <wux-white-space></wux-white-space>
       <wux-card full actions="{{ actions }}" bind:action="onAction">
-        <view slot="title">
+        <view slot="title" style="max-width: 600rpx">
           <view>
-            <text class="text-gray cuIcon-{{repoDetail.fork ? 'fork' : 'medal'}}"></text>
-            <text> {{repoDetail.full_name}}</text>
+            <text class="text-gray cuIcon-{{repoDetail.fork ? 'fork' : 'medal'}} padding-right-xs"></text>
+            <text class="break-word">{{repoDetail.full_name}}</text>
           </view>
           <view wx:if="{{repoDetail.fork}}" class="text-xs text-gray">
             Forked from
@@ -29,21 +29,19 @@
           </view>
         </view>
         <view slot="extra">
-          <view slot="right">
-            <button
-              class="cu-btn bg-none text-green padding-xs text-lg"
-              open-type="share"
-            >
-              <text class="cuIcon-share"></text>
-            </button>
-            <button
-              wx:if="{{githubConfig.token}}"
-              class="cu-btn bg-none padding-xs text-lg text-{{isStarred ? 'red' : 'green'}}"
-              bind:tap="onStaring"
-            >
-              <text class="cuIcon-{{isStarred ? 'favorfill' : 'favor'}}"></text>
-            </button>
-          </view>
+          <button
+            class="cu-btn bg-none text-green padding-xs text-lg"
+            open-type="share"
+          >
+            <text class="cuIcon-share"></text>
+          </button>
+          <button
+            wx:if="{{githubConfig.token}}"
+            class="cu-btn bg-none padding-xs text-lg text-{{isStarred ? 'red' : 'green'}}"
+            bind:tap="onStaring"
+          >
+            <text class="cuIcon-{{isStarred ? 'favorfill' : 'favor'}}"></text>
+          </button>
         </view>
         <view slot="body">
           <mp-github-repo-description content="{{repoDetail.description}}" />

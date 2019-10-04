@@ -11,7 +11,7 @@
     >
     <!-- <image class="repo-icon" src="{{item.owner.avatar_placeholder}}" slot="loading" /> -->
   </image>
-  <view class="repo-name">{{item.name}}</view>
+  <view class="repo-name break-word">{{item.name}}</view>
 
   <view class="repo-time">
     <text class="cuIcon-people"> {{item.owner.login}}</text>

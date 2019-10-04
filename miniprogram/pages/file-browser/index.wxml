@@ -100,7 +100,7 @@
 
 <view style="top: {{marginTop}}px" class="sidebar {{showSidebar ?  'show-sidebar' : ''}}">
   <view class="sidebar-title">
-    <text class="text-blue" bind:tap="onRepoTitleClick">{{repoDetail.full_name}}</text>
+    <text class="text-blue break-word" bind:tap="onRepoTitleClick">{{repoDetail.full_name}}</text>
     <text class="cuIcon-copy text-gary padding-left-xs" bind:tap="onRepoUrlCopyClick"></text>
   </view>
   <view class="sidebar-head">

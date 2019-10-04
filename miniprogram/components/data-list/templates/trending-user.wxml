@@ -8,16 +8,16 @@
       >
       <!-- <image class="repo-icon" src="{{item.owner.avatar_placeholder}}" slot="loading" /> -->
     </image>
-    <view class="user-name text-cut">
-      <text class="cuIcon-people"></text>
-      {{item.owner.name}}
+    <view class="user-name">
+      <text class="cuIcon-people padding-right-xs"></text>
+      <text class="break-word">{{item.owner.name}}</text>
     </view>
     <view class="user-login text-cut">{{item.owner.login}}</view>
   </view>
   <view class="user-repo" mark:type="repo">
-    <view class="repo-name text-cut">
-      <text class="cuIcon-medal"></text>
-      {{item.name}}
+    <view class="repo-name break-word">
+      <text class="cuIcon-medal padding-right-xs"></text>
+      <text class="break-word">{{item.name}}</text>
     </view>
     <view class="repo-description">
       <mp-github-repo-description content="{{item.description}}" />
