@@ -42,6 +42,10 @@ page .button-group-item.active {
   height: 100%;
 }
 
+.break-word {
+  word-wrap: break-word;
+}
+
 .bg-none {
 	background-color: transparent;
 }

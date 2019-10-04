@@ -1,9 +1,5 @@
 /**index.wxss**/
 
-.break-word {
-  word-wrap: break-word;
-}
-
 .data-list-scroll {
   height: 100%;
 }
