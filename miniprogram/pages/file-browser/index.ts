@@ -8,7 +8,7 @@ import github from '../../utils/helper/githubApi'
 import { $wuxToptips } from '../../common/lib/wux/index'
 import fileTypeMap from './file-types'
 import openDocument from '../../utils/helper/openDocument'
-import { sleep, wrapLoading, getLinkInfo, parseRepoDetail } from '../../utils/common'
+import { sleep, wrapLoading, getLinkInfo, parseRepoDetail, doHideLoading, setDataSync } from '../../utils/common'
 import bookmarks from '../../utils/data-manager/bookmarks'
 
 const MAX_OPEN_FILE_SIZE = 3 * 1024 * 1024 // 限制最大为2M
@@ -274,14 +274,12 @@ Page({
     this.viewFile(this.data.repoDetail.full_name, this.data.ref, e.detail.path)
   },
   switchMdMode () {
+    wx.showLoading({
+      title: `切换到${this.data.mdPreview ? '代码' : '预览'}视图`
+    })
     this.setData!({
       mdPreview: !this.data.mdPreview
-    })
-    wx.showToast({
-      title: `切换到${this.data.mdPreview ? '预览' : '代码'}视图`,
-      icon: 'loading',
-      duration: 1000
-    })
+    }, doHideLoading(500))
   },
   showFileTree () {
     if (this.data.branches.length === 0) {
@@ -528,7 +526,7 @@ Page({
             pushHistory = false
           }
         }
-        this.setData!({
+        await setDataSync(this, {
           showSidebar,
           fileTooLarge,
           ref,
@@ -540,6 +538,12 @@ Page({
           fileGitHash: fileMeta.sha,
           fileScrollTop: scrollTop,
           fileSelected: selected
+        }, 300, {
+          onLongWait () {
+            wx.showLoading({
+              title: '努力加载中...'
+            })
+          }
         })
       })
     }
@@ -563,7 +567,7 @@ Page({
       }
     })
     this.setData!({
-      isBookmarded: bookmarks.get(url)
+      isBookmarded: !!bookmarks.get(url)
     })
   },
   previewImage (e: any) {
