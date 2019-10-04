@@ -2,6 +2,7 @@
 import resolvePathname from './helper/resolve-pathname'
 
 const sleep = async (time: number) => new Promise(resolve => { setTimeout(resolve, time) })
+const noop = () => {}
 
 function parseRepoDetail (repoDetail: any) {
   const owner = repoDetail.owner = repoDetail.owner || {}
@@ -58,9 +59,27 @@ async function wrapLoading (title: string, task: Promise<void>|(() => Promise<vo
   wx.hideLoading()
 }
 
+function doHideLoading (delay: number = 0) {
+  return () => {
+    setTimeout(wx.hideLoading, delay)
+  }
+}
+
+function setDataSync (vm: any, data: any, delay: number = 0, { longWait = 2500, onLongWait = noop } = {} ) {
+  const timer = setTimeout(onLongWait,longWait)
+  return new Promise((resolve) => {
+    vm.setData!(data, () => {
+      clearTimeout(timer)
+      setTimeout(resolve, delay)
+    })
+  })
+}
+
 export {
   sleep,
   wrapLoading,
   parseRepoDetail,
-  getLinkInfo
+  getLinkInfo,
+  doHideLoading,
+  setDataSync
 }
