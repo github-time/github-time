@@ -145,13 +145,13 @@ Page({
       this.loadTags(repoDetail.id)
     }
 
-    const token = this.data.githubConfig = app.settings.get('githubConfig', {})
+    const githubConfig = this.data.githubConfig = app.settings.get('githubConfig', {})
 
-    if (token && token.token) {
+    if (githubConfig && githubConfig.token) {
       (async () => {
-        const result = await github.isStarred(this.data.repoDetail.full_name, token)
+        const result = await github.isStarred(this.data.repoDetail.full_name)
         this.setData!({
-          githubConfig: token,
+          githubConfig,
           isStarred: result.data
         })
       })()
@@ -167,15 +167,15 @@ Page({
     this.loadReadmeContent()
   },
   async onStaring () {
-    const token = this.data.githubConfig
-    if (token && token.token) {
-      wrapLoading('请稍候...', async () => {
+    const githubConfig = this.data.githubConfig
+    if (githubConfig && githubConfig.token) {
+      await wrapLoading('请稍候...', async () => {
         let isStarred = this.data.isStarred
         if (this.data.isStarred) {
-          let result = await github.unstar(this.data.repoDetail.full_name, token)
+          const result = await github.unstar(this.data.repoDetail.full_name)
           if (result.status === 'done') isStarred = false
         } else {
-          let result = await github.star(this.data.repoDetail.full_name, token)
+          const result = await github.star(this.data.repoDetail.full_name)
           if (result.status === 'done') isStarred = true
         }
         this.setData!({
@@ -264,7 +264,7 @@ Page({
   async loadReadmeContent () {
     if (!this.data.readmeLoaded && this.data.current === 'readme') {
       this.data.readmeLoaded = true
-      wrapLoading('正在加载', async () => {
+      await wrapLoading('正在加载', async () => {
         const result = await github.getReadme({
           fullRepoName: this.data.repoDetail.full_name
         })

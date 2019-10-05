@@ -503,7 +503,7 @@ Page({
     let pushHistory = !isBack
     let fileContent = ''
     if (!fileTooLarge) {
-      wrapLoading('正在加载', async () => {
+      await wrapLoading('正在加载', async () => {
         if (fileInfo.type === 'img') {
           await sleep(1000) // 等待1s
         } else if (fileInfo.type === 'document') {

@@ -7,10 +7,11 @@ import footprints from '../../utils/data-manager/footprints'
 import { IMyApp } from '../../app'
 import bookmarks from '../../utils/data-manager/bookmarks'
 const app = getApp<IMyApp>()
+const githubConfig = app.settings.get('githubConfig', {})
 
 Page({
   data: {
-    githubConfig: {} as any,
+    githubConfig,
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
@@ -48,13 +49,14 @@ Page({
       //   icon: 'message'
       // }
     ],
-    query: {},
+    query: {
+      owner: githubConfig.user
+    },
     async getUserRepos (query: any, pageSize: number, pageNo: number) {
       const result = await github.getUserRepositories({
         owner: query.owner,
         pageSize,
-        pageNo,
-        token: query.token
+        pageNo
       })
       // await sleep(2000)
       return result
@@ -83,11 +85,12 @@ Page({
     }
   },
   onShareAppMessage () {
-    if (this.data.githubConfig.user) {
+    const user = this.data.githubConfig.user
+    if (user) {
       return {
         title: 'Github Time',
-        desc: `分享开发者: ${this.data.githubConfig.user}`,
-        path: `/pages/owner-detail/index?o=${this.data.githubConfig.user}&s=true`
+        desc: `分享开发者: ${user}`,
+        path: `/pages/owner-detail/index?o=${user}&s=true`
       }
     } else {
       return {
@@ -125,23 +128,23 @@ Page({
       })
     }
     this.setData!({userInfo: this.data.userInfo})
-    this.loadUserRepos()
   },
   onShow(this: any) {
     const tabBar = this.getTabBar()
     if (tabBar) tabBar.init()
-    if (app.settings.isGithubUserChanged(this)) {
-      this.loadUserRepos()
-    }
+
     this.setData({
       footprintQuery: {},
       bookmarkQuery: {}
     })
+
+    if (app.settings.isGithubUserChanged(this)) {
+      this.loadUserRepos()
+    }
   },
 
   viewMoreUserRepos () {
-    const githubConfig = this.data.githubConfig =  app.settings.get('githubConfig', {})
-    app.globalData.ownerDetail = { login: githubConfig.user } as any
+    app.globalData.ownerDetail = { login: this.data.githubConfig.user } as any
     wx.navigateTo({
       url: '/pages/owner-detail/index'
     })
@@ -235,20 +238,11 @@ Page({
   },
 
   async loadUserRepos () {
-    const githubConfig = this.data.githubConfig =  app.settings.get('githubConfig', {})
+    const githubConfig = app.settings.get('githubConfig', {})
     const owner = githubConfig.user
-    if (owner) {
-      this.setData!({
-        query: {
-          owner,
-          token: githubConfig
-        },
-        githubConfig
-      })
-    } else {
-      this.setData!({
-        githubConfig
-      })
-    }
+    this.setData!({
+      githubConfig,
+      ...(owner ? { query: { owner } } : {})
+    })
   }
 })

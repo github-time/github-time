@@ -21,8 +21,8 @@ Page({
   async onSave () {
     if (this.data.githubConfig.token) {
       // 验证 Token
-      wrapLoading('正在验证令牌...', async () => {
-        const result = await github.checkToken(this.data.githubConfig)
+      await wrapLoading('正在验证令牌...', async () => {
+        const result = await github.checkToken(this.data.githubConfig.token)
 
         if (result.status === 'done' && result.data.login) {
           // 更新用户名
