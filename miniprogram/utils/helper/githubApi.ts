@@ -1,6 +1,7 @@
 import { Base64 } from 'js-base64'
 import requestWithCache from '../data-fetcher/requestWithCache'
 import callCloudFunctionWithCache, { CallResult } from '../data-fetcher/callCloudFunctionWithCache'
+import settings from '../data-manager/settings'
 
 const githubApiUrl = 'https://api.github.com'
 
@@ -21,11 +22,6 @@ type ErrorResult<T> = {
 }
 
 type Result<T> = Promise<SuccessResult<T>|ErrorResult<T>>
-
-type Token = {
-  user: string,
-  token: string
-}
 
 function nullSearchResult () {
   return {
@@ -51,12 +47,19 @@ function successResult<T> (data: T, res: wx.RequestSuccessCallbackResult|CallRes
   }
 }
 
-function requestFactory (req: wx.RequestOption, token?: Token) {
-  if (token && token.token) {
-    req.header = req.header || {}
-    ;(req.header as any).Authorization = `token ${token.token}`
+function requestFactory (request: wx.RequestOption) {
+  const githubConfig = settings.get('githubConfig', {})
+  const token = githubConfig && githubConfig.token // 尝试使用token
+  const user = githubConfig && githubConfig.user
+  if (token) {
+    request.header = request.header || {}
+    ;(request.header as any).Authorization = `token ${token}`
   }
-  return req
+  return {
+    request,
+    token,
+    user
+}
 }
 
 function cloudRequestFactory (url: string) {
@@ -92,12 +95,14 @@ function resultFactory<T> (
   }
 }
 
-async function checkToken (token: Token, cleanCache = false): Result<github.users.UserDetail> {
-  const url = `${githubApiUrl}/user`
+async function checkToken (token: string, cleanCache = false): Result<github.users.UserDetail> {
   console.log(`checkToken`)
   return requestWithCache(
-    requestFactory({ url }, token),
-    { timeout: 120, group: 'CheckToken', discard: cleanCache, key: token.token }
+    {
+      url: `${githubApiUrl}/user`,
+      header: { Authorization:`token ${token}`}
+    },
+    { timeout: 120, group: 'CheckToken', discard: cleanCache, key: token}
   ).then(resultFactory({ nullData: {} as github.users.UserDetail }))
 }
 
@@ -114,13 +119,11 @@ async function searchTopics ({
   keyword,
   pageSize,
   pageNo = 1,
-  token,
   cleanCache = false
 }: {
   keyword: string,
   pageSize: number,
   pageNo?: number,
-  token?: Token,
   cleanCache?: boolean
 }): Result<github.topics.SearchResult> {
   const url = `${githubApiUrl}/search/topics?q=${keyword}&per_page=${pageSize}&page=${pageNo}`
@@ -129,7 +132,7 @@ async function searchTopics ({
     requestFactory({
       url,
       header: { Accept: 'application/vnd.github.mercy-preview+json' }
-    }, token),
+    }).request,
     { timeout: 120, group: 'SearchData#topics', discard: cleanCache }
   ).then(resultFactory({ nullData: nullSearchResult() }))
 }
@@ -155,7 +158,6 @@ async function searchRepositories ({
   pageNo = 1,
   sort = 'stars',
   order = 'desc',
-  token,
   cleanCache = false
 }: {
   query: string,
@@ -163,47 +165,45 @@ async function searchRepositories ({
   pageNo?: number,
   sort?: string,
   order?: string,
-  token?: Token,
   cleanCache?: boolean
 }): Result<github.repos.SearchResult> {
   const url = `${githubApiUrl}/search/repositories?q=${query}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchRepositories: keyword=${query}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
-    requestFactory({ url }, token),
+    requestFactory({ url }).request,
     { timeout: 30, group: 'SearchData#repos', discard: cleanCache }
   ).then(resultFactory({ nullData: nullSearchResult() }))
 }
 
-async function getRepositoryDetail (fullRepoName: string, token?: Token, cleanCache?: boolean): Result<github.repos.RepoDetail> {
+async function getRepositoryDetail (fullRepoName: string, cleanCache?: boolean): Result<github.repos.RepoDetail> {
   const url = `${githubApiUrl}/repos/${fullRepoName}`
   console.log(`getRepositoryDetail: fullRepoName=${fullRepoName}`)
   return requestWithCache(
-    requestFactory({ url }, token),
+    requestFactory({ url }).request,
     { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then(resultFactory<github.repos.RepoDetail>())
 }
 
-async function getRepositoryBranches (fullRepoName: string, token?: Token, cleanCache?: boolean): Result<github.repos.RepoBranche[]> {
+async function getRepositoryBranches (fullRepoName: string, cleanCache?: boolean): Result<github.repos.RepoBranche[]> {
   const url = `${githubApiUrl}/repos/${fullRepoName}/branches`
   console.log(`getRepositoryBranches: fullRepoName=${fullRepoName}`)
   return requestWithCache(
-    requestFactory({ url }, token),
+    requestFactory({ url }).request,
     { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then(resultFactory({ nullData: [] }))
 }
 
-async function getUserDetail (owner: string, token?: Token, cleanCache?: boolean): Result<github.users.UserDetail> {
-  let url
+async function getUserDetail (owner: string, cleanCache?: boolean): Result<github.users.UserDetail> {
   let key = ''
-  if (token && owner === token.user) {
-    key = `${token.token}:user`
-    url = `${githubApiUrl}/user`
+  const req = requestFactory({ url: `${githubApiUrl}/user` })
+  if (req.token && owner === req.user) {
+    key = `${req.token}:user`
   } else {
-    url = `${githubApiUrl}/users/${owner}`
+    req.request.url = `${githubApiUrl}/users/${owner}`
   }
-  console.log(`getUserDetail: login=${owner}`)
+  console.log(`getUserDetail(${req.request.url}): login=${owner}`)
   return requestWithCache(
-    requestFactory({ url }, token),
+    req.request,
     { timeout: 30, group: `UserData#${owner}`, discard: cleanCache, key }
   ).then(resultFactory<github.users.UserDetail>())
 }
@@ -226,7 +226,7 @@ async function searchUsers ({
   const url = `${githubApiUrl}/search/users?q=${keyword}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`searchUsers: keyword=${keyword}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
-    { url },
+    requestFactory({ url }).request,
     { timeout: 30, group: 'SearchData#users', discard: cleanCache }
   ).then(resultFactory({ nullData: nullSearchResult() }))
 }
@@ -237,7 +237,6 @@ async function getUserRepositories ({
   pageNo = 1,
   sort = 'stars',
   order = 'desc',
-  token,
   cleanCache = false
 }: {
   owner: string,
@@ -245,21 +244,20 @@ async function getUserRepositories ({
   pageNo?: number,
   sort?: string,
   order?: string,
-  token?: Token,
   cleanCache?: boolean
 }): Result<github.repos.SearchResultItem[]> {
-  let url
   let key = ''
   const query = `repos?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
-  if (token && token.token && owner === token.user) {
-    key = `${token.token}:${query}`
-    url = `${githubApiUrl}/user/${query}`
+  const req = requestFactory({ url: `${githubApiUrl}/user/${query}` })
+
+  if (req.token && owner === req.user) {
+    key = `${req.token}:${query}`
   } else {
-    url = `${githubApiUrl}/users/${owner}/${query}`
+    req.request.url = `${githubApiUrl}/users/${owner}/${query}`
   }
-  console.log(`searchRepositories: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
+  console.log(`getUserRepositories(${req.request.url}): owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
-    requestFactory({ url }, token),
+    req.request,
     { timeout: 30, group: `UserData#${owner}`, discard: cleanCache, key }
   ).then(resultFactory({ nullData: [] }))
 }
@@ -282,7 +280,7 @@ async function getUserStaring ({
   const url = `${githubApiUrl}/users/${owner}/starred?sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
   console.log(`getUserStaring: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
   return requestWithCache(
-    { url },
+    requestFactory({ url }).request,
     { timeout: 30, group: `UserData#${owner}`, discard: cleanCache }
   ).then(resultFactory({ nullData: [] }))
 }
@@ -299,7 +297,7 @@ async function getFileTree ({
   const url = `${githubApiUrl}/repos/${fullRepoName}/git/trees/${ref}?recursive=1`
   console.log(`getFileTree: fullRepoName=${fullRepoName}, ref=${ref}`)
   return requestWithCache(
-    { url },
+    requestFactory({ url }).request,
     { timeout: 30, group: `RepoData#${fullRepoName}`, maxsize: 256 * 1024, discard: cleanCache }
   ).then(resultFactory({ nullData: [], successData: res => res.data.tree }))
 }
@@ -316,7 +314,7 @@ async function getReadmeContent ({
   const url = `${githubApiUrl}/repos/${fullRepoName}/readme?ref=${ref}`
   console.log(`getReadmeContent: fullRepoName=${fullRepoName}, ref=${ref}`)
   return requestWithCache(
-    { url },
+    requestFactory({ url }).request,
     { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then(resultFactory({
     nullData: '',
@@ -337,7 +335,7 @@ async function getReadme ({
   let path = 'README.md'
   let ref = 'master'
   return requestWithCache(
-    { url },
+    requestFactory({ url }).request,
     { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then(resultFactory({
     nullData: {
@@ -375,7 +373,7 @@ async function getFileContent ({
   const url = `${githubApiUrl}/repos/${fullRepoName}/contents/${filePath}?ref=${ref}`
   console.log(`getFileContent: fullRepoName=${fullRepoName}, filePath=${filePath}, ref=${ref}`)
   return requestWithCache(
-    { url },
+    requestFactory({ url }).request,
     { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
   ).then(resultFactory({
     nullData: '',
@@ -383,31 +381,31 @@ async function getFileContent ({
   }))
 }
 
-async function star (fullRepoName: string, token: Token): Result<boolean> {
+async function star (fullRepoName: string): Result<boolean> {
   const url = `${githubApiUrl}/user/starred/${fullRepoName}`
   console.log(`star: fullRepoName=${fullRepoName}`)
   return requestWithCache(
-    requestFactory({ method: 'PUT', url }, token),
+    requestFactory({ method: 'PUT', url }).request,
     false, // 关闭缓存
     { successCode: 204 }
   ).then(resultFactory({ nullData: false, successData: () => true }, 204))
 }
 
-async function unstar (fullRepoName: string, token: Token): Result<boolean>  {
+async function unstar (fullRepoName: string): Result<boolean>  {
   const url = `${githubApiUrl}/user/starred/${fullRepoName}`
   console.log(`unstar: fullRepoName=${fullRepoName}`)
   return requestWithCache(
-    requestFactory({ method: 'DELETE', url }, token),
+    requestFactory({ method: 'DELETE', url }).request,
     false, // 关闭缓存
     { successCode: 204 }
   ).then(resultFactory({ nullData: false, successData: () => true }, 204))
 }
 
-async function isStarred (fullRepoName: string, token: Token): Result<boolean>  {
+async function isStarred (fullRepoName: string): Result<boolean>  {
   const url = `${githubApiUrl}/user/starred/${fullRepoName}`
   console.log(`isStarred: fullRepoName=${fullRepoName}`)
   return requestWithCache(
-    requestFactory({ url }, token),
+    requestFactory({ url }).request,
     false, // 关闭缓存
     { successCode: 204 }
   ).then(resultFactory({ nullData: false, successData: () => true }, 204))
@@ -449,20 +447,20 @@ async function getGithubUsersTrending ({
 
 export default {
   checkToken,
+  getGithubEmojis,
   getAllTopics,
   searchTopics,
+  searchUsers,
   searchRepositories,
   getRepositoryDetail,
   getRepositoryBranches,
   getUserDetail,
-  searchUsers,
+  getUserStaring,
+  getUserRepositories,
+  getFileTree,
   getFileContent,
   getReadmeContent,
   getReadme,
-  getFileTree,
-  getUserStaring,
-  getUserRepositories,
-  getGithubEmojis,
   star,
   unstar,
   isStarred,
