@@ -12,6 +12,7 @@ Page({
       id: undefined as undefined|number,
       login: 'vuejs'
     },
+    index: 0,
     current: 'repos',
     tabs: [
       {
@@ -28,6 +29,17 @@ Page({
     query: null,
     async getUserRepos (query: any, pageSize: number, pageNo: number) {
       const result = await github.getUserRepositories({
+        owner: query.owner,
+        pageSize,
+        pageNo
+      })
+      // await sleep(2000)
+      return result
+    },
+    enableLoadUserEvents: false,
+    userEventQuery: null,
+    async getUserEvents (query: any, pageSize: number, pageNo: number) {
+      const result = await github.getUserEvents({
         owner: query.owner,
         pageSize,
         pageNo
@@ -82,6 +94,7 @@ Page({
       }
     })()
     this.loadUserRepos()
+    this.loadUserEvents()
   },
   onRepoClick (e: any) {
     app.globalData.repoDetail = e.detail.item
@@ -89,6 +102,33 @@ Page({
     wx.navigateTo({
       url: '/pages/repo-detail/index'
     })
+  },
+  onUserEventClick (e: any) {
+    // app.globalData.repoDetail = e.detail.item
+    // app.globalData.ownerDetail = e.detail.item.owner
+    // wx.navigateTo({
+    //   url: '/pages/repo-detail/index'
+    // })
+    console.log('onUserEventClick', e.detail)
+    switch (e.detail.type) {
+      case 'owner':
+        if (this.data.ownerDetail.login !== e.detail.item.actor.login) {
+          wx.navigateTo({
+            url: `/pages/owner-detail/index?o=${e.detail.item.actor.login}`
+          })
+        }
+        break;
+      case 'repo':
+        wx.navigateTo({
+          url: `/pages/repo-detail/index?r=${e.detail.item.repo.name}`
+        })
+        break;
+      case 'fork-repo':
+        wx.navigateTo({
+          url: `/pages/repo-detail/index?r=${e.detail.item.payload.forkee.full_name}`
+        })
+        break;
+    }
   },
   onTabsChange(e: any) {
     const { key } = e.detail
@@ -98,6 +138,10 @@ Page({
       current: key,
       index,
     })
+
+    if (key === 'activity') {
+      this.setData!({enableLoadUserEvents: true})
+    }
   },
   onSwiperChange(e: any) {
     const { current: index, source } = e.detail
@@ -108,6 +152,9 @@ Page({
         current: key,
         index,
       })
+      if (key === 'activity') {
+        this.setData!({enableLoadUserEvents: true})
+      }
     }
   },
   async loadUserRepos () {
@@ -115,6 +162,16 @@ Page({
     if (owner) {
       this.setData!({
         query: {
+          owner
+        }
+      })
+    }
+  },
+  async loadUserEvents () {
+    const owner = this.data.ownerDetail.login
+    if (owner) {
+      this.setData!({
+        userEventQuery: {
           owner
         }
       })

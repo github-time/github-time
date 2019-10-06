@@ -56,7 +56,18 @@
           </mp-data-list>
         </swiper-item>
         <swiper-item>
-          <mp-todo-coming-soon />
+          <mp-data-list
+            list-style="timeline"
+            item-template="user-event"
+            key="id"
+            query="{{userEventQuery}}"
+            page-size="{{5}}"
+            fetch-data="{{getUserEvents}}"
+            auto-load="{{enableLoadUserEvents}}"
+            bind:itemclick="onUserEventClick"
+            >
+            <view slot="load-more" class="text-center" bind:tap="viewMoreUserRepos">查看更多</view>
+          </mp-data-list>
         </swiper-item>
         <swiper-item>
           <mp-data-list

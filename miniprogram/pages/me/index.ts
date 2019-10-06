@@ -61,6 +61,19 @@ Page({
       // await sleep(2000)
       return result
     },
+    enableLoadUserEvents: false,
+    userEventQuery: {
+      owner: githubConfig.user
+    },
+    async getUserEvents (query: any, pageSize: number, pageNo: number) {
+      const result = await github.getUserEvents({
+        owner: query.owner,
+        pageSize,
+        pageNo
+      })
+      // await sleep(2000)
+      return result
+    },
     footprintQuery: {},
     async getFootprints (query: any, pageSize: number, pageNo: number) {
       return {
@@ -140,6 +153,7 @@ Page({
 
     if (app.settings.isGithubUserChanged(this)) {
       this.loadUserRepos()
+      this.loadUserEvents()
     }
   },
 
@@ -164,6 +178,9 @@ Page({
       current: key,
       index,
     })
+    if (key === 'activity') {
+      this.setData!({ enableLoadUserEvents: true })
+    }
   },
   onSwiperChange(e: any) {
     const { current: index, source } = e.detail
@@ -174,6 +191,9 @@ Page({
         current: key,
         index,
       })
+      if (key === 'activity') {
+        this.setData!({ enableLoadUserEvents: true })
+      }
     }
   },
   onUserRepoClick (e: any) {
@@ -243,6 +263,15 @@ Page({
     this.setData!({
       githubConfig,
       ...(owner ? { query: { owner } } : {})
+    })
+  },
+
+  async loadUserEvents () {
+    const githubConfig = app.settings.get('githubConfig', {})
+    const owner = githubConfig.user
+    this.setData!({
+      githubConfig,
+      ...(owner ? { userEventQuery: { owner } } : {})
     })
   }
 })

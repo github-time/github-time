@@ -1,0 +1,128 @@
+<!--index.wxml-->
+<wxs module="common" src="../../../wxs/common.wxs" />
+<wxs module="utils" src="../utils.wxs" />
+<wxs module="trans">
+var eventTypes = {
+  WatchEvent: '收藏',
+  PushEvent: '提交代码',
+  PullRequestEvent: {
+    assigned: 'PR已分配',
+    unassigned: 'PR分配取消',
+    review_requested: 'PR待评审',
+    review_request_removed: 'PR取消待评审',
+    labeled: 'PR标签已添加',
+    unlabeled: 'PR标签已移除',
+    opened: 'PR已创建',
+    edited: 'PR被编辑',
+    closed: 'PR已关闭',
+    ready_for_review: 'PR评审已准备好',
+    locked: 'PR已锁定',
+    unlocked: 'PR已解锁',
+    reopened: 'PR被重新开启'
+  },
+  IssueCommentEvent: {
+    created: '问题评论已创建'
+    edited: '问题评论被修改'
+    deleted: '问题评论已删除'
+  },
+  IssuesEvent: {
+    opened: '问题已创建',
+    edited: '问题已编辑',
+    deleted: '问题已删除',
+    transferred: '问题已转移',
+    pinned: '问题已置顶',
+    unpinned: '问题已取消置顶',
+    closed: '问题已关闭',
+    reopened: '问题已回应',
+    assigned: '问题已分配',
+    unassigned: '问题已取消分配',
+    labeled: '问题标签已添加',
+    unlabeled: '问题标签已取消',
+    locked: '问题已锁定',
+    unlocked: '问题已解定',
+    milestoned: '问题被加入里程碑',
+    demilestoned: '问题被移出里程碑'
+  },
+  DeleteEvent: '仓库删除',
+  CreateEvent: '仓库创建',
+  ForkEvent: '派生'
+}
+module.exports = {
+  mapEventType: function (type, payload) {
+    var result = eventTypes[type]
+    if (result && result[payload.action] ) {
+      result = result[payload.action]
+    }
+    return result || type.replace('Event', '')
+  }
+}
+</wxs>
+
+<template name="user-event">
+  <view class="cu-item text-gray cuIcon-people">
+    <image
+      class="timeline-icon"
+      src="{{item.actor.avatar_url}}"
+      error="load\nfailed"
+      mark:type="owner"
+    />
+    <view class="bg-white content shadow" style="padding: 16rpx;">
+      <view class="text-bold cu-capsule radius">
+        <view class="text-xs cu-tag text-white bg-{{item.type}} bg-grey">{{trans.mapEventType(item.type, item.payload)}}</view>
+        <view class="text-xs cu-tag line-gray">{{common.dateFormat(item.created_at)}}</view>
+      </view>
+      <view class="text-sm margin-top-sm text-content text-gray">
+        <block wx:if="{{item.type==='WatchEvent'}}">
+          <text class="cuIcon-people">{{item.actor.login}}</text>
+          收藏了仓库
+          <text class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</text>
+        </block>
+        <block wx:elif="{{item.type==='PushEvent'}}">
+          <text class="cuIcon-people">{{item.actor.login}}</text>
+          向仓库
+          <text class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</text>
+          提交了代码
+        </block>
+        <block wx:elif="{{item.type==='PullRequestEvent'}}">
+          <block wx:if="{{item.payload.action==='opened'}}">
+            <text class="cuIcon-people">{{item.actor.login}}</text>
+            创建了关于仓库
+            <text class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</text>
+            的PR
+          </block>
+          <block wx:elif="{{item.payload.action==='closed'}}">
+            <text class="cuIcon-people">{{item.actor.login}}</text>
+            关闭了关于仓库
+            <text class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</text>
+            的PR
+          </block>
+          <block wx:else>
+            <view class="cuIcon-people">{{item.actor.login}}</view>
+            <view class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</view>
+          </block>
+        </block>
+        <block wx:elif="{{item.type==='ForkEvent'}}">
+          <text class="cuIcon-people">{{item.actor.login}}</text>
+          从
+          <text class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</text>
+          派生出
+          <text class="cuIcon-medal text-blue" mark:type="fork-repo">{{item.payload.forkee.full_name}}</text>
+        </block>
+        <block wx:elif="{{item.type==='CreateEvent'}}">
+          <text class="cuIcon-people">{{item.actor.login}}</text>
+          创建了新的仓库
+          <text class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</text>
+        </block>
+        <block wx:elif="{{item.type==='DeleteEvent'}}">
+          <text class="cuIcon-people">{{item.actor.login}}</text>
+          删除了仓库
+          <text class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</text>
+        </block>
+        <block wx:else>
+          <view class="cuIcon-people">{{item.actor.login}}</view>
+          <view class="cuIcon-medal text-blue" mark:type="repo">{{item.repo.name}}</view>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>

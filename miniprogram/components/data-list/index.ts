@@ -19,6 +19,10 @@ Component({
       type: Boolean,
       value: false
     },
+    listStyle: {
+      type: String,
+      value: 'card'
+    },
     itemTemplate: {
       type: String,
       value: 'repo'

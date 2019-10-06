@@ -3,6 +3,8 @@
 <import src="./templates/trending-user.wxml" />
 <import src="./templates/repo.wxml" />
 <import src="./templates/footprint.wxml" />
+<import src="./templates/user-event.wxml" />
+
 <scroll-view
   scroll-top="{{scrollTop}}"
   hidden="{{hidden}}"
@@ -13,7 +15,7 @@
     wx:for="{{list}}"
     wx:key="index"
     data-detail="{{item}}"
-    class="repo-card"
+    class="{{listStyle==='timeline'?'cu-timeline':'repo-card'}}"
     bind:tap="onItemClick"
     >
     <template is="{{itemTemplate}}" data="{{item}}"></template>

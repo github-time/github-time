@@ -83,7 +83,7 @@ declare namespace github {
 
     type UserDetail = {
       login: string
-      id: number,
+      id: number
       node_id: string
       avatar_url: string
       gravatar_id: string
@@ -98,20 +98,20 @@ declare namespace github {
       repos_url: string
       events_url: string
       received_events_url: string
-      type: string,
-      site_admin: false,
-      name: string,
-      company: string,
-      blog: string,
-      location: string,
-      email: string,
-      hireable: string,
-      bio: string,
-      public_repos: number,
-      public_gists: number,
-      followers: number,
-      following: number,
-      created_at: string,
+      type: string
+      site_admin: false
+      name: string
+      company: string
+      blog: string
+      location: string
+      email: string
+      hireable: string
+      bio: string
+      public_repos: number
+      public_gists: number
+      followers: number
+      following: number
+      created_at: string
       updated_at: string
     }
   }
@@ -221,6 +221,38 @@ declare namespace github {
       name: string
       commit: Commit
       protected: boolean
+    }
+  }
+
+  namespace events {
+    type UserEvent = {
+      id: number
+      type: string
+      actor: {
+        id: number
+        login: string
+        display_login: string
+        gravatar_id: string
+        url: string
+        avatar_url: string
+      }
+      repo: {
+        id: number
+        name: string
+        url: string
+      }
+      payload: {
+        action: string
+      }
+      public: boolean
+      created_at: string
+      org: {
+        id: number
+        login: string
+        gravatar_id: string
+        url: string
+        avatar_url: string
+      }
     }
   }
 }

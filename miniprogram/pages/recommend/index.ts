@@ -182,7 +182,9 @@ Page({
         index,
     })
 
-    this.setData!({enableLoadTrendingUsers: true})
+    if (key === 'developers') {
+      this.setData!({enableLoadTrendingUsers: true})
+    }
   },
 
   onSwiperChange(e: any) {
@@ -194,7 +196,9 @@ Page({
         current: key,
         index,
       })
-      this.setData!({enableLoadTrendingUsers: true})
+      if (key === 'developers') {
+        this.setData!({enableLoadTrendingUsers: true})
+      }
     }
   },
 

@@ -67,7 +67,18 @@
         />
     </swiper-item>
     <swiper-item>
-      <mp-todo-coming-soon />
+      <mp-data-list
+        list-style="timeline"
+        item-template="user-event"
+        key="id"
+        query="{{userEventQuery}}"
+        page-size="{{10}}"
+        fetch-data="{{getUserEvents}}"
+        show-load-more
+        auto-load-more
+        auto-load="{{enableLoadUserEvents}}"
+        bind:itemclick="onUserEventClick"
+        />
     </swiper-item>
   </swiper>
 </mp-fill-view>

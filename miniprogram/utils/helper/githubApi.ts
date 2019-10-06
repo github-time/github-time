@@ -59,7 +59,7 @@ function requestFactory (request: wx.RequestOption) {
     request,
     token,
     user
-}
+  }
 }
 
 function cloudRequestFactory (url: string) {
@@ -285,6 +285,25 @@ async function getUserStaring ({
   ).then(resultFactory({ nullData: [] }))
 }
 
+async function getUserEvents ({
+  owner,
+  pageSize,
+  pageNo = 1,
+  cleanCache = false
+}: {
+  owner: string,
+  pageSize: number,
+  pageNo?: number,
+  cleanCache?: boolean
+}): Result<github.events.UserEvent[]> {
+  const url = `${githubApiUrl}/users/${owner}/events?per_page=${pageSize}&page=${pageNo}`
+  console.log(`getUserEvents: owner=${owner}, pageSize=${pageSize}, pageNo=${pageNo}`)
+  return requestWithCache(
+    requestFactory({ url }).request,
+    { timeout: 30, group: `UserData#${owner}`, discard: cleanCache }
+  ).then(resultFactory({ nullData: [] }))
+}
+
 async function getFileTree ({
   fullRepoName,
   ref = 'master',
@@ -456,6 +475,7 @@ export default {
   getRepositoryBranches,
   getUserDetail,
   getUserStaring,
+  getUserEvents,
   getUserRepositories,
   getFileTree,
   getFileContent,

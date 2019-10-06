@@ -20,6 +20,17 @@
   border: 1px solid var(--background-color-base)
 }
 
+.timeline-icon {
+  position: absolute;
+  left: 24rpx;
+  top: 24rpx;
+  z-index: 100;
+  height: 72rpx !important;
+  width: 72rpx !important;
+  border-radius: 50%;
+  border: 1px solid var(--background-color-base)
+}
+
 .user-name {
   color: var(--color-text-primary);
   font-size: var(--font-size-large);
@@ -151,4 +162,20 @@
 
 .lang-Go {
   background-color: #00ADD8;
+}
+
+.bg-WatchEvent {
+  background-color: #178600;
+}
+
+.bg-PushEvent {
+  background-color: #00ADD8;
+}
+
+.bg-CreateEvent {
+  background-color: #b07219;
+}
+
+.bg-ForkEvent {
+  background-color: #563d7c;
 }
