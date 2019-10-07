@@ -1,5 +1,6 @@
 {
   "usingComponents": {
+    "mp-data-list": "/components/data-list/index",
     "mp-load-more": "/components/load-more/index",
     "mp-github-repo-description": "/components/github-repo-description/index",
     "mp-markdown": "/common/components/markdown/index",

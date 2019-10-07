@@ -152,6 +152,29 @@ async function getAllTopics () {
   return topics
 }
 
+async function searchUsers ({
+  keyword,
+  pageSize,
+  pageNo = 1,
+  sort = 'stars',
+  order = 'desc',
+  cleanCache = false
+}: {
+  keyword: string,
+  pageSize: number,
+  pageNo?: number,
+  sort?: string,
+  order?: string,
+  cleanCache?: boolean
+}): Result<github.users.SearchResult> {
+  const url = `${githubApiUrl}/search/users?q=${keyword}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
+  console.log(`searchUsers: keyword=${keyword}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
+  return requestWithCache(
+    requestFactory({ url }).request,
+    { timeout: 30, group: 'SearchData#users', discard: cleanCache }
+  ).then(resultFactory({ nullData: nullSearchResult() }))
+}
+
 async function searchRepositories ({
   query,
   pageSize,
@@ -175,6 +198,34 @@ async function searchRepositories ({
   ).then(resultFactory({ nullData: nullSearchResult() }))
 }
 
+async function searchIssues ({
+  keyword,
+  pageSize,
+  pageNo = 1,
+  sort = '',
+  order = 'desc',
+  cleanCache = false
+}: {
+  keyword: string,
+  pageSize: number,
+  pageNo?: number,
+  sort?: string,
+  order?: string,
+  cleanCache?: boolean
+}): Result<github.issues.SearchResult> {
+  let group = 'SearchData#issues'
+  const matches = keyword.match(/\brepo:([\w-]+\/[\w-]+)/)
+  if (matches) {
+    group = `RepoData#${matches[1]}$issues`
+  }
+  const url = `${githubApiUrl}/search/issues?q=${keyword}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
+  console.log(`searchIssues: keyword=${keyword}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
+  return requestWithCache(
+    requestFactory({ url }).request,
+    { timeout: 30, group, discard: cleanCache }
+  ).then(resultFactory({ nullData: nullSearchResult() }))
+}
+
 async function getRepositoryDetail (fullRepoName: string, cleanCache?: boolean): Result<github.repos.RepoDetail> {
   const url = `${githubApiUrl}/repos/${fullRepoName}`
   console.log(`getRepositoryDetail: fullRepoName=${fullRepoName}`)
@@ -193,6 +244,68 @@ async function getRepositoryBranches (fullRepoName: string, cleanCache?: boolean
   ).then(resultFactory({ nullData: [] }))
 }
 
+async function getRepositoryEvents ({
+  fullRepoName,
+  pageSize,
+  pageNo = 1,
+  cleanCache = false
+}: {
+  fullRepoName: string,
+  pageSize: number,
+  pageNo?: number,
+  cleanCache?: boolean
+}): Result<github.events.UserEvent[]> {
+  const url = `${githubApiUrl}/repos/${fullRepoName}/events?per_page=${pageSize}&page=${pageNo}`
+  console.log(`getRepositoryEvents: repo=${fullRepoName}, pageSize=${pageSize}, pageNo=${pageNo}`)
+  return requestWithCache(
+    requestFactory({ url }).request,
+    { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
+  ).then(resultFactory({ nullData: [] }))
+}
+
+async function getRepositoryIssueEvents ({
+  fullRepoName,
+  pageSize,
+  pageNo = 1,
+  cleanCache = false
+}: {
+  fullRepoName: string,
+  pageSize: number,
+  pageNo?: number,
+  cleanCache?: boolean
+}): Result<github.issues.IssueEvent[]> {
+  const url = `${githubApiUrl}/repos/${fullRepoName}/issues/events?per_page=${pageSize}&page=${pageNo}`
+  console.log(`getRepositoryIssueEvents: repo=${fullRepoName}, pageSize=${pageSize}, pageNo=${pageNo}`)
+  return requestWithCache(
+    requestFactory({ url }).request,
+    { timeout: 30, group: `RepoData#${fullRepoName}`, discard: cleanCache }
+  ).then(resultFactory({ nullData: [] }))
+}
+
+async function getRepositoryIssueTimeline ({
+  fullRepoName,
+  issueNo,
+  pageSize,
+  pageNo = 1,
+  cleanCache = false
+}: {
+  fullRepoName: string,
+  issueNo: number,
+  pageSize: number,
+  pageNo?: number,
+  cleanCache?: boolean
+}): Result<github.issues.IssueTimeline[]> {
+  const url = `${githubApiUrl}/repos/${fullRepoName}/issues/${issueNo}/timeline?per_page=${pageSize}&page=${pageNo}`
+  console.log(`getRepositoryIssueTimeline: repo=${fullRepoName}, pageSize=${pageSize}, pageNo=${pageNo}`)
+  return requestWithCache(
+    requestFactory({
+      url,
+      header: { Accept: 'application/vnd.github.mockingbird-preview' }
+    }).request,
+    { timeout: 30, group: `RepoData#${fullRepoName}$issues`, discard: cleanCache }
+  ).then(resultFactory({ nullData: [] }))
+}
+
 async function getUserDetail (owner: string, cleanCache?: boolean): Result<github.users.UserDetail> {
   let key = ''
   const req = requestFactory({ url: `${githubApiUrl}/user` })
@@ -206,29 +319,6 @@ async function getUserDetail (owner: string, cleanCache?: boolean): Result<githu
     req.request,
     { timeout: 30, group: `UserData#${owner}`, discard: cleanCache, key }
   ).then(resultFactory<github.users.UserDetail>())
-}
-
-async function searchUsers ({
-  keyword,
-  pageSize,
-  pageNo = 1,
-  sort = 'stars',
-  order = 'desc',
-  cleanCache = false
-}: {
-  keyword: string,
-  pageSize: number,
-  pageNo?: number,
-  sort?: string,
-  order?: string,
-  cleanCache?: boolean
-}): Result<github.users.SearchResult> {
-  const url = `${githubApiUrl}/search/users?q=${keyword}&sort=${sort}&order=${order}&per_page=${pageSize}&page=${pageNo}`
-  console.log(`searchUsers: keyword=${keyword}, pageSize=${pageSize}, pageNo=${pageNo}, sort=${sort}, order=${order}`)
-  return requestWithCache(
-    requestFactory({ url }).request,
-    { timeout: 30, group: 'SearchData#users', discard: cleanCache }
-  ).then(resultFactory({ nullData: nullSearchResult() }))
 }
 
 async function getUserRepositories ({
@@ -471,8 +561,12 @@ export default {
   searchTopics,
   searchUsers,
   searchRepositories,
+  searchIssues,
   getRepositoryDetail,
   getRepositoryBranches,
+  getRepositoryEvents,
+  getRepositoryIssueEvents,
+  getRepositoryIssueTimeline,
   getUserDetail,
   getUserStaring,
   getUserEvents,

@@ -69,7 +69,7 @@
     <swiper-item>
       <mp-data-list
         list-style="timeline"
-        item-template="user-event"
+        item-template="activity"
         key="id"
         query="{{userEventQuery}}"
         page-size="{{10}}"

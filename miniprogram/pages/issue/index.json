@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "mp-data-list": "/components/data-list/index",
+    "mp-markdown": "/common/components/markdown/index"
+  }
+}

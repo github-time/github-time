@@ -179,3 +179,11 @@
 .bg-ForkEvent {
   background-color: #563d7c;
 }
+
+.bg-issue-closed {
+  background-color: #28a745;
+}
+
+.bg-issue-open {
+  background-color: #cb2431;
+}

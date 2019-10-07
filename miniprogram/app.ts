@@ -20,6 +20,7 @@ export interface IMyApp {
     zanCodeUrl: string
     ownerDetail?: github.repos.OwnerInfo
     repoDetail?: github.repos.SearchResultItem
+    issueDetail?: github.issues.SearchResultItem
     userInfo?: wx.UserInfo
     signal?: Signal
     emojis: Promise<{[key: string]: string}>

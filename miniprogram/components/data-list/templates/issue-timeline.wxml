@@ -1,0 +1,27 @@
+<!--index.wxml-->
+<wxs module="common" src="../../../wxs/common.wxs" />
+<wxs module="utils" src="../utils.wxs" />
+
+<template name="issue-timeline">
+  <view wx:if="{{item.actor}}" class="cu-item text-gray cuIcon-people">
+    <image
+      class="timeline-icon"
+      src="{{item.actor.avatar_url}}"
+      error="load\nfailed"
+      mark:type="owner"
+    />
+    <view class="bg-white content shadow" style="padding: 16rpx;">
+      <view class="text-bold cu-capsule radius">
+        <view class="text-xs cu-tag text-white bg-{{item.type}} bg-issue-{{item.state}} bg-grey">{{item.event}}</view>
+        <view class="text-xs cu-tag line-gray">{{common.dateFormat(item.created_at)}}</view>
+      </view>
+      <view class="text-df margin-top-sm text-content text-grey">
+        {{item.title}}
+      </view>
+      <mp-markdown
+        content="{{item.body}}"
+        emojis="{{emojis}}"
+      />
+    </view>
+  </view>
+</template>

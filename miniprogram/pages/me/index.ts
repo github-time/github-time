@@ -152,8 +152,7 @@ Page({
     })
 
     if (app.settings.isGithubUserChanged(this)) {
-      this.loadUserRepos()
-      this.loadUserEvents()
+      this.refreshUserData()
     }
   },
 
@@ -257,20 +256,12 @@ Page({
     })
   },
 
-  async loadUserRepos () {
+  async refreshUserData () {
     const githubConfig = app.settings.get('githubConfig', {})
     const owner = githubConfig.user
     this.setData!({
       githubConfig,
-      ...(owner ? { query: { owner } } : {})
-    })
-  },
-
-  async loadUserEvents () {
-    const githubConfig = app.settings.get('githubConfig', {})
-    const owner = githubConfig.user
-    this.setData!({
-      githubConfig,
+      ...(owner ? { query: { owner } } : {}),
       ...(owner ? { userEventQuery: { owner } } : {})
     })
   }

@@ -58,7 +58,7 @@ module.exports = {
 }
 </wxs>
 
-<template name="user-event">
+<template name="activity">
   <view class="cu-item text-gray cuIcon-people">
     <image
       class="timeline-icon"

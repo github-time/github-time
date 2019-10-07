@@ -18,17 +18,23 @@ const app = getApp<IMyApp>()
 
 Page({
   data: {
+    index: 0,
     current: 'summary',
     tabs: [
       {
         key: 'summary',
-        title: '项目摘要',
+        title: '摘要',
         icon: 'medal'
       },
       {
         key: 'readme',
-        title: '项目介绍',
+        title: '介绍',
         icon: 'text'
+      },
+      {
+        key: 'activity',
+        title: '动态',
+        icon: 'activity'
       },
       {
         key: 'issues',
@@ -89,6 +95,31 @@ Page({
       token: ''
     },
     isStarred: false,
+    enableLoadRepoEvents: false,
+    repoEventQuery: null,
+    async getRepoEvents (query: any, pageSize: number, pageNo: number) {
+      const result = await github.getRepositoryEvents({
+        fullRepoName: query.fullRepoName,
+        pageSize,
+        pageNo
+      })
+      // await sleep(2000)
+      return result
+    },
+    enableLoadRepoIssues: false,
+    repoIssueQuery: null,
+    async getRepoIssues (query: any, pageSize: number, pageNo: number) {
+      const result = await github.searchIssues({
+        keyword: `repo:${query.fullRepoName}`,
+        pageSize,
+        pageNo
+      })
+      // await sleep(2000)
+      return {
+        status: result.status,
+        data: result.data.items
+      }
+    }
   },
   onShareAppMessage () {
     return {
@@ -156,6 +187,9 @@ Page({
         })
       })()
     }
+
+    this.loadRepoEvents()
+    this.loadRepoIssues()
   },
   onTabsChange(e: any) {
     const { key } = e.detail
@@ -164,7 +198,22 @@ Page({
         current: key,
         index,
     })
-    this.loadReadmeContent()
+
+    switch (key) {
+      case 'readme':
+        this.loadReadmeContent()
+        break
+      case 'activity':
+        this.setData!({
+          enableLoadRepoEvents: true
+        })
+        break
+      case 'issues':
+        this.setData!({
+          enableLoadRepoIssues: true
+        })
+        break
+    }
   },
   async onStaring () {
     const githubConfig = this.data.githubConfig
@@ -346,5 +395,56 @@ Page({
     // this.setData!({
     //   tags
     // })
+  },
+
+  async loadRepoEvents () {
+    const fullRepoName = this.data.repoDetail.full_name
+    if (fullRepoName) {
+      this.setData!({
+        repoEventQuery: {
+          fullRepoName
+        }
+      })
+    }
+  },
+
+  async loadRepoIssues () {
+    const fullRepoName = this.data.repoDetail.full_name
+    if (fullRepoName) {
+      this.setData!({
+        repoIssueQuery: {
+          fullRepoName
+        }
+      })
+    }
+  },
+
+  onRepoEventClick (e: any) {
+    switch (e.detail.type) {
+      case 'owner':
+        wx.navigateTo({
+          url: `/pages/owner-detail/index?o=${e.detail.item.actor.login}`
+        })
+        break;
+      case 'repo':
+        if (this.data.repoDetail.full_name !== e.detail.item.repo.name) {
+          wx.navigateTo({
+            url: `/pages/repo-detail/index?r=${e.detail.item.repo.name}`
+          })
+        }
+        break;
+      case 'fork-repo':
+        wx.navigateTo({
+          url: `/pages/repo-detail/index?r=${e.detail.item.payload.forkee.full_name}`
+        })
+        break;
+    }
+  },
+
+  onRepoIssueClick (e: any) {
+    app.globalData.issueDetail = e.detail.item
+    wx.navigateTo({
+      url: `/pages/issue/index?r=${this.data.repoDetail.full_name}`
+    })
   }
 })

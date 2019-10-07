@@ -123,8 +123,33 @@
       ></mp-markdown>
     </block>
   </view>
-  <view hidden="{{current!=='issues'}}">
-    <mp-todo-coming-soon />
+  <view hidden="{{current!=='activity'}}" style="height: 100%;">
+    <mp-data-list
+      list-style="timeline"
+      item-template="activity"
+      key="id"
+      query="{{repoEventQuery}}"
+      page-size="{{10}}"
+      fetch-data="{{getRepoEvents}}"
+      show-load-more
+      auto-load-more
+      auto-load="{{enableLoadRepoEvents}}"
+      bind:itemclick="onRepoEventClick"
+      />
+  </view>
+  <view hidden="{{current!=='issues'}}" style="height: 100%;">
+    <mp-data-list
+      list-style="timeline"
+      item-template="issue"
+      key="id"
+      query="{{repoIssueQuery}}"
+      page-size="{{10}}"
+      fetch-data="{{getRepoIssues}}"
+      show-load-more
+      auto-load-more
+      auto-load="{{enableLoadRepoIssues}}"
+      bind:itemclick="onRepoIssueClick"
+      />
   </view>
   <view hidden="{{current!=='discuss'}}">
     <mp-todo-coming-soon />

@@ -3,7 +3,9 @@
 <import src="./templates/trending-user.wxml" />
 <import src="./templates/repo.wxml" />
 <import src="./templates/footprint.wxml" />
-<import src="./templates/user-event.wxml" />
+<import src="./templates/activity.wxml" />
+<import src="./templates/issue.wxml" />
+<import src="./templates/issue-timeline.wxml" />
 
 <scroll-view
   scroll-top="{{scrollTop}}"

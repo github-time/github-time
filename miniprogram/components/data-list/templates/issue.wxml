@@ -1,0 +1,31 @@
+<!--index.wxml-->
+<wxs module="common" src="../../../wxs/common.wxs" />
+<wxs module="utils" src="../utils.wxs" />
+
+<template name="issue">
+  <view class="cu-item text-gray cuIcon-people">
+    <image
+      class="timeline-icon"
+      src="{{item.user.avatar_url}}"
+      error="load\nfailed"
+      mark:type="owner"
+    />
+    <view class="bg-white content shadow" style="padding: 16rpx;">
+      <view class="text-bold cu-capsule radius">
+        <view class="text-xs cu-tag text-white bg-{{item.type}} bg-issue-{{item.state}} bg-grey">问题{{item.state==='open'?'创建':'关闭'}}</view>
+        <view class="text-xs cu-tag line-gray">
+          <text wx:if="{{item.state==='open'}}">{{common.dateFormat(item.created_at)}}</text>
+          <text wx:else>{{common.dateFormat(item.closed_at)}}</text>
+        </view>
+      </view>
+      <view class="text-sm margin-top-xs text-content text-gray">
+        <text class="cuIcon-people">{{item.user.login}}</text>
+        {{item.state==='open'?'创建':'关闭'}}了问题
+        <text class="text-blue">#{{item.number}}</text>
+      </view>
+      <view class="text-df margin-top-sm text-content text-grey">
+        {{item.title}}
+      </view>
+    </view>
+  </view>
+</template>

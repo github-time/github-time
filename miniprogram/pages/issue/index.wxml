@@ -1,0 +1,34 @@
+<!--miniprogram/pages/logs/index.wxml-->
+<wxs module="common" src="../../wxs/common.wxs" />
+<navigation-bar bgColor="bg-gradual-green">
+  <view slot="backText">返回</view>
+  <view slot="content">问题</view>
+</navigation-bar>
+
+<view class="bg-white content shadow margin-sm padding-sm radius">
+  <view class="cu-capsule radius">
+    <view class="cu-tag bg-grey text-white">问题{{issueDetail.state==='open'?'创建':'关闭'}}</view>
+    <view class="text-xs cu-tag line-gray">
+      <text wx:if="{{issueDetail.state==='open'}}">{{common.dateFormat(issueDetail.created_at)}}</text>
+      <text wx:else>{{common.dateFormat(issueDetail.closed_at)}}</text>
+    </view>
+  </view>
+  <view class="margin-top-sm text-content">{{issueDetail.title}}</view>
+  <mp-markdown
+    content="{{issueDetail.body}}"
+    emojis="{{emojis}}"
+    bind:action="onMarkdownAction"
+  />
+</view>
+
+<mp-data-list
+  list-style="timeline"
+  item-template="issue-timeline"
+  key="id"
+  query="{{repoTimelineQuery}}"
+  page-size="{{10}}"
+  fetch-data="{{getRepoIssueTimeline}}"
+  auto-load
+  show-load-more
+  bind:itemclick="onRepoIssueTimelineClick"
+  />

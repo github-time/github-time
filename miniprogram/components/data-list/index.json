@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
+    "mp-markdown": "/common/components/markdown/index",
     "wux-white-space": "/common/lib/wux/white-space/index",
     "wux-image": "/common/lib/wux/image/index",
     "mp-github-repo-description": "../github-repo-description/index",

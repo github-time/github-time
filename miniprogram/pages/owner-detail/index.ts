@@ -104,12 +104,6 @@ Page({
     })
   },
   onUserEventClick (e: any) {
-    // app.globalData.repoDetail = e.detail.item
-    // app.globalData.ownerDetail = e.detail.item.owner
-    // wx.navigateTo({
-    //   url: '/pages/repo-detail/index'
-    // })
-    console.log('onUserEventClick', e.detail)
     switch (e.detail.type) {
       case 'owner':
         if (this.data.ownerDetail.login !== e.detail.item.actor.login) {
