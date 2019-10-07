@@ -359,6 +359,7 @@ renderer.hr = function () {
 }
 
 renderer.link = function (href: string, title: string, text: string) {
+  href = decodeURI(href)
   if (/^#.*/.test(href)) {
     href = '#' + getHashAnchor(href.substr(1))
   }
