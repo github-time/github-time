@@ -10,8 +10,8 @@
   >
   <view class="markdown-container {{preview ? 'markdown-container-preview' : 'markdown-container-code'}}">
     <view wx:for="{{markdownNodes}}" wx:key="{{index}}" class="markdown-body">
-      <code-highlight wx:if="{{item.type === 'code'}}" code="{{item.value}}" language="{{item.class}}"
-      /><rich-text wx:if="{{item.type === 'html'}}" nodes="{{item.value}}"></rich-text
+      <view class="padding-tb-xs"><code-highlight wx:if="{{item.type === 'code'}}" code="{{item.value}}" language="{{item.class}}"
+      /></view><rich-text wx:if="{{item.type === 'html'}}" nodes="{{item.value}}"></rich-text
       ><md-list wx:elif="{{item.type === 'list'}}"
         model="{{item}}"
         bind:action="onAction"
