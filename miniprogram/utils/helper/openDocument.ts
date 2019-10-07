@@ -169,6 +169,7 @@ async function redownload (url: string, gitHash: string) {
         icon: 'none',
         duration: 2000
       })
+      await sleep(2000)
     }
   })
 }
