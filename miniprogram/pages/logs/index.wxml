@@ -9,12 +9,13 @@
     <view class="bg-cyan content shadow">
       <view class="cu-capsule radius">
         <view class="cu-tag bg-white text-cyan">v0.6.0</view>
-        <view class="cu-tag line-white">2019/10/07</view>
+        <view class="cu-tag line-white">2019/10/08</view>
       </view>
       <view class="margin-top-sm text-content"> v0.6.0 发布</view>
       <view class="text-xs">
         <view class="cuIcon-add"> 支持 star/unstar 仓库</view>
         <view class="cuIcon-add"> 支持显示开发者及仓库动态</view>
+        <view class="cuIcon-add"> 支持显示问题列表及问题评论</view>
         <view class="cuIcon-add"> 优化代码浏览器跳转</view>
         <view class="cuIcon-magic"> 界面美化</view>
         <view class="cuIcon-repair"> 修复bug</view>

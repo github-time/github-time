@@ -40,11 +40,6 @@ Page({
         key: 'issues',
         title: '问题',
         icon: 'question'
-      },
-      {
-        key: 'discuss',
-        title: '讨论',
-        icon: 'community'
       }
     ],
     actions: [{
@@ -69,10 +64,6 @@ Page({
     {
       name: 'issues',
       text: "Issues",
-    },
-    {
-      name: 'discuss',
-      text: "评论",
     }],
     noReadme: false,
     readmeContent: '',

@@ -379,7 +379,7 @@ renderer.image = function (href: string, title: string, text: string) {
     title,
     text,
     // @ts-ignore
-    href: encodeURI(getFixedImagePath(href, this.contextPath))
+    href: getFixedImagePath(href, this.contextPath)
   })
   return `__$$var:${varIndex++}$$__`
 }

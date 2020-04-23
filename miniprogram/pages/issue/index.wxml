@@ -6,12 +6,21 @@
 </navigation-bar>
 
 <view class="bg-white content shadow margin-sm padding-sm radius">
+  <image
+    class="user-icon"
+    src="{{issueDetail.user.avatar_url}}"
+    error="load\nfailed"
+    mark:type="owner"
+  />
   <view class="cu-capsule radius">
-    <view class="cu-tag bg-grey text-white">问题{{issueDetail.state==='open'?'创建':'关闭'}}</view>
+    <view class="cu-tag bg-issue-{{issueDetail.state}} text-white">问题{{issueDetail.state==='open'?'创建':'关闭'}}</view>
     <view class="text-xs cu-tag line-gray">
       <text wx:if="{{issueDetail.state==='open'}}">{{common.dateFormat(issueDetail.created_at)}}</text>
       <text wx:else>{{common.dateFormat(issueDetail.closed_at)}}</text>
     </view>
+  </view>
+  <view class="margin-top-sm text-content">
+    <text class="cuIcon-people">{{issueDetail.user.login}}</text>
   </view>
   <view class="margin-top-sm text-content">{{issueDetail.title}}</view>
   <mp-markdown

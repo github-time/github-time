@@ -187,3 +187,11 @@
 .bg-issue-open {
   background-color: #cb2431;
 }
+
+.bg-base {
+  background-color: var(--background-color-base);
+}
+
+.cu-timeline>.cu-item[class*="cuIcon-"]::before {
+  background-color: var(--background-color-base);
+}

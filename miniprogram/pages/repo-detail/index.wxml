@@ -151,9 +151,6 @@
       bind:itemclick="onRepoIssueClick"
       />
   </view>
-  <view hidden="{{current!=='discuss'}}">
-    <mp-todo-coming-soon />
-  </view>
 </mp-fill-view>
 
 <!-- {{repoDetail.owner.login}}

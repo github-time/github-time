@@ -59,7 +59,7 @@ module.exports = {
 </wxs>
 
 <template name="activity">
-  <view class="cu-item text-gray cuIcon-people">
+  <view class="cu-item text-gray cuIcon-people bg-base">
     <image
       class="timeline-icon"
       src="{{item.actor.avatar_url}}"
