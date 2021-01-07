@@ -92,4 +92,3 @@ export default function (req: wx.RequestOption, opts: CacheOptions|false, { succ
 
   return promise
 }
-

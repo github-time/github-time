@@ -12,7 +12,8 @@
 </wux-tabs>
 
 <view class="info">
-  {{current==='repos' ? repoSinceDisplay : userSinceDisplay}}趋势 > 语言: {{(current==='repos' ? repoLanguageDisplay : userLanguageDisplay) || '所有'}}
+  <text class="info-meta">{{current==='repos' ? repoSinceDisplay : userSinceDisplay}}趋势 > 语言: {{(current==='repos' ? repoLanguageDisplay : userLanguageDisplay) || '所有'}}</text>
+  <text class="info-refresh-cache cuIcon-refresh" bind:tap="onCacheSettingsClick"> 刷新缓存</text>
 </view>
 
 <mp-fill-view>

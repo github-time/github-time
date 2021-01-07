@@ -69,8 +69,10 @@ Page({
     async getTrendingRepos (query: any) {
       const result = await github.getGithubReposTrending({
         since: query.since,
-        language: query.language
+        language: query.language,
+        cleanCache: query.cleanCache
       })
+      query.cleanCache = false
       // await sleep(2000)
       const data = result.data.map((item) => {
         return {
@@ -95,10 +97,17 @@ Page({
     async getTrendingUsers (query: any) {
       const result = await github.getGithubUsersTrending({
         since: query.since,
-        language: query.language
+        language: query.language,
+        cleanCache: query.cleanCache
       })
+      query.cleanCache = false
       // await sleep(2000)
       const data = result.data.map((user) => {
+        user.repo = user.repo || {
+          name: '',
+          description: '',
+          url: ''
+        }
         return {
           name: user.repo.name,
           full_name: `${user.username}/${user.repo.name}`,
@@ -175,7 +184,7 @@ Page({
 
   onTabsChange(e: any) {
     const { key } = e.detail
-    const index = this.data.tabs.map((n) => n.key).indexOf(key)
+    const index = this.data.tabs.map((n: any) => n.key).indexOf(key)
 
     this.setData!({
         current: key,
@@ -226,5 +235,23 @@ Page({
         url: '/pages/language-selector/index'
       })
     }
-  }
+  },
+
+  onCacheSettingsClick () {
+    if (this.data.current === 'repos') {
+      this.setData!({
+        reposQuery: {
+          ...this.data.reposQuery,
+          cleanCache: true
+        }
+      })
+    } else if (this.data.current === 'developers') {
+      this.setData!({
+        usersQuery: {
+          ...this.data.usersQuery,
+          cleanCache: true
+        }
+      })
+    }
+  },
 })

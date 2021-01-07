@@ -529,12 +529,25 @@ async function getGithubReposTrending ({
   since?:'daily'|'weekly'|'monthly',
   cleanCache?: boolean
 } = {}): Result<github.trending.Repository[]> {
-  const url = `https://github-trending-api.now.sh/repositories?language=${language}&since=${since}`
+  // const url = `https://github-trending-api.now.sh/repositories?language=${language}&since=${since}`
   console.log(`getGithubRepoTrending: language=${language} since=${since}`)
   return callCloudFunctionWithCache(
-    cloudRequestFactory(url),
+    // cloudRequestFactory(url),
+    {
+      name: 'github-trending',
+      data: {
+        type: 'repositories',
+        params: {
+          language,
+          since
+        }
+      }
+    },
     { timeout: 60, group: 'TrendingData#repos', discard: cleanCache }
-  ).then(resultFactory({ nullData: [], successData: (res) => res.result.data }))
+  ).then(resultFactory({ nullData: [], successData: (res) => {
+    console.log(res.result.data)
+    return res.result.data
+  }}))
 }
 
 async function getGithubUsersTrending ({
@@ -546,10 +559,20 @@ async function getGithubUsersTrending ({
   since?: 'daily'|'weekly'|'monthly',
   cleanCache?: boolean
 } = {}): Result<github.trending.Developer[]> {
-  const url = `https://github-trending-api.now.sh/developers?language=${language}&since=${since}`
+  // const url = `https://github-trending-api.now.sh/developers?language=${language}&since=${since}`
   console.log(`getGithubUserTrending: language=${language} since=${since}`)
   return callCloudFunctionWithCache(
-    cloudRequestFactory(url),
+    // cloudRequestFactory(url),
+    {
+      name: 'github-trending',
+      data: {
+        type: 'developers',
+        params: {
+          language,
+          since
+        }
+      }
+    },
     { timeout: 60, group: 'TrendingData#users', discard: cleanCache }
   ).then(resultFactory({ nullData: [], successData: (res) => res.result.data }))
 }

@@ -24,9 +24,9 @@
   bindsubmit="onFilter"
   ></mp-repo-filter>
 
-<view class="info">
-  <text class="info-meta cuIcon-rank"> 数据更新于: {{common.dateFormat(cache_date)}}</text>
-  <text class="info-settings cuIcon-refresh" bind:tap="onCacheSettingsClick"> 刷新缓存</text>
+<view class="cache-info">
+  <text class="cache-info-meta cuIcon-rank"> 数据更新于: {{common.dateFormat(cache_date)}}</text>
+  <text class="cache-info-settings cuIcon-refresh" bind:tap="onCacheSettingsClick"> 刷新缓存</text>
 </view>
 
 <mp-fill-view>
